@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="com.silabs.ide.project.core.cdtMbsProjectType">
+		<item value="com.silabs.ide.project.core.templates.model.com.silabs.sdk.si32.efm32.sls.2.0.11.SLSTK3400A_EFM32HG.template.SLSTK3400A_usbdcomposite" key="selectedTemplateId"/>
+		<item value="LINK" key="importOption"/>
+		<item value="true" key="filterTemplatesByToolchain"/>
+		<item value="true" key="filterTemplatesByPartSdk"/>
+		<item value="LINK_LIBRARIES" key="settingImportModeOption"/>
+		<item value="com.silabs.ide.halconf.ui.halConfiguratedProjectWizard" key="projectTypeId"/>
+		<list key="fileLocationHistory">
+		</list>
+		<list key="fileLocations">
+			<item value="C:\Users\Summer\Documents\projects\LaundryBubl\bubbl\LDD_v2"/>
+		</list>
+	</section>
+</section>

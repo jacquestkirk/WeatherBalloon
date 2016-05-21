@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="ASCII"?>
+<device:XMLDevice xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:device="http://www.silabs.com/sls/hc/document/device.ecore" name="EFM32HG322F64" partId="com.silabs.mcu.si32.efm32.efm32hg.efm32hg322f64">
+  <mode name="DefaultMode">
+    <property object="DefaultMode" propertyId="mode.diagramLocation" value="100, 100"/>
+    <property object="GPIO" propertyId="ABPeripheral.included" value="true"/>
+    <property object="PB7" propertyId="ports.settings.pinmode" value="Push-pull"/>
+    <property object="PB8" propertyId="ports.settings.pinmode" value="Push-pull"/>
+    <property object="PC0" propertyId="ports.settings.pinmode" value="Push-pull"/>
+    <property object="PC1" propertyId="ports.settings.pinmode" value="Input"/>
+    <property object="PD6" propertyId="ports.settings.pinmode" value="Wired-and pullup filter"/>
+    <property object="PD7" propertyId="ports.settings.pinmode" value="Wired-and pullup filter"/>
+    <property object="PE10" propertyId="ports.settings.pinmode" value="Push-pull"/>
+    <property object="PE11" propertyId="ports.settings.pinmode" value="Input"/>
+    <property object="PE12" propertyId="ports.settings.pinmode" value="Push-pull"/>
+    <property object="PE13" propertyId="ports.settings.pinmode" value="Push-pull"/>
+    <property object="PORTIO" propertyId="portio.hfxo.enable.n" value="Enabled"/>
+    <property object="PORTIO" propertyId="portio.hfxo.enable.p" value="Enabled"/>
+    <property object="PORTIO" propertyId="portio.i2c0.enable.scl" value="Enabled"/>
+    <property object="PORTIO" propertyId="portio.i2c0.enable.sda" value="Enabled"/>
+    <property object="PORTIO" propertyId="portio.i2c0.location.i2c0" value="1"/>
+    <property object="PORTIO" propertyId="portio.usart0.enable.clk" value="Enabled"/>
+    <property object="PORTIO" propertyId="portio.usart0.enable.cs" value="Enabled"/>
+    <property object="PORTIO" propertyId="portio.usart0.enable.rx" value="Enabled"/>
+    <property object="PORTIO" propertyId="portio.usart0.enable.tx" value="Enabled"/>
+    <property object="PORTIO" propertyId="portio.usart1.enable.clk" value="Enabled"/>
+    <property object="PORTIO" propertyId="portio.usart1.enable.cs" value="Enabled"/>
+    <property object="PORTIO" propertyId="portio.usart1.enable.rx" value="Enabled"/>
+    <property object="PORTIO" propertyId="portio.usart1.enable.tx" value="Enabled"/>
+    <property object="PORTIO" propertyId="portio.usb.enable.dm" value="Enabled"/>
+    <property object="PORTIO" propertyId="portio.usb.enable.dmpu" value="Enabled"/>
+    <property object="PORTIO" propertyId="portio.usb.enable.dp" value="Enabled"/>
+  </mode>
+  <modeTransition>
+    <property object="RESET &#x2192; DefaultMode" propertyId="modeTransition.target" value="DefaultMode"/>
+    <property object="RESET &#x2192; DefaultMode" propertyId="modeTransition.source" value="RESET"/>
+  </modeTransition>
+</device:XMLDevice>

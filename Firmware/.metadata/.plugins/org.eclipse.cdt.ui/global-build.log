@@ -1,0 +1,124 @@
+00:16:54 **** Build of configuration GNU ARM v4.8.3 - Debug for project WeatherBalloon ****
+make -j4 all 
+Building file: ../src/main.c
+Building file: ../emlib/em_cmu.c
+Building file: ../src/Scheduler.c
+Building file: ../src/InitDevice.c
+Invoking: GNU ARM C Compiler
+arm-none-eabi-gcc -g -gdwarf-2 -mcpu=cortex-m0plus -mthumb '-DEFM32HG322F64=1' -I"C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/CMSIS/Include" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/SLSTK3400A_EFM32HG/config" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/drivers" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/bsp" -O0 -Wall -c -fmessage-length=0 -mno-sched-prolog -fno-builtin -ffunction-sections -fdata-sections -std=c99 -MMD -MP -MF"src/Scheduler.d" -MT"src/Scheduler.o" -o "src/Scheduler.o" "../src/Scheduler.c"
+../src/Scheduler.c: In function 'RunTasks':
+Invoking: GNU ARM C Compiler
+../src/Scheduler.c:61:42: error: expected expression before ';' token
+arm-none-eabi-gcc -g -gdwarf-2 -mcpu=cortex-m0plus -mthumb '-DEFM32HG322F64=1' -I"C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/CMSIS/Include" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/SLSTK3400A_EFM32HG/config" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/drivers" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/bsp" -O0 -Wall -c -fmessage-length=0 -mno-sched-prolog -fno-builtin -ffunction-sections -fdata-sections -std=c99 -MMD -MP -MF"src/InitDevice.d" -MT"src/InitDevice.o" -o "src/InitDevice.o" "../src/InitDevice.c"
+   TaskTimer[ReadTemps] = READ_TEMPS_RESET;
+Invoking: GNU ARM C Compiler
+                                          ^
+Invoking: GNU ARM C Compiler
+make: *** [src/Scheduler.o] Error 1
+make: *** Waiting for unfinished jobs....
+arm-none-eabi-gcc -g -gdwarf-2 -mcpu=cortex-m0plus -mthumb '-DEFM32HG322F64=1' -I"C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/CMSIS/Include" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/SLSTK3400A_EFM32HG/config" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/drivers" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/bsp" -O0 -Wall -c -fmessage-length=0 -mno-sched-prolog -fno-builtin -ffunction-sections -fdata-sections -std=c99 -MMD -MP -MF"emlib/em_cmu.d" -MT"emlib/em_cmu.o" -o "emlib/em_cmu.o" "../emlib/em_cmu.c"
+arm-none-eabi-gcc -g -gdwarf-2 -mcpu=cortex-m0plus -mthumb '-DEFM32HG322F64=1' -I"C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/CMSIS/Include" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/SLSTK3400A_EFM32HG/config" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/drivers" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/bsp" -O0 -Wall -c -fmessage-length=0 -mno-sched-prolog -fno-builtin -ffunction-sections -fdata-sections -std=c99 -MMD -MP -MF"src/main.d" -MT"src/main.o" -o "src/main.o" "../src/main.c"
+Finished building: ../src/InitDevice.c
+ 
+Finished building: ../emlib/em_cmu.c
+ 
+Finished building: ../src/main.c
+ 
+00:19:18 **** Incremental Build of configuration GNU ARM v4.8.3 - Debug for project WeatherBalloon ****
+make -j4 all 
+Building file: ../src/Scheduler.c
+Building file: ../emlib/em_emu.c
+Invoking: GNU ARM C Compiler
+Building file: ../emlib/em_gpio.c
+arm-none-eabi-gcc -g -gdwarf-2 -mcpu=cortex-m0plus -mthumb '-DEFM32HG322F64=1' -I"C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/CMSIS/Include" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/SLSTK3400A_EFM32HG/config" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/drivers" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/bsp" -O0 -Wall -c -fmessage-length=0 -mno-sched-prolog -fno-builtin -ffunction-sections -fdata-sections -std=c99 -MMD -MP -MF"src/Scheduler.d" -MT"src/Scheduler.o" -o "src/Scheduler.o" "../src/Scheduler.c"
+Building file: ../emlib/em_system.c
+Invoking: GNU ARM C Compiler
+Invoking: GNU ARM C Compiler
+arm-none-eabi-gcc -g -gdwarf-2 -mcpu=cortex-m0plus -mthumb '-DEFM32HG322F64=1' -I"C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/CMSIS/Include" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/SLSTK3400A_EFM32HG/config" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/drivers" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/bsp" -O0 -Wall -c -fmessage-length=0 -mno-sched-prolog -fno-builtin -ffunction-sections -fdata-sections -std=c99 -MMD -MP -MF"emlib/em_gpio.d" -MT"emlib/em_gpio.o" -o "emlib/em_gpio.o" "../emlib/em_gpio.c"
+Invoking: GNU ARM C Compiler
+arm-none-eabi-gcc -g -gdwarf-2 -mcpu=cortex-m0plus -mthumb '-DEFM32HG322F64=1' -I"C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/CMSIS/Include" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/SLSTK3400A_EFM32HG/config" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/drivers" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/bsp" -O0 -Wall -c -fmessage-length=0 -mno-sched-prolog -fno-builtin -ffunction-sections -fdata-sections -std=c99 -MMD -MP -MF"emlib/em_emu.d" -MT"emlib/em_emu.o" -o "emlib/em_emu.o" "../emlib/em_emu.c"
+arm-none-eabi-gcc -g -gdwarf-2 -mcpu=cortex-m0plus -mthumb '-DEFM32HG322F64=1' -I"C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/CMSIS/Include" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/SLSTK3400A_EFM32HG/config" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/drivers" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/bsp" -O0 -Wall -c -fmessage-length=0 -mno-sched-prolog -fno-builtin -ffunction-sections -fdata-sections -std=c99 -MMD -MP -MF"emlib/em_system.d" -MT"emlib/em_system.o" -o "emlib/em_system.o" "../emlib/em_system.c"
+Finished building: ../emlib/em_emu.c
+Finished building: ../emlib/em_gpio.c
+Finished building: ../src/Scheduler.c
+ 
+ 
+Building file: ../CMSIS/efm32hg/startup_gcc_efm32hg.s
+Building file: ../CMSIS/efm32hg/system_efm32hg.c
+ 
+Invoking: GNU ARM Assembler
+arm-none-eabi-gcc -g -gdwarf-2 -mcpu=cortex-m0plus -mthumb -c -x assembler-with-cpp -I"C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/CMSIS/Include" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/SLSTK3400A_EFM32HG/config" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/drivers" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/bsp" '-DEFM32HG322F64=1' -o "CMSIS/efm32hg/startup_gcc_efm32hg.o" "../CMSIS/efm32hg/startup_gcc_efm32hg.s"
+Invoking: GNU ARM C Compiler
+arm-none-eabi-gcc -g -gdwarf-2 -mcpu=cortex-m0plus -mthumb '-DEFM32HG322F64=1' -I"C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/CMSIS/Include" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/SLSTK3400A_EFM32HG/config" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/drivers" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/bsp" -O0 -Wall -c -fmessage-length=0 -mno-sched-prolog -fno-builtin -ffunction-sections -fdata-sections -std=c99 -MMD -MP -MF"CMSIS/efm32hg/system_efm32hg.d" -MT"CMSIS/efm32hg/system_efm32hg.o" -o "CMSIS/efm32hg/system_efm32hg.o" "../CMSIS/efm32hg/system_efm32hg.c"
+Finished building: ../emlib/em_system.c
+Finished building: ../CMSIS/efm32hg/startup_gcc_efm32hg.s
+ 
+ 
+Finished building: ../CMSIS/efm32hg/system_efm32hg.c
+ 
+Building target: WeatherBalloon.axf
+Invoking: GNU ARM C Linker
+arm-none-eabi-gcc -g -gdwarf-2 -mcpu=cortex-m0plus -mthumb -T "WeatherBalloon.ld" -Xlinker --gc-sections -Xlinker -Map="WeatherBalloon.map" --specs=nano.specs -o WeatherBalloon.axf "./src/InitDevice.o" "./src/Scheduler.o" "./src/main.o" "./emlib/em_cmu.o" "./emlib/em_emu.o" "./emlib/em_gpio.o" "./emlib/em_system.o" "./CMSIS/efm32hg/startup_gcc_efm32hg.o" "./CMSIS/efm32hg/system_efm32hg.o" -Wl,--start-group -lgcc -lc -lnosys -Wl,--end-group
+Finished building target: WeatherBalloon.axf
+ 
+Building hex file: WeatherBalloon.hex
+arm-none-eabi-objcopy -O ihex "WeatherBalloon.axf" "WeatherBalloon.hex"
+ 
+Building bin file: WeatherBalloon.bin
+arm-none-eabi-objcopy -O binary "WeatherBalloon.axf" "WeatherBalloon.bin"
+ 
+Running size tool
+arm-none-eabi-size "WeatherBalloon.axf"
+   text	   data	    bss	    dec	    hex	filename
+    680	    108	     28	    816	    330	WeatherBalloon.axf
+ 
+16:31:27 **** Build of configuration GNU ARM v4.8.3 - Debug for project WeatherBalloon ****
+make -j4 all 
+Building file: ../src/Scheduler.c
+Invoking: GNU ARM C Compiler
+arm-none-eabi-gcc -g -gdwarf-2 -mcpu=cortex-m0plus -mthumb '-DEFM32HG322F64=1' -I"C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/CMSIS/Include" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/SLSTK3400A_EFM32HG/config" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/drivers" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/bsp" -O0 -Wall -c -fmessage-length=0 -mno-sched-prolog -fno-builtin -ffunction-sections -fdata-sections -std=c99 -MMD -MP -MF"src/Scheduler.d" -MT"src/Scheduler.o" -o "src/Scheduler.o" "../src/Scheduler.c"
+../src/Scheduler.c: In function 'RunTasks':
+../src/Scheduler.c:157:3: warning: implicit declaration of function 'TskTurnOffLed3' [-Wimplicit-function-declaration]
+   TskTurnOffLed3();
+   ^
+Finished building: ../src/Scheduler.c
+ 
+Building target: WeatherBalloon.axf
+Invoking: GNU ARM C Linker
+arm-none-eabi-gcc -g -gdwarf-2 -mcpu=cortex-m0plus -mthumb -T "WeatherBalloon.ld" -Xlinker --gc-sections -Xlinker -Map="WeatherBalloon.map" --specs=nano.specs -o WeatherBalloon.axf "./src/InitDevice.o" "./src/Scheduler.o" "./src/main.o" "./emlib/em_cmu.o" "./emlib/em_emu.o" "./emlib/em_gpio.o" "./emlib/em_system.o" "./CMSIS/efm32hg/startup_gcc_efm32hg.o" "./CMSIS/efm32hg/system_efm32hg.o" -Wl,--start-group -lgcc -lc -lnosys -Wl,--end-group
+Finished building target: WeatherBalloon.axf
+ 
+Building hex file: WeatherBalloon.hex
+arm-none-eabi-objcopy -O ihex "WeatherBalloon.axf" "WeatherBalloon.hex"
+ 
+Building bin file: WeatherBalloon.bin
+arm-none-eabi-objcopy -O binary "WeatherBalloon.axf" "WeatherBalloon.bin"
+ 
+Running size tool
+arm-none-eabi-size "WeatherBalloon.axf"
+   text	   data	    bss	    dec	    hex	filename
+    680	    108	     28	    816	    330	WeatherBalloon.axf
+ 
+16:31:55 **** Incremental Build of configuration GNU ARM v4.8.3 - Debug for project WeatherBalloon ****
+make -j4 all 
+Building file: ../src/Scheduler.c
+Invoking: GNU ARM C Compiler
+arm-none-eabi-gcc -g -gdwarf-2 -mcpu=cortex-m0plus -mthumb '-DEFM32HG322F64=1' -I"C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/CMSIS/Include" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/SLSTK3400A_EFM32HG/config" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/drivers" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include" -I"C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/bsp" -O0 -Wall -c -fmessage-length=0 -mno-sched-prolog -fno-builtin -ffunction-sections -fdata-sections -std=c99 -MMD -MP -MF"src/Scheduler.d" -MT"src/Scheduler.o" -o "src/Scheduler.o" "../src/Scheduler.c"
+Finished building: ../src/Scheduler.c
+ 
+Building target: WeatherBalloon.axf
+Invoking: GNU ARM C Linker
+arm-none-eabi-gcc -g -gdwarf-2 -mcpu=cortex-m0plus -mthumb -T "WeatherBalloon.ld" -Xlinker --gc-sections -Xlinker -Map="WeatherBalloon.map" --specs=nano.specs -o WeatherBalloon.axf "./src/InitDevice.o" "./src/Scheduler.o" "./src/main.o" "./emlib/em_cmu.o" "./emlib/em_emu.o" "./emlib/em_gpio.o" "./emlib/em_system.o" "./CMSIS/efm32hg/startup_gcc_efm32hg.o" "./CMSIS/efm32hg/system_efm32hg.o" -Wl,--start-group -lgcc -lc -lnosys -Wl,--end-group
+Finished building target: WeatherBalloon.axf
+ 
+Building hex file: WeatherBalloon.hex
+arm-none-eabi-objcopy -O ihex "WeatherBalloon.axf" "WeatherBalloon.hex"
+ 
+Building bin file: WeatherBalloon.bin
+arm-none-eabi-objcopy -O binary "WeatherBalloon.axf" "WeatherBalloon.bin"
+ 
+Running size tool
+arm-none-eabi-size "WeatherBalloon.axf"
+   text	   data	    bss	    dec	    hex	filename
+    680	    108	     28	    816	    330	WeatherBalloon.axf
+ 

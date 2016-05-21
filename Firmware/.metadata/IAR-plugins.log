@@ -1,0 +1,1 @@
+15:15:17,021 [Worker-3] ERROR com.iar.ide.common.ui  - Path to EW has not been specified for provider iar.sdkprovider.arm. The C-SPY plugins will not function properly.
