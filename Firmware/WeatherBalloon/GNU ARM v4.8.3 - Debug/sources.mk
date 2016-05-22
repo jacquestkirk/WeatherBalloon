@@ -17,5 +17,7 @@ EXECUTABLES :=
 SUBDIRS := \
 src \
 emlib \
+Drivers \
 CMSIS/efm32hg \
+BSP \
 

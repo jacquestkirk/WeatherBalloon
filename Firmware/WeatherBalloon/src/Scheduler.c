@@ -1,3 +1,4 @@
+
 /*
  * Scheduler.c
  *
@@ -5,11 +6,21 @@
  *      Author: Summer
  */
 
+#include "em_emu.h"
+#include "em_cmu.h"
+#include "em_rtc.h"
+#include <stdint.h>
+#include <stdbool.h>
+#include "InitDevice.h"
+#include "rtcdriver.h"
+#include "Scheduler.h"
+
 
 
 // Functions
 void RunTasks(void);
 void DecrementTaskTimer(void);
+void SetSleepClockState(int);
 
 // Task Functions
 // (should these live in the the other modules? I'll just leave these here and call into other modules in case these are needed. can refactor later)
@@ -24,7 +35,7 @@ void TskTurnOffLed1(void);
 void TskTurnOffLed2(void);
 void TskPollBtn1(void);
 void TskPollBtn2(void);
-void TskTimeStanp(void);
+void TskTimeStamp(void);
 void TskWriteToFlash(void);
 void TskCheckCli(void);
 
@@ -65,7 +76,7 @@ enum Tasks
 	TurnOffLed2,
 	PollBtn1,
 	PollBtn2,
-	TimeStanp,
+	TimeStamp,
 	WriteToFlash,
 	CheckCli,
 	TotalNumOfTasks //A place holder to make the compiler keep track of the last task
@@ -74,12 +85,18 @@ enum Tasks
 
 int TaskTimer[TotalNumOfTasks]; //count down to 0 when it's time to run a task. Index of the timer corresponds to Tasks enum.
 char _continue_running_scheduler = 0;
-
+RTCDRV_TimerID_t id;
 
 //public functions
 void Sch_Initilize_Scheduler(void)
 {
 	_continue_running_scheduler = 1;
+
+	/* Setup RTC with selected clock source and prescaler. */
+	RTCDRV_Init();
+	RTCDRV_AllocateTimer( &id );
+
+
 	//tbd
 }
 
@@ -88,9 +105,17 @@ void Sch_Run_Scheduler(void)
 	while(_continue_running_scheduler)
 	{
 		RunTasks();
-		//Add a sleep function here.
+		DecrementTaskTimer();
+
+		//Delay, enter EM2 while waiting
+		SetSleepClockState(1);
+		//RTCDRV_Delay(SCH_SCHEDULERPERIOD_MS ,true);
+		RTCDRV_Delay(SCH_SCHEDULERPERIOD_MS);
+		SetSleepClockState(0);
 	}
 }
+
+
 
 void Sch_Stop_Scheduler (void)
 {
@@ -99,6 +124,26 @@ void Sch_Stop_Scheduler (void)
 
 
 //private functions
+
+void SetSleepClockState(int enable)
+{
+	//This function stores clock state before going into sleep clock state. It returns the clock state when it wakes up.
+	static uint32_t lfclksel_save = 0x0;
+
+	if(enable)
+	{
+		lfclksel_save = CMU->LFCLKSEL;
+
+		/* Disable LFB clock domains to save power */
+		CMU->LFCLKSEL &= ~_CMU_LFCLKSEL_LFB_MASK;
+
+	}else
+	{
+		CMU->LFCLKSEL = lfclksel_save;
+	}
+
+}
+
 void RunTasks(void)
 {
 	//ReadPressure
@@ -169,11 +214,11 @@ void RunTasks(void)
 		TskPollBtn1();
 		TaskTimer[PollBtn2] = POLL_BTN1_RESET;
 	}
-	//TimeStanp
-	if (TaskTimer[TimeStanp] == 0)
+	//TimeStap
+	if (TaskTimer[TimeStamp] == 0)
 	{
-		TskTimeStanp();
-		TaskTimer[TimeStanp] = TIMESTAMP_RESET;
+		TskTimeStamp();
+		TaskTimer[TimeStamp] = TIMESTAMP_RESET;
 	}
 	//WriteToFlash
 	if (TaskTimer[WriteToFlash] == 0)
@@ -248,7 +293,7 @@ void TskPollBtn2(void)
 {
 	//TBD
 }
-void TskTimeStanp(void)
+void TskTimeStamp(void)
 {
 	//TBD
 }
@@ -261,6 +306,43 @@ void TskCheckCli(void)
 	//TBD
 }
 
+void test_function(void)
+{
+
+}
 
 
+/*void em_EM2_LfrcoRTC(void)
+{
+  // Make sure clocks are disabled specifically for EM2.
+  CMU ->LFACLKEN0 = 0x00000000;
+  CMU ->LFBCLKEN0 = 0x00000000;
+  CMU ->LFCLKSEL = 0x00000000;
+
+  // Route the LFRCO clock to RTC.
+  CMU_ClockSelectSet(cmuClock_LFA, cmuSelect_LFRCO);
+  CMU_ClockEnable(cmuClock_RTC, true);
+
+  // Configure RTC to .977mS
+  CMU_ClockDivSet(cmuClock_RTC, cmuClkDiv_32);
+
+  // Enable clock to the interface with low energy modules.
+  CMU_ClockEnable(cmuClock_CORELE, true);
+
+  // Setup RTC parameters
+  RTC_Init_TypeDef rtcInit = RTC_INIT_DEFAULT;
+
+  rtcInit.enable   = true;    // Enable RTC after init has run.
+  rtcInit.debugRun = false;   // Halt RTC when debugging.
+  rtcInit.comp0Top = false;   // Wrap around on default.
+
+  // Initialize RTC
+  RTC_Init(&rtcInit);
+
+  // Make sure unwanted oscillators are disabled specifically for EM2 and LFRCO.
+  CMU_OscillatorEnable(cmuOsc_LFXO, false, true);
+
+  // Enter EM2.
+  EMU_EnterEM2(false);
+}*/
 

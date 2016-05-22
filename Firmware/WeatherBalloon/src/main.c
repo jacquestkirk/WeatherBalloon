@@ -16,6 +16,7 @@
  ******************************************************************************/
 #include "em_device.h"
 #include "em_chip.h"
+#include "Scheduler.h"
 
 /**************************************************************************//**
  * @brief  Main function
@@ -24,8 +25,9 @@ int main(void)
 {
   /* Chip errata */
   CHIP_Init();
+  Sch_Initilize_Scheduler();
 
   /* Infinite loop */
-  while (1) {
-  }
+  Sch_Run_Scheduler();
+
 }

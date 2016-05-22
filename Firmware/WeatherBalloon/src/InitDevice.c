@@ -19,6 +19,10 @@
 #include "em_device.h"
 #include "em_chip.h"
 #include "em_gpio.h"
+#include "em_i2c.h"
+#include "em_rtc.h"
+#include "em_timer.h"
+#include "em_usart.h"
 // [Library includes]$
 
 //==============================================================================
@@ -26,7 +30,13 @@
 //==============================================================================
 extern void enter_DefaultMode_from_RESET(void) {
 	// $[Config Calls]
+	HFXO_enter_DefaultMode_from_RESET();
+	LFXO_enter_DefaultMode_from_RESET();
 	CMU_enter_DefaultMode_from_RESET();
+	RTC_enter_DefaultMode_from_RESET();
+	USART0_enter_DefaultMode_from_RESET();
+	I2C0_enter_DefaultMode_from_RESET();
+	TIMER0_enter_DefaultMode_from_RESET();
 	PORTIO_enter_DefaultMode_from_RESET();
 	// [Config Calls]$
 
@@ -38,6 +48,12 @@ extern void enter_DefaultMode_from_RESET(void) {
 extern void HFXO_enter_DefaultMode_from_RESET(void) {
 
 	// $[HFXO]
+	CMU->CTRL = (CMU->CTRL & ~_CMU_CTRL_HFXOMODE_MASK) | CMU_CTRL_HFXOMODE_XTAL;
+
+	CMU->CTRL = (CMU->CTRL & ~_CMU_CTRL_HFXOBOOST_MASK)
+			| CMU_CTRL_HFXOBOOST_50PCENT;
+
+	SystemHFXOClockSet(32000000);
 	// [HFXO]$
 
 }
@@ -48,9 +64,12 @@ extern void HFXO_enter_DefaultMode_from_RESET(void) {
 extern void LFXO_enter_DefaultMode_from_RESET(void) {
 
 	// $[Use oscillator source]
+	CMU->CTRL = (CMU->CTRL & ~_CMU_CTRL_LFXOMODE_MASK) | CMU_CTRL_LFXOMODE_XTAL;
 	// [Use oscillator source]$
 
 	// $[LFXO Boost Percent]
+	CMU->CTRL = (CMU->CTRL & ~_CMU_CTRL_LFXOBOOST_MASK)
+			| CMU_CTRL_LFXOBOOST_100PCENT;
 	// [LFXO Boost Percent]$
 
 	// $[REDLFXO Boost]
@@ -64,17 +83,22 @@ extern void LFXO_enter_DefaultMode_from_RESET(void) {
 extern void CMU_enter_DefaultMode_from_RESET(void) {
 
 	// $[LFXO enable]
+	CMU_OscillatorEnable(cmuOsc_LFXO, true, true);
 	// [LFXO enable]$
 
 	// $[HFXO enable]
+	CMU_OscillatorEnable(cmuOsc_HFXO, true, true);
 	// [HFXO enable]$
 
 	// $[LFACLK Setup]
+	/* Select LFXO as clock source for LFACLK */
+	CMU_ClockSelectSet(cmuClock_LFA, cmuSelect_LFXO);
+
 	// [LFACLK Setup]$
 
 	// $[High Frequency Clock select]
-	/* Using HFRCO at 14MHz as high frequency clock, HFCLK */
-	CMU_ClockSelectSet(cmuClock_HF, cmuSelect_HFRCO);
+	/* Using HFXO as high frequency clock, HFCLK */
+	CMU_ClockSelectSet(cmuClock_HF, cmuSelect_HFXO);
 
 	/* Enable peripheral clock */
 	CMU_ClockEnable(cmuClock_HFPER, true);
@@ -82,9 +106,23 @@ extern void CMU_enter_DefaultMode_from_RESET(void) {
 	// [High Frequency Clock select]$
 
 	// $[LF clock tree setup]
-	/* No LF peripherals enabled */
+	/* Enable LF clocks */
+	CMU_ClockEnable(cmuClock_CORELE, true);
+	CMU_ClockSelectSet(cmuClock_LFA, cmuSelect_LFXO);
 	// [LF clock tree setup]$
 	// $[Peripheral Clock enables]
+	/* Enable clock for I2C0 */
+	CMU_ClockEnable(cmuClock_I2C0, true);
+
+	/* Enable clock for RTC */
+	CMU_ClockEnable(cmuClock_RTC, true);
+
+	/* Enable clock for TIMER0 */
+	CMU_ClockEnable(cmuClock_TIMER0, true);
+
+	/* Enable clock for USART0 */
+	CMU_ClockEnable(cmuClock_USART0, true);
+
 	/* Enable clock for GPIO by default */
 	CMU_ClockEnable(cmuClock_GPIO, true);
 
@@ -143,6 +181,12 @@ extern void IDAC0_enter_DefaultMode_from_RESET(void) {
 extern void RTC_enter_DefaultMode_from_RESET(void) {
 
 	// $[RTC_Init]
+	RTC_Init_TypeDef init = RTC_INIT_DEFAULT;
+
+	init.debugRun = 0;
+	init.comp0Top = 1;
+
+	RTC_Init(&init);
 	// [RTC_Init]$
 
 }
@@ -153,12 +197,33 @@ extern void RTC_enter_DefaultMode_from_RESET(void) {
 extern void USART0_enter_DefaultMode_from_RESET(void) {
 
 	// $[USART_InitAsync]
+	USART_InitAsync_TypeDef initasync = USART_INITASYNC_DEFAULT;
+
+	initasync.baudrate = 115200;
+	initasync.databits = usartDatabits8;
+	initasync.parity = usartNoParity;
+	initasync.stopbits = usartStopbits1;
+	initasync.oversampling = usartOVS16;
+#if defined( USART_INPUT_RXPRS ) && defined( USART_CTRL_MVDIS )
+	initasync.mvdis = 0;
+	initasync.prsRxEnable = 0;
+	initasync.prsRxCh = 0;
+#endif
+
+	USART_InitAsync(USART0, &initasync);
 	// [USART_InitAsync]$
 
 	// $[USART_InitSync]
 	// [USART_InitSync]$
 
 	// $[USART_InitPrsTrigger]
+	USART_PrsTriggerInit_TypeDef initprs = USART_INITPRSTRIGGER_DEFAULT;
+
+	initprs.rxTriggerEnable = 0;
+	initprs.txTriggerEnable = 0;
+	initprs.prsTriggerChannel = usartPrsTriggerCh0;
+
+	USART_InitPrsTrigger(USART0, &initprs);
 	// [USART_InitPrsTrigger]$
 
 }
@@ -221,6 +286,13 @@ extern void WDOG_enter_DefaultMode_from_RESET(void) {
 extern void I2C0_enter_DefaultMode_from_RESET(void) {
 
 	// $[I2C0 initialization]
+	I2C_Init_TypeDef init = I2C_INIT_DEFAULT;
+
+	init.enable = 1;
+	init.master = 1;
+	init.freq = I2C_FREQ_STANDARD_MAX;
+	init.clhr = i2cClockHLRStandard;
+	I2C_Init(I2C0, &init);
 	// [I2C0 initialization]$
 
 }
@@ -231,18 +303,96 @@ extern void I2C0_enter_DefaultMode_from_RESET(void) {
 extern void TIMER0_enter_DefaultMode_from_RESET(void) {
 
 	// $[TIMER0 initialization]
+	TIMER_Init_TypeDef init = TIMER_INIT_DEFAULT;
+
+	init.enable = 1;
+	init.debugRun = 0;
+	init.dmaClrAct = 0;
+	init.sync = 0;
+	init.clkSel = timerClkSelHFPerClk;
+	init.prescale = timerPrescale1;
+	init.fallAction = timerInputActionNone;
+	init.riseAction = timerInputActionNone;
+	init.mode = timerModeUp;
+	init.quadModeX4 = 0;
+	init.oneShot = 0;
+	init.count2x = 0;
+	init.ati = 0;
+	TIMER_Init(TIMER0, &init);
 	// [TIMER0 initialization]$
 
 	// $[TIMER0 CC0 init]
+	TIMER_InitCC_TypeDef initCC0 = TIMER_INITCC_DEFAULT;
+
+	initCC0.prsInput = false;
+	initCC0.prsSel = timerPRSSELCh0;
+	initCC0.edge = timerEdgeRising;
+	initCC0.mode = timerCCModeOff;
+	initCC0.eventCtrl = timerEventEveryEdge;
+	initCC0.filter = 0;
+	initCC0.cofoa = timerOutputActionNone;
+	initCC0.cufoa = timerOutputActionNone;
+	initCC0.cmoa = timerOutputActionNone;
+	initCC0.coist = 0;
+	initCC0.outInvert = 0;
+	TIMER_InitCC(TIMER0, 0, &initCC0);
 	// [TIMER0 CC0 init]$
 
 	// $[TIMER0 CC1 init]
+	TIMER_InitCC_TypeDef initCC1 = TIMER_INITCC_DEFAULT;
+
+	initCC1.prsInput = false;
+	initCC1.prsSel = timerPRSSELCh0;
+	initCC1.edge = timerEdgeRising;
+	initCC1.mode = timerCCModeOff;
+	initCC1.eventCtrl = timerEventEveryEdge;
+	initCC1.filter = 0;
+	initCC1.cofoa = timerOutputActionNone;
+	initCC1.cufoa = timerOutputActionNone;
+	initCC1.cmoa = timerOutputActionNone;
+	initCC1.coist = 0;
+	initCC1.outInvert = 0;
+	TIMER_InitCC(TIMER0, 1, &initCC1);
 	// [TIMER0 CC1 init]$
 
 	// $[TIMER0 CC2 init]
+	TIMER_InitCC_TypeDef initCC2 = TIMER_INITCC_DEFAULT;
+
+	initCC2.prsInput = false;
+	initCC2.prsSel = timerPRSSELCh0;
+	initCC2.edge = timerEdgeRising;
+	initCC2.mode = timerCCModeOff;
+	initCC2.eventCtrl = timerEventEveryEdge;
+	initCC2.filter = 0;
+	initCC2.cofoa = timerOutputActionNone;
+	initCC2.cufoa = timerOutputActionNone;
+	initCC2.cmoa = timerOutputActionNone;
+	initCC2.coist = 0;
+	initCC2.outInvert = 0;
+	TIMER_InitCC(TIMER0, 2, &initCC2);
 	// [TIMER0 CC2 init]$
 
 	// $[TIMER0 DTI init]
+	TIMER_InitDTI_TypeDef initDTI = TIMER_INITDTI_DEFAULT;
+
+	initDTI.enable = 0;
+	initDTI.activeLowOut = 0;
+	initDTI.invertComplementaryOut = 0;
+	initDTI.autoRestart = 0;
+	initDTI.enablePrsSource = 0;
+	initDTI.prsSel = timerPRSSELCh0;
+	initDTI.prescale = timerPrescale1;
+	initDTI.riseTime = 1;
+	initDTI.fallTime = 1;
+	initDTI.enableFaultSourceCoreLockup = 1;
+	initDTI.enableFaultSourceDebugger = 1;
+	initDTI.faultSourcePrsSel0 = 0;
+	initDTI.faultSourcePrsSel0 = timerPRSSELCh0;
+	initDTI.faultSourcePrsSel1 = 0;
+	initDTI.faultSourcePrsSel1 = timerPRSSELCh0;
+	initDTI.faultAction = timerDtiFaultActionInactive;
+	initDTI.outputsEnableMask = 0;
+	TIMER_InitDTI(TIMER0, &initDTI);
 	// [TIMER0 DTI init]$
 
 }
@@ -350,6 +500,21 @@ extern void PORTIO_enter_DefaultMode_from_RESET(void) {
 	// [Port F Configuration]$
 
 	// $[Route Configuration]
+
+	/* Module I2C0 is configured to location 1 */
+	I2C0->ROUTE = (I2C0->ROUTE & ~_I2C_ROUTE_LOCATION_MASK)
+			| I2C_ROUTE_LOCATION_LOC1;
+
+	/* Enable signals SCL, SDA */
+	I2C0->ROUTE |= I2C_ROUTE_SCLPEN | I2C_ROUTE_SDAPEN;
+
+	/* Enable signals CLK, CS, RX, TX */
+	USART0->ROUTE |= USART_ROUTE_CLKPEN | USART_ROUTE_CSPEN | USART_ROUTE_RXPEN
+			| USART_ROUTE_TXPEN;
+
+	/* Enable signals CLK, CS, RX, TX */
+	USART1->ROUTE |= USART_ROUTE_CLKPEN | USART_ROUTE_CSPEN | USART_ROUTE_RXPEN
+			| USART_ROUTE_TXPEN;
 	// [Route Configuration]$
 
 }

@@ -3,6 +3,14 @@
   <mode name="DefaultMode">
     <property object="DefaultMode" propertyId="mode.diagramLocation" value="100, 100"/>
     <property object="GPIO" propertyId="ABPeripheral.included" value="true"/>
+    <property object="HFXO" propertyId="ABPeripheral.included" value="true"/>
+    <property object="HFXO" propertyId="hfxo.circuitcharacteristics.calculatedclpf" value="12.50"/>
+    <property object="HFXO" propertyId="hfxo.result.rnegesrmaxratio" value="28.819"/>
+    <property object="I2C0" propertyId="ABPeripheral.included" value="true"/>
+    <property object="LFXO" propertyId="ABPeripheral.included" value="true"/>
+    <property object="LFXO" propertyId="lfxo.circuitcharacteristics.calculatedclpf" value="12.50"/>
+    <property object="LFXO" propertyId="lfxo.recommendedoscillatorboostsettings.lfxoboostpercent" value="100%"/>
+    <property object="LFXO" propertyId="lfxo.result.rnegesrmaxratio" value="15.574"/>
     <property object="PB7" propertyId="ports.settings.pinmode" value="Push-pull"/>
     <property object="PB8" propertyId="ports.settings.pinmode" value="Push-pull"/>
     <property object="PC0" propertyId="ports.settings.pinmode" value="Push-pull"/>
@@ -29,6 +37,9 @@
     <property object="PORTIO" propertyId="portio.usb.enable.dm" value="Enabled"/>
     <property object="PORTIO" propertyId="portio.usb.enable.dmpu" value="Enabled"/>
     <property object="PORTIO" propertyId="portio.usb.enable.dp" value="Enabled"/>
+    <property object="RTC" propertyId="ABPeripheral.included" value="true"/>
+    <property object="TIMER0" propertyId="ABPeripheral.included" value="true"/>
+    <property object="USART0" propertyId="ABPeripheral.included" value="true"/>
   </mode>
   <modeTransition>
     <property object="RESET &#x2192; DefaultMode" propertyId="modeTransition.target" value="DefaultMode"/>

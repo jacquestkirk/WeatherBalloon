@@ -6,8 +6,12 @@
  */
 
 #ifndef SCHEDULER_H_
-#define SCHEDULER_H_
+	#define SCHEDULER_H_
 
-#define SCHEDULERPERIOD_MS 10	//Scheduler period in miliseconds
+	//
+	#define SCH_SCHEDULERPERIOD_MS 10	//Scheduler period in miliseconds
+
+	void Sch_Initilize_Scheduler(void);
+	void Sch_Run_Scheduler(void);
 
 #endif /* SCHEDULER_H_ */
