@@ -1,4 +1,5 @@
-src/main.o: ../src/main.c \
+src/Cli.o: ../src/Cli.c \
+ C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/usb/inc/em_usb.h \
  C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include/em_device.h \
  C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include/efm32hg322f64.h \
  C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/CMSIS/Include/arm_math.h \
@@ -44,13 +45,18 @@ src/main.o: ../src/main.c \
  C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include/efm32hg_dmactrl.h \
  C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include/efm32hg_af_ports.h \
  C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include/efm32hg_af_pins.h \
- C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_chip.h \
- C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_system.h \
- C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_gpio.h \
- C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_bus.h \
  C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_assert.h \
- ../src/Scheduler.h \
+ C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/usbconfig.h \
+ C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_common.h \
+ C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_int.h \
+ C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_cmu.h \
+ C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_assert.h \
+ C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_bus.h \
+ C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/drivers/cdc.h \
+ C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/descriptors.h \
  C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/Cli.h
+
+C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/usb/inc/em_usb.h:
 
 C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include/em_device.h:
 
@@ -142,16 +148,22 @@ C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EF
 
 C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include/efm32hg_af_pins.h:
 
-C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_chip.h:
+C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_assert.h:
 
-C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_system.h:
+C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/usbconfig.h:
 
-C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_gpio.h:
+C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_common.h:
 
-C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_bus.h:
+C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_int.h:
+
+C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_cmu.h:
 
 C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_assert.h:
 
-../src/Scheduler.h:
+C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_bus.h:
+
+C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/drivers/cdc.h:
+
+C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/descriptors.h:
 
 C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/Cli.h:

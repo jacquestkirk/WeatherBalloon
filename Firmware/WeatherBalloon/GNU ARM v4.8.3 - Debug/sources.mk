@@ -16,6 +16,7 @@ EXECUTABLES :=
 # Every subdirectory with source files must be described here
 SUBDIRS := \
 src \
+emusb \
 emlib \
 Drivers \
 CMSIS/efm32hg \

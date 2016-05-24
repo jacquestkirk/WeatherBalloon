@@ -154,7 +154,6 @@ void SetSleepClockState(int enable)
 
 void RunTasks(void)
 {
-	RTCDRV_Delay(500); //delete me
 	//ReadPressure
 	if (TaskTimer[ReadPressure] == 0)							//If it is time to run the task
 	{

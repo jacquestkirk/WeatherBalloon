@@ -14,9 +14,13 @@
  * terms of that agreement.
  *
  ******************************************************************************/
+//Silabs modules
 #include "em_device.h"
 #include "em_chip.h"
+
+//my modules
 #include "Scheduler.h"
+#include "Cli.h"
 
 /**************************************************************************//**
  * @brief  Main function
@@ -25,9 +29,21 @@ int main(void)
 {
   /* Chip errata */
   CHIP_Init();
-  Sch_Initilize_Scheduler();
+
 
   /* Infinite loop */
-  Sch_Run_Scheduler();
+  //Sch_Run_Scheduler();
 
+  while(1)
+  {
+	  //Temporary while loop
+  }
+
+}
+
+
+void InitializeMain(void)
+{
+	Sch_Initilize_Scheduler();
+	Cli_Initialize_Cli();
 }
