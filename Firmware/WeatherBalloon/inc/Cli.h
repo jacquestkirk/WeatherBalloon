@@ -9,5 +9,6 @@
 #define CLI_H_
 
 void Cli_Initialize_Cli(void);
+void Cli_WriteUSB(void* message, int dataLen);
 
 #endif /* CLI_H_ */

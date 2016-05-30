@@ -34,6 +34,8 @@ int main(void)
   /* Infinite loop */
   //Sch_Run_Scheduler();
 
+  Cli_Initialize_Cli();
+
   while(1)
   {
 	  //Temporary while loop

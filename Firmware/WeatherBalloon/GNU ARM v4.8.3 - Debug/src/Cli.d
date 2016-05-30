@@ -52,7 +52,6 @@ src/Cli.o: ../src/Cli.c \
  C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_cmu.h \
  C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_assert.h \
  C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_bus.h \
- C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/drivers/cdc.h \
  C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/descriptors.h \
  C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/Cli.h
 
@@ -161,8 +160,6 @@ C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_cmu.h:
 C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_assert.h:
 
 C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_bus.h:
-
-C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/drivers/cdc.h:
 
 C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/descriptors.h:
 
