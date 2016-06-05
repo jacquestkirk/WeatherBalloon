@@ -1,5 +1,12 @@
-src/Scheduler.o: ../src/Scheduler.c \
- C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_emu.h \
+Graphics/dmdif_ssd2119_ebi16.o: ../Graphics/dmdif_ssd2119_ebi16.c \
+ C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/reptile/glib/dmd/dmd.h \
+ C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/reptile/glib/em_types.h \
+ ../Graphics/dmd_ssd2119_registers.h ../Graphics/dmd_ssd2119.h \
+ ../Graphics/dmdif_ssd2119_ebi.h ../Graphics/em_types.h \
+ C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/bsp/bsp.h \
+ C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/SLSTK3400A_EFM32HG/config/bspconfig.h \
+ C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/bsp/bsp_bcp.h \
+ C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_usart.h \
  C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include/em_device.h \
  C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include/efm32hg322f64.h \
  C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/CMSIS/Include/arm_math.h \
@@ -44,18 +51,27 @@ src/Scheduler.o: ../src/Scheduler.c \
  C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include/efm32hg_dmareq.h \
  C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include/efm32hg_dmactrl.h \
  C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include/efm32hg_af_ports.h \
- C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include/efm32hg_af_pins.h \
- C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_bus.h \
- C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_cmu.h \
- C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_assert.h \
- C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_rtc.h \
- C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/InitDevice.h \
- C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emdrv/rtcdrv/inc/rtcdriver.h \
- C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emdrv/common/inc/ecode.h \
- C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emdrv/config/rtcdrv_config.h \
- C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/Scheduler.h
+ C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include/efm32hg_af_pins.h
 
-C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_emu.h:
+C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/reptile/glib/dmd/dmd.h:
+
+C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/reptile/glib/em_types.h:
+
+../Graphics/dmd_ssd2119_registers.h:
+
+../Graphics/dmd_ssd2119.h:
+
+../Graphics/dmdif_ssd2119_ebi.h:
+
+../Graphics/em_types.h:
+
+C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/bsp/bsp.h:
+
+C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/SLSTK3400A_EFM32HG/config/bspconfig.h:
+
+C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/kits/common/bsp/bsp_bcp.h:
+
+C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_usart.h:
 
 C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include/em_device.h:
 
@@ -146,21 +162,3 @@ C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EF
 C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include/efm32hg_af_ports.h:
 
 C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include/efm32hg_af_pins.h:
-
-C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_bus.h:
-
-C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_cmu.h:
-
-C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_assert.h:
-
-C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_rtc.h:
-
-C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/InitDevice.h:
-
-C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emdrv/rtcdrv/inc/rtcdriver.h:
-
-C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emdrv/common/inc/ecode.h:
-
-C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emdrv/config/rtcdrv_config.h:
-
-C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/Scheduler.h:

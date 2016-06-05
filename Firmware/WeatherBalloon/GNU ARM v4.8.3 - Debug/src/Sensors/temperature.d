@@ -1,5 +1,7 @@
-src/Scheduler.o: ../src/Scheduler.c \
- C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_emu.h \
+src/Sensors/temperature.o: ../src/Sensors/temperature.c \
+ C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/Sensors/temperature.h \
+ C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/descriptors.h \
+ C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/usb/inc/em_usb.h \
  C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include/em_device.h \
  C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include/efm32hg322f64.h \
  C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/CMSIS/Include/arm_math.h \
@@ -45,17 +47,17 @@ src/Scheduler.o: ../src/Scheduler.c \
  C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include/efm32hg_dmactrl.h \
  C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include/efm32hg_af_ports.h \
  C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include/efm32hg_af_pins.h \
- C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_bus.h \
- C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_cmu.h \
  C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_assert.h \
- C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_rtc.h \
- C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/InitDevice.h \
- C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emdrv/rtcdrv/inc/rtcdriver.h \
- C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emdrv/common/inc/ecode.h \
- C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emdrv/config/rtcdrv_config.h \
- C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/Scheduler.h
+ C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/usbconfig.h \
+ C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_common.h \
+ C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_int.h \
+ C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/flash.h
 
-C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_emu.h:
+C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/Sensors/temperature.h:
+
+C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/descriptors.h:
+
+C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/usb/inc/em_usb.h:
 
 C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include/em_device.h:
 
@@ -147,20 +149,12 @@ C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EF
 
 C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include/efm32hg_af_pins.h:
 
-C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_bus.h:
-
-C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_cmu.h:
-
 C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_assert.h:
 
-C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_rtc.h:
+C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/usbconfig.h:
 
-C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/InitDevice.h:
+C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_common.h:
 
-C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emdrv/rtcdrv/inc/rtcdriver.h:
+C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_int.h:
 
-C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emdrv/common/inc/ecode.h:
-
-C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emdrv/config/rtcdrv_config.h:
-
-C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/Scheduler.h:
+C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/flash.h:

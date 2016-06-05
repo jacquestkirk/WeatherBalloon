@@ -53,7 +53,12 @@ src/Cli.o: ../src/Cli.c \
  C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_assert.h \
  C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_bus.h \
  C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/descriptors.h \
- C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/Cli.h
+ C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/Cli.h \
+ C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/Sensors\imu.h \
+ C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/Sensors\led.h \
+ C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/Sensors\magnetometer.h \
+ C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/Sensors\pressure.h \
+ C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/Sensors\temperature.h
 
 C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/usb/inc/em_usb.h:
 
@@ -164,3 +169,13 @@ C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_bus.h:
 C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/descriptors.h:
 
 C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/Cli.h:
+
+C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/Sensors\imu.h:
+
+C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/Sensors\led.h:
+
+C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/Sensors\magnetometer.h:
+
+C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/Sensors\pressure.h:
+
+C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/Sensors\temperature.h:

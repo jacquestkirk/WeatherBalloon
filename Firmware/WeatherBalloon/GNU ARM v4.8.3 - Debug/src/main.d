@@ -49,7 +49,7 @@ src/main.o: ../src/main.c \
  C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_gpio.h \
  C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_bus.h \
  C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_assert.h \
- ../src/Scheduler.h \
+ C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/Scheduler.h \
  C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/Cli.h
 
 C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/Device/SiliconLabs/EFM32HG/Include/em_device.h:
@@ -152,6 +152,6 @@ C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_bus.h:
 
 C:/SiliconLabs/SimplicityStudio/v3/developer/sdks/efm32/v2/emlib/inc/em_assert.h:
 
-../src/Scheduler.h:
+C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/Scheduler.h:
 
 C:/Users/Summer/Documents/projects/WeatherBalloon/Firmware/WeatherBalloon/inc/Cli.h:

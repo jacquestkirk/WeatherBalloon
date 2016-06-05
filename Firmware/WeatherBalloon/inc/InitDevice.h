@@ -50,6 +50,9 @@ extern void PORTIO_enter_DefaultMode_from_RESET(void);
 #define I2C0_SDA_PIN        (6)
 #define I2C0_SDA_PORT       (gpioPortD)
 
+#define TIMER2_CC0_PIN      (8)
+#define TIMER2_CC0_PORT     (gpioPortA)
+
 #define USART0_CLK_PIN      (12)
 #define USART0_CLK_PORT     (gpioPortE)
 

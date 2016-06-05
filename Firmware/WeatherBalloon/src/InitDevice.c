@@ -442,6 +442,10 @@ extern void PRS_enter_DefaultMode_from_RESET(void) {
 extern void PORTIO_enter_DefaultMode_from_RESET(void) {
 
 	// $[Port A Configuration]
+
+	/* Pin PA8 is configured to Push-pull */
+	GPIO->P[0].MODEH = (GPIO->P[0].MODEH & ~_GPIO_P_MODEH_MODE8_MASK)
+			| GPIO_P_MODEH_MODE8_PUSHPULL;
 	// [Port A Configuration]$
 
 	// $[Port B Configuration]
@@ -464,6 +468,11 @@ extern void PORTIO_enter_DefaultMode_from_RESET(void) {
 	/* Pin PC1 is configured to Input enabled */
 	GPIO->P[2].MODEL = (GPIO->P[2].MODEL & ~_GPIO_P_MODEL_MODE1_MASK)
 			| GPIO_P_MODEL_MODE1_INPUT;
+
+	/* Pin PC4 is configured to Input enabled with pull-up */
+	GPIO->P[2].DOUT |= (1 << 4);
+	GPIO->P[2].MODEL = (GPIO->P[2].MODEL & ~_GPIO_P_MODEL_MODE4_MASK)
+			| GPIO_P_MODEL_MODE4_INPUTPULL;
 	// [Port C Configuration]$
 
 	// $[Port D Configuration]
@@ -507,6 +516,9 @@ extern void PORTIO_enter_DefaultMode_from_RESET(void) {
 
 	/* Enable signals SCL, SDA */
 	I2C0->ROUTE |= I2C_ROUTE_SCLPEN | I2C_ROUTE_SDAPEN;
+
+	/* Enable signals CC0 */
+	TIMER2->ROUTE |= TIMER_ROUTE_CC0PEN;
 
 	/* Enable signals CLK, CS, RX, TX */
 	USART0->ROUTE |= USART_ROUTE_CLKPEN | USART_ROUTE_CSPEN | USART_ROUTE_RXPEN
