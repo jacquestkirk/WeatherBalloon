@@ -32,7 +32,7 @@ class SpaceBubblUsbDriver:
         self.dev.write(self.write_address, dataToSend, self.timeout)
 
     def ReadData(self, data_size_bytes):
-        read_bytes = self.dev.read(self.read_address, data_size_bytes + self.error_message_size, self.timeout)
+        read_bytes = self.dev.read(self.read_address, data_size_bytes + 1 + self.error_message_size, self.timeout)  #+1 for echo bit
         return read_bytes
 
     def ReadString(self):

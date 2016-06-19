@@ -39,6 +39,7 @@ enum Commands{
 
 #define ERROR_MESSAGE_ENUM  255
 
+/*
 #define CMD_READ_PRESSURE 		"readpressure"
 #define CMD_READ_TEMPERATURE 	"readtemperature"
 #define CMD_READ_IMU 			"readimu"
@@ -50,7 +51,7 @@ enum Commands{
 #define CMD_READ_FLASH_LOCATIONS	"readflashlocations"
 #define CMD_READ_LAST_DATA		"readlastdata"
 #define CMD_READ_START_ADDR		"readstartaddr"
-
+*/
 
 //States
 enum States{
@@ -75,6 +76,16 @@ int WriteDebugMessage(char* message, int offset, int length);
 void WriteInvalidCommandMessage(void);
 void WriteTempData(void);
 void WritePressData(void);
+void WriteImuData(void);
+void WriteMagData(void);
+void BlinkLed1(void);
+void BlinkLed2(void);
+
+void WriteTimestamp(void);
+void EraseFlash(void);
+void ReadFlashLoc(void);
+void ReadLastData(void);
+void ReadStartAddr(void);
 
 
 
@@ -205,7 +216,42 @@ void RunStateMachine(char* usbRxBuff)
 			WriteTempData();
 			next_state = State_Home;
 			return;
-
+		case Cmd_ReadImu:
+			WriteImuData();
+			next_state = State_Home;
+			return;
+		case Cmd_ReadMag:
+			WriteMagData();
+			next_state = State_Home;
+			return;
+		case Cmd_BlinkLed1:
+			BlinkLed1();
+			next_state = State_Home;
+			return;
+		case Cmd_BlinkLed2:
+			BlinkLed2();
+			next_state = State_Home;
+			return;
+		case Cmd_ReadTimestamp:
+			WriteTimestamp();
+			next_state = State_Home;
+			return;
+		case Cmd_EraseFlash:
+			EraseFlash();
+			next_state = State_Home;
+			return;
+		case Cmd_ReadFlashLoc:
+			ReadFlashLoc();
+			next_state = State_Home;
+			return;
+		case Cmd_ReadLastData:
+			ReadLastData();
+			next_state = State_Home;
+			return;
+		case Cmd_ReadStartAddr:
+			ReadStartAddr();
+			next_state = State_Home;
+			return;
 		default:
 			WriteInvalidCommandMessage();
 			return;
@@ -257,6 +303,176 @@ void WriteTempData(void)
 	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
 
 }
+
+void WriteImuData(void)
+{
+	Imu_Data imuData;
+	int startIndex = 0;
+
+	imuData = Imu_Read();
+
+	//Write data to Tx buff
+	startIndex = Add8bitIntToTxBuff((uint8_t) Cmd_ReadImu, startIndex);
+	startIndex = Add16bitIntToTxBuff(imuData.x_accel, startIndex);
+	startIndex = Add16bitIntToTxBuff(imuData.y_accel, startIndex);
+	startIndex = Add16bitIntToTxBuff(imuData.z_accel, startIndex);
+	startIndex = Add16bitIntToTxBuff(imuData.x_gyro, startIndex);
+	startIndex = Add16bitIntToTxBuff(imuData.y_gyro, startIndex);
+	startIndex = Add16bitIntToTxBuff(imuData.z_gyro, startIndex);
+
+	//Write debug message to Tx Buff
+	char message[] = "ThisIsDebugData";
+	startIndex = WriteDebugMessage((char*)&message, startIndex, 16);
+
+	//Write the TxBuff over USB
+	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
+
+}
+
+void WriteMagData(void)
+{
+	Mag_Data magData;
+	int startIndex = 0;
+
+	magData = Mag_Read();
+
+	//Write data to Tx buff
+	startIndex = Add8bitIntToTxBuff((uint8_t) Cmd_ReadMag, startIndex);
+	startIndex = Add16bitIntToTxBuff(magData.x_mag, startIndex);
+	startIndex = Add16bitIntToTxBuff(magData.y_mag, startIndex);
+	startIndex = Add16bitIntToTxBuff(magData.z_mag, startIndex);
+
+	//Write debug message to Tx Buff
+	char message[] = "ThisIsDebugData";
+	startIndex = WriteDebugMessage((char*)&message, startIndex, 16);
+
+	//Write the TxBuff over USB
+	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
+
+}
+
+void BlinkLed1(void)
+{
+	int startIndex = 0;
+
+	//Execute the command
+	Led_Blink_1();
+
+	//Write data to Tx buff
+	startIndex = Add8bitIntToTxBuff((uint8_t) Cmd_BlinkLed1, startIndex);
+
+	//Write debug message to Tx Buff
+	char message[] = "This command doesn't do anything yet";
+	startIndex = WriteDebugMessage((char*)&message, startIndex, 36);
+
+	//Write the TxBuff over USB
+	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
+}
+
+void BlinkLed2(void)
+{
+	int startIndex = 0;
+
+	//Execute the command
+	Led_Blink_2();
+
+	//Write data to Tx buff
+	startIndex = Add8bitIntToTxBuff((uint8_t) Cmd_BlinkLed2, startIndex);
+
+	//Write debug message to Tx Buff
+	char message[] = "This command doesn't do anything yet";
+	startIndex = WriteDebugMessage((char*)&message, startIndex, 36);
+
+	//Write the TxBuff over USB
+	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
+}
+
+void WriteTimestamp(void)
+{
+	int startIndex = 0;
+
+	//Execute the command
+	//Todo: Place command here
+
+	//Write data to Tx buff
+	startIndex = Add8bitIntToTxBuff((uint8_t) Cmd_ReadTimestamp, startIndex);
+
+	//Write debug message to Tx Buff
+	char message[] = "This command doesn't do anything yet";
+	startIndex = WriteDebugMessage((char*)&message, startIndex, 36);
+
+	//Write the TxBuff over USB
+	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
+}
+void EraseFlash(void)
+{
+	int startIndex = 0;
+
+	//Execute the command
+	//Todo: Place command here
+
+	//Write data to Tx buff
+	startIndex = Add8bitIntToTxBuff((uint8_t) Cmd_EraseFlash, startIndex);
+
+	//Write debug message to Tx Buff
+	char message[] = "This command doesn't do anything yet";
+	startIndex = WriteDebugMessage((char*)&message, startIndex, 36);
+
+	//Write the TxBuff over USB
+	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
+}
+void ReadFlashLoc(void)
+{
+	int startIndex = 0;
+
+	//Execute the command
+	//Todo: Place command here
+
+	//Write data to Tx buff
+	startIndex = Add8bitIntToTxBuff((uint8_t) Cmd_ReadFlashLoc, startIndex);
+
+	//Write debug message to Tx Buff
+	char message[] = "This command doesn't do anything yet";
+	startIndex = WriteDebugMessage((char*)&message, startIndex, 36);
+
+	//Write the TxBuff over USB
+	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
+}
+void ReadLastData(void)
+{
+	int startIndex = 0;
+
+	//Execute the command
+	//Todo: Place command here
+
+	//Write data to Tx buff
+	startIndex = Add8bitIntToTxBuff((uint8_t) Cmd_ReadLastData, startIndex);
+
+	//Write debug message to Tx Buff
+	char message[] = "This command doesn't do anything yet";
+	startIndex = WriteDebugMessage((char*)&message, startIndex, 36);
+
+	//Write the TxBuff over USB
+	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
+}
+void ReadStartAddr(void)
+{
+	int startIndex = 0;
+
+	//Execute the command
+	//Todo: Place command here
+
+	//Write data to Tx buff
+	startIndex = Add8bitIntToTxBuff((uint8_t) Cmd_ReadStartAddr, startIndex);
+
+	//Write debug message to Tx Buff
+	char message[] = "This command doesn't do anything yet";
+	startIndex = WriteDebugMessage((char*)&message, startIndex, 36);
+
+	//Write the TxBuff over USB
+	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
+}
+
 
 void WriteInvalidCommandMessage(void)
 {

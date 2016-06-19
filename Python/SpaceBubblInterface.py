@@ -38,8 +38,8 @@ class SpaceBubbl:
         assert commandEcho == Enum_Commands.Cmd_ReadPress, "Bubbl responded with an invalid response"
 
         # parse the response
-        [pressure, startIndex] = self._Read32bit(read_bytes, startIndex)        #(read_bytes[0] << 24) + (read_bytes[1] << 16) + (read_bytes[2] << 8) + read_bytes[3];
-        [temperature, startIndex] = self._Read32bit(read_bytes, startIndex)     #(read_bytes[4] << 24) + (read_bytes[5] << 16) + (read_bytes[6] << 8) + read_bytes[7];
+        [pressure, startIndex] = self._Read32bit(read_bytes, startIndex)
+        [temperature, startIndex] = self._Read32bit(read_bytes, startIndex)
 
         message = "Message: "
         for n in range(startIndex, len(read_bytes)):
@@ -63,10 +63,10 @@ class SpaceBubbl:
         assert commandEcho == Enum_Commands.Cmd_ReadTemp, "Bubbl responded with an invalid response"
 
         #parse the response
-        [temp1, startIndex] = self._Read16bit(read_bytes, startIndex)  # (read_bytes[0] << 8) + read_bytes[1];
-        [temp2, startIndex] = self._Read16bit(read_bytes, startIndex)  # (read_bytes[2] << 8) + read_bytes[3];
-        [temp3, startIndex] = self._Read16bit(read_bytes, startIndex)  # (read_bytes[4] << 8) + read_bytes[5];
-        [temp4, startIndex] = self._Read16bit(read_bytes, startIndex)  # (read_bytes[6] << 8) + read_bytes[7];
+        [temp1, startIndex] = self._Read16bit(read_bytes, startIndex)
+        [temp2, startIndex] = self._Read16bit(read_bytes, startIndex)
+        [temp3, startIndex] = self._Read16bit(read_bytes, startIndex)
+        [temp4, startIndex] = self._Read16bit(read_bytes, startIndex)
 
         # message_start = 8;
         message = "Message: "
@@ -78,6 +78,204 @@ class SpaceBubbl:
         print("Temp 2: ", hex(temp2))
         print("Temp 3: ", hex(temp3))
         print("Temp 4: ", hex(temp4))
+        print(message)
+
+    def ReadImu(self):
+        self.driver.WriteData([Enum_Commands.Cmd_ReadImu])
+        data_size_bytes = 12
+        read_bytes = self.driver.ReadData(data_size_bytes)
+
+        startIndex = 0
+
+        #Error Handling
+        [commandEcho, startIndex] = self._Read8bit(read_bytes, startIndex)
+        if(commandEcho == 255):
+            self.ParseError(read_bytes, startIndex)
+        assert commandEcho == Enum_Commands.Cmd_ReadImu, "Bubbl responded with an invalid response"
+
+        #parse the response
+        [x_accel, startIndex] = self._Read16bit(read_bytes, startIndex)
+        [y_accel, startIndex] = self._Read16bit(read_bytes, startIndex)
+        [z_accel, startIndex] = self._Read16bit(read_bytes, startIndex)
+        [x_gyro, startIndex]  = self._Read16bit(read_bytes, startIndex)
+        [y_gyro, startIndex]  = self._Read16bit(read_bytes, startIndex)
+        [z_gyro, startIndex]  = self._Read16bit(read_bytes, startIndex)
+
+        # message_start = 8;
+        message = "Message: "
+        for n in range(startIndex, len(read_bytes)):
+            message += chr(read_bytes[n])
+
+
+        print("X Acceletation: ", hex(x_accel))
+        print("Y Acceletation: ", hex(y_accel))
+        print("Z Acceletation: ", hex(z_accel))
+        print("X Angular Velocity: ", hex(x_gyro))
+        print("Y Angular Velocity: ", hex(y_gyro))
+        print("Z Angular Velocity: ", hex(z_gyro))
+
+        print(message)
+
+    def ReadMag(self):
+        self.driver.WriteData([Enum_Commands.Cmd_ReadMag])
+        data_size_bytes = 6
+        read_bytes = self.driver.ReadData(data_size_bytes)
+
+        startIndex = 0
+
+        # Error Handling
+        [commandEcho, startIndex] = self._Read8bit(read_bytes, startIndex)
+        if (commandEcho == 255):
+            self.ParseError(read_bytes, startIndex)
+        assert commandEcho == Enum_Commands.Cmd_ReadMag, "Bubbl responded with an invalid response"
+
+        # parse the response
+        [x_mag, startIndex] = self._Read16bit(read_bytes, startIndex)
+        [y_mag, startIndex] = self._Read16bit(read_bytes, startIndex)
+        [z_mag, startIndex] = self._Read16bit(read_bytes, startIndex)
+
+        # message_start = 8;
+        message = "Message: "
+        for n in range(startIndex, len(read_bytes)):
+            message += chr(read_bytes[n])
+
+        print("X Magnetic Field: ", hex(x_mag))
+        print("Y Magnetic Field: ", hex(y_mag))
+        print("Z Magnetic Field: ", hex(z_mag))
+
+        print(message)
+
+    def BlinkLed1(self):
+        self.driver.WriteData([Enum_Commands.Cmd_BlinkLed1])
+        data_size_bytes = 0
+        read_bytes = self.driver.ReadData(data_size_bytes)
+
+        startIndex = 0
+
+        # Error Handling
+        [commandEcho, startIndex] = self._Read8bit(read_bytes, startIndex)
+        if (commandEcho == 255):
+            self.ParseError(read_bytes, startIndex)
+        assert commandEcho == Enum_Commands.Cmd_BlinkLed1, "Bubbl responded with an invalid response"
+
+        message = "Message: "
+        for n in range(startIndex, len(read_bytes)):
+            message += chr(read_bytes[n])
+
+        print(message)
+
+    def BlinkLed2(self):
+        self.driver.WriteData([Enum_Commands.Cmd_BlinkLed2])
+        data_size_bytes = 0
+        read_bytes = self.driver.ReadData(data_size_bytes)
+
+        startIndex = 0
+
+        # Error Handling
+        [commandEcho, startIndex] = self._Read8bit(read_bytes, startIndex)
+        if (commandEcho == 255):
+            self.ParseError(read_bytes, startIndex)
+        assert commandEcho == Enum_Commands.Cmd_BlinkLed2, "Bubbl responded with an invalid response"
+
+        message = "Message: "
+        for n in range(startIndex, len(read_bytes)):
+            message += chr(read_bytes[n])
+
+        print(message)
+
+    def ReadTimeStamp(self):
+        self.driver.WriteData([Enum_Commands.Cmd_ReadTimestamp])
+        data_size_bytes = 0
+        read_bytes = self.driver.ReadData(data_size_bytes)
+
+        startIndex = 0
+
+        # Error Handling
+        [commandEcho, startIndex] = self._Read8bit(read_bytes, startIndex)
+        if (commandEcho == 255):
+            self.ParseError(read_bytes, startIndex)
+        assert commandEcho == Enum_Commands.Cmd_ReadTimestamp, "Bubbl responded with an invalid response"
+
+        message = "Message: "
+        for n in range(startIndex, len(read_bytes)):
+            message += chr(read_bytes[n])
+
+        print(message)
+
+    def EraseFlash(self):
+        self.driver.WriteData([Enum_Commands.Cmd_EraseFlash])
+        data_size_bytes = 0
+        read_bytes = self.driver.ReadData(data_size_bytes)
+
+        startIndex = 0
+
+        # Error Handling
+        [commandEcho, startIndex] = self._Read8bit(read_bytes, startIndex)
+        if (commandEcho == 255):
+            self.ParseError(read_bytes, startIndex)
+        assert commandEcho == Enum_Commands.Cmd_EraseFlash, "Bubbl responded with an invalid response"
+
+        message = "Message: "
+        for n in range(startIndex, len(read_bytes)):
+            message += chr(read_bytes[n])
+
+        print(message)
+
+    def ReadFlashLocations(self):
+        self.driver.WriteData([Enum_Commands.Cmd_ReadFlashLoc])
+        data_size_bytes = 0
+        read_bytes = self.driver.ReadData(data_size_bytes)
+
+        startIndex = 0
+
+        # Error Handling
+        [commandEcho, startIndex] = self._Read8bit(read_bytes, startIndex)
+        if (commandEcho == 255):
+            self.ParseError(read_bytes, startIndex)
+        assert commandEcho == Enum_Commands.Cmd_ReadFlashLoc, "Bubbl responded with an invalid response"
+
+        message = "Message: "
+        for n in range(startIndex, len(read_bytes)):
+            message += chr(read_bytes[n])
+
+        print(message)
+
+    def ReadLastData(self):
+        self.driver.WriteData([Enum_Commands.Cmd_ReadLastData])
+        data_size_bytes = 0
+        read_bytes = self.driver.ReadData(data_size_bytes)
+
+        startIndex = 0
+
+        # Error Handling
+        [commandEcho, startIndex] = self._Read8bit(read_bytes, startIndex)
+        if (commandEcho == 255):
+            self.ParseError(read_bytes, startIndex)
+        assert commandEcho == Enum_Commands.Cmd_ReadLastData, "Bubbl responded with an invalid response"
+
+        message = "Message: "
+        for n in range(startIndex, len(read_bytes)):
+            message += chr(read_bytes[n])
+
+        print(message)
+
+    def ReadStartAddr(self):
+        self.driver.WriteData([Enum_Commands.Cmd_ReadStartAddr])
+        data_size_bytes = 0
+        read_bytes = self.driver.ReadData(data_size_bytes)
+
+        startIndex = 0
+
+        # Error Handling
+        [commandEcho, startIndex] = self._Read8bit(read_bytes, startIndex)
+        if (commandEcho == 255):
+            self.ParseError(read_bytes, startIndex)
+        assert commandEcho == Enum_Commands.Cmd_ReadStartAddr, "Bubbl responded with an invalid response"
+
+        message = "Message: "
+        for n in range(startIndex, len(read_bytes)):
+            message += chr(read_bytes[n])
+
         print(message)
 
     def ParseError(self, read_bytes, startIndex):
