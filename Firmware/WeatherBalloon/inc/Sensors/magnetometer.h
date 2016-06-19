@@ -9,6 +9,7 @@
 #define MAGNETOMETER_H_
 
 #define MAG_DATA_SIZE_BYTES 6
+#include <stdint.h>
 typedef struct Mag_Data {
 	int16_t x_mag;
 	int16_t y_mag;

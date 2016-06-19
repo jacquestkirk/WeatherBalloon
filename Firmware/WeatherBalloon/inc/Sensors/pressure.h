@@ -9,6 +9,7 @@
 #define PRESSURE_H_
 
 #define PRESS_DATA_SIZE_BYTES 8
+#include <stdint.h>
 typedef struct Press_Data{
 	int32_t pressure;
 	int32_t temperature;

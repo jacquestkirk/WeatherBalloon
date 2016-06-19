@@ -9,6 +9,7 @@
 #define IMU_H_
 
 #define IMU_DATA_SIZE_BYTES 12
+#include <stdint.h>
 typedef struct Imu_Data {
 	int16_t x_accel;
 	int16_t y_accel;

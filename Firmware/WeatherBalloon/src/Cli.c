@@ -37,6 +37,8 @@ enum Commands{
 	Cmd_ReadStartAddr,
 };
 
+#define ERROR_MESSAGE_ENUM  255
+
 #define CMD_READ_PRESSURE 		"readpressure"
 #define CMD_READ_TEMPERATURE 	"readtemperature"
 #define CMD_READ_IMU 			"readimu"
@@ -62,10 +64,19 @@ enum States{
 static void StateChangeCallback( USBD_State_TypeDef oldState, USBD_State_TypeDef newState );
 static int  UsbDataReceived(USB_Status_TypeDef status, uint32_t xferred,
                             uint32_t remaining);
-void RunStateMachine(void);
-int ParseCommand(void);
+void RunStateMachine(char* usbRxBuff);
+int ParseCommand(char* usbRxBuff);
+
+int Add8bitIntToTxBuff(int8_t data, int offset);
 int Add16bitIntToTxBuff(int16_t data, int offset);
+int Add32bitIntToTxBuff(int32_t data, int offset);
+
 int WriteDebugMessage(char* message, int offset, int length);
+void WriteInvalidCommandMessage(void);
+void WriteTempData(void);
+void WritePressData(void);
+
+
 
 SL_PACK_START(1)
 typedef struct
@@ -151,16 +162,17 @@ static int UsbDataReceived(USB_Status_TypeDef status,
                            uint32_t remaining)
 {
   (void) remaining;            /* Unused parameter. */
-  char writeData[100];
+  //char writeData[100];
 
   if ((status == USB_STATUS_OK) && (xferred > 0))
   {
 
 	  //Debug: Write something back to show that we received something
-	  sprintf(writeData, "From Device: %s", (char*)usbRxBuff);
+	  //sprintf(writeData, "From Device: %s", (char*)usbRxBuff);
 	  //Cli_WriteUSB((void*)writeData, xferred + 13);
 
-	  RunStateMachine();
+
+	  RunStateMachine((char*) usbRxBuff);
 
       /* Start a new USB receive transfer. */
       USBD_Read(CDC_EP_DATA_OUT, (void*) usbRxBuff, USB_FS_BULK_EP_MAXSIZE, UsbDataReceived);
@@ -175,33 +187,63 @@ void Cli_WriteUSB(void* message, int dataLen)
 }
 
 
-RunStateMachine()
+void RunStateMachine(char* usbRxBuff)
 {
 	static int current_state = State_Home;
 	static int next_state = State_Home;
 
-	int command = ParseCommand();
+	int command = ParseCommand(usbRxBuff);
 
 	switch (command)
 	{
+
+		case Cmd_ReadPress:
+			WritePressData();
+			next_state = State_Home;
+			return;
 		case Cmd_ReadTemp:
 			WriteTempData();
 			next_state = State_Home;
+			return;
+
+		default:
+			WriteInvalidCommandMessage();
 			return;
 
 	}
 
 }
 
+void WritePressData(void)
+{
+	Press_Data  pressData;
+	int startIndex = 0;
+
+	pressData = Press_Read();
+
+	//Write data to Tx buff
+	startIndex = Add8bitIntToTxBuff((uint8_t) Cmd_ReadPress, startIndex);
+	startIndex = Add32bitIntToTxBuff(pressData.pressure, startIndex);
+	startIndex = Add32bitIntToTxBuff(pressData.temperature, startIndex);
+
+
+	//Write debug message to Tx Buff
+	char message[] = "ThisIsDebugData";
+	startIndex = WriteDebugMessage((char*)&message, startIndex, 16);
+
+	//Write the TxBuff over USB
+	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
+}
+
 void WriteTempData(void)
 {
 	Temp_Data tempData;
-	int transmitlen = 0;
 	int startIndex = 0;
 
 	tempData = Temp_Read();
 
 	//Write data to Tx buff
+	startIndex = Add8bitIntToTxBuff((uint8_t) Cmd_ReadTemp, startIndex);
 	startIndex = Add16bitIntToTxBuff(tempData.therm1, startIndex);
 	startIndex = Add16bitIntToTxBuff(tempData.therm2, startIndex);
 	startIndex = Add16bitIntToTxBuff(tempData.therm3, startIndex);
@@ -209,11 +251,31 @@ void WriteTempData(void)
 
 	//Write debug message to Tx Buff
 	char message[] = "ThisIsDebugData";
-	startIndex = WriteDebugMessage(&message, startIndex, 16);
+	startIndex = WriteDebugMessage((char*)&message, startIndex, 16);
 
 	//Write the TxBuff over USB
 	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
 
+}
+
+void WriteInvalidCommandMessage(void)
+{
+	//Write debug message to Tx Buff
+	char message[] = "Invalid Command Sent";
+	int startIndex = 0;
+	startIndex = Add8bitIntToTxBuff(ERROR_MESSAGE_ENUM, startIndex);
+	startIndex = WriteDebugMessage((char*)&message, startIndex, 20);
+
+	//Write the TxBuff over USB
+	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
+}
+
+int Add8bitIntToTxBuff(int8_t data, int offset)
+{
+	usbTxBuff [offset] = data;
+
+	offset += 1;
+	return offset;
 }
 
 int Add16bitIntToTxBuff(int16_t data, int offset)
@@ -222,6 +284,17 @@ int Add16bitIntToTxBuff(int16_t data, int offset)
 	usbTxBuff [offset+1] = (uint8_t) (data);
 
 	offset += 2;
+	return offset;
+}
+
+int Add32bitIntToTxBuff(int32_t data, int offset)
+{
+	usbTxBuff [offset]   = (uint8_t) (data >> 24);
+	usbTxBuff [offset+1] = (uint8_t) (data >> 16);
+	usbTxBuff [offset+2] = (uint8_t) (data >> 8);
+	usbTxBuff [offset+3] = (uint8_t) (data);
+
+	offset += 4;
 	return offset;
 }
 
@@ -235,8 +308,10 @@ int WriteDebugMessage(char* message, int offset, int length)
 	return offset + length;
 }
 
-int ParseCommand(void)
+int ParseCommand(char* usbRxBuff)
 {
-	//todo: actually pares commands instead of choosing a random one
-	return Cmd_ReadTemp;
+	//To parse return the first and only byte
+	//Limited to 256 commands, but I tink that that should be fine.
+
+	return (int) usbRxBuff[0];
 }
