@@ -1,11 +1,12 @@
-load 'TS91ResTemp'
-temps_degC = TS91ResTemp(:,1);
-resistances_ohms = TS91ResTemp(:,2);
+%load 'TS91ResTemp'
+load 'B57164K0103'
+temps_degC = data(:,1);
+resistances_ohms = data(:,2);
 
 
 
 %%
-ref_res_ohms = 68812.7;
+ref_res_ohms = 84700;
 
 
 pct_full_scale = ref_res_ohms./(resistances_ohms + ref_res_ohms) * 100;
