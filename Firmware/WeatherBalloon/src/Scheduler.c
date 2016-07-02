@@ -14,6 +14,11 @@
 #include "InitDevice.h"
 #include "rtcdriver.h"
 #include "Scheduler.h"
+#include "Sensors/imu.h"
+#include "Sensors/led.h"
+#include "Sensors/magnetometer.h"
+#include "Sensors/pressure.h"
+#include "Sensors/temperature.h"
 
 
 
@@ -27,8 +32,7 @@ void RtcCallback( RTCDRV_TimerID_t, void*);
 // (should these live in the the other modules? I'll just leave these here and call into other modules in case these are needed. can refactor later)
 void TskReadPressure(void);
 void TskReadTemps(void);
-void TskReadAccel(void);
-void TskReadGyro(void);
+void TskReadImu(void);
 void TskReadMagnetometer(void);
 void TskTurnOnLed1(void);
 void TskTurnOnLed2(void);
@@ -43,8 +47,7 @@ void TskCheckCli(void);
 //defines
 #define READ_PRESSURE_RESET			1
 #define READ_TEMPS_RESET			1
-#define READ_ACCEL_RESET			1
-#define READ_GYRO_RESET				1
+#define READ_IMU_RESET				1
 #define READ_MAGNETOMETER_RESET		1
 #define TURN_ON_LED1_RESET			1
 #define TURN_ON_LED2_RESET			1
@@ -68,8 +71,7 @@ enum Tasks
 {
 	ReadPressure,
 	ReadTemps,
-	ReadAccel,
-	ReadGyro,
+	ReadImu,
 	ReadMagnetometer,
 	TurnOnLed1,
 	TurnOnLed2,
@@ -168,18 +170,13 @@ void RunTasks(void)
 		TaskTimer[ReadTemps] = READ_TEMPS_RESET;
 	}
 
-	//ReadAccel
-	if (TaskTimer[ReadAccel] == 0)
+	//ReadImu
+	if (TaskTimer[ReadImu] == 0)
 	{
 		TskReadAccel();
-		TaskTimer[ReadAccel] = READ_ACCEL_RESET;
+		TaskTimer[ReadImu] = READ_IMU_RESET;
 	}
-	//ReadGyro
-	if (TaskTimer[ReadGyro] == 0)
-	{
-		TskReadGyro();
-		TaskTimer[ReadGyro] = READ_GYRO_RESET;
-	}
+
 	//ReadMagnetometer
 	if (TaskTimer[ReadMagnetometer] == 0)
 	{
@@ -259,47 +256,44 @@ void DecrementTaskTimer()
 
 void TskReadPressure(void)
 {
-	//TBD
+	Press_Read_Tsk();
 }
 void TskReadTemps(void)
 {
-	//TBD
+	Temp_Read_Tsk();
 }
-void TskReadAccel(void)
+void TskReadImu(void)
 {
-	//TBD
+	Imu_Read_Tsk();
 }
-void TskReadGyro(void)
-{
-	//TBD
-}
+
 void TskReadMagnetometer(void)
 {
-	//TBD
+	Mag_Read_Tsk();
 }
 void TskTurnOnLed1(void)
 {
-	//TBD
+	Led_1_On_Tsk();
 }
 void TskTurnOnLed2(void)
 {
-	//TBD
+	Led_2_On_Tsk();
 }
 void TskTurnOffLed1(void)
 {
-	//TBD
+	Led_1_Off_Tsk();
 }
 void TskTurnOffLed2(void)
 {
-	//TBD
+	Led_2_Off_Tsk();
 }
 void TskPollBtn1(void)
 {
-	//TBD
+	Btn_Poll_Tsk();
 }
 void TskPollBtn2(void)
 {
-	//TBD
+	//We don't actually have this button so do nothing
 }
 void TskTimeStamp(void)
 {

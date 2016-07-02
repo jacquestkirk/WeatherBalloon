@@ -35,6 +35,10 @@ enum Commands{
 	Cmd_ReadFlashLoc,
 	Cmd_ReadLastData,
 	Cmd_ReadStartAddr,
+
+	Cmd_StartRecording,
+	Cmd_StopRecording,
+
 };
 
 #define ERROR_MESSAGE_ENUM  255
