@@ -290,8 +290,8 @@ extern void I2C0_enter_DefaultMode_from_RESET(void) {
 
 	init.enable = 1;
 	init.master = 1;
-	init.freq = I2C_FREQ_STANDARD_MAX;
-	init.clhr = i2cClockHLRStandard;
+	init.freq = I2C_FREQ_FAST_MAX;
+	init.clhr = i2cClockHLRAsymetric;
 	I2C_Init(I2C0, &init);
 	// [I2C0 initialization]$
 

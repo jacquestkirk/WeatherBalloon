@@ -1,5 +1,5 @@
 from SpaceBubblUsbDriver import *
-
+import math
 
 class Enum_Commands:
     Cmd_ReadPress = 0
@@ -106,13 +106,23 @@ class SpaceBubbl:
         for n in range(startIndex, len(read_bytes)):
             message += chr(read_bytes[n])
 
+        accel_scale_g = 8.0;
+        gyro_scale_dps = 500.0;
 
-        print("X Acceletation: ", hex(x_accel))
-        print("Y Acceletation: ", hex(y_accel))
-        print("Z Acceletation: ", hex(z_accel))
-        print("X Angular Velocity: ", hex(x_gyro))
-        print("Y Angular Velocity: ", hex(y_gyro))
-        print("Z Angular Velocity: ", hex(z_gyro))
+        x_accel_g = accel_scale_g * self._Convert2sComplement(x_accel , 16) / 32768.0
+        y_accel_g = accel_scale_g * self._Convert2sComplement(y_accel , 16) / 32768.0
+        z_accel_g = accel_scale_g * self._Convert2sComplement(z_accel , 16) / 32768.0
+
+        total_accel_g = math.sqrt(math.pow(x_accel_g, 2) + math.pow( y_accel_g, 2) + math.pow(z_accel_g, 2))
+
+        print("X Acceletation: ", x_accel_g, " g")
+        print("Y Acceletation: ", y_accel_g, " g")
+        print("Z Acceletation: ", z_accel_g, " g")
+        print("Total Acceleration: ", total_accel_g, " g")
+
+        print("X Angular Velocity: ", gyro_scale_dps * self._Convert2sComplement(x_gyro, 16) / 32768.0, " dps")
+        print("Y Angular Velocity: ", gyro_scale_dps * self._Convert2sComplement(y_gyro, 16) / 32768.0, " dps")
+        print("Z Angular Velocity: ", gyro_scale_dps * self._Convert2sComplement(z_gyro, 16) / 32768.0, " dps")
 
         print(message)
 
@@ -302,3 +312,9 @@ class SpaceBubbl:
                  (read_bytes[startIndex + 3])
         nextIndex = startIndex + 4
         return [result, nextIndex]
+
+    def _Convert2sComplement(self, number, num_bits):
+        if number >> (num_bits - 1) >= 1:
+            return number - (1 << num_bits)
+        else:
+            return number

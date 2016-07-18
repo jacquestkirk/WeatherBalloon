@@ -21,7 +21,10 @@
 //my modules
 #include "Scheduler.h"
 #include "Cli.h"
+#include "InitDevice.h"
 
+//Eventually remove these
+#include "Sensors/imu.h"
 /**************************************************************************//**
  * @brief  Main function
  *****************************************************************************/
@@ -30,15 +33,21 @@ int main(void)
   /* Chip errata */
   CHIP_Init();
 
+  enter_DefaultMode_from_RESET();
+
 
   /* Infinite loop */
   //Sch_Run_Scheduler();
 
+  Imu_Initialize();
   Cli_Initialize_Cli();
+
 
   while(1)
   {
 	  //Temporary while loop
+	  //Imu_TestFunction();
+	  //Imu_Read();
   }
 
 }
