@@ -241,19 +241,93 @@ enum accel_digital_filt_cutoff
 #define CTRL_REG_7_XL_HPIS_EN_MASK 0b00000001
 
 ///////////////////////////////////////////////////////////////
+//CTRL_REG_8
+///////////////////////////////////////////////////////////////
+#define CTRL_REG_8_IF_ADD_INC_SHIFT 2
+#define CTRL_REG_8_IF_ADD_INC_MASK 0b00000100
+
+#define CTRL_REG_8_SW_RESET_SHIFT 0
+#define CTRL_REG_8_SW_RESET_MASK 0b00000001
+
+
+///////////////////////////////////////////////////////////////
 //CTRL_REG_9
 ///////////////////////////////////////////////////////////////
+#define CTRL_REG_9_SLEEP_G_SHIFT 6
+#define CTRL_REG_9_SLEEP_G_MASK 0b01000000
+
+#define CTRL_REG_9_FIFO_TEMP_EN_SHIFT 4
+#define CTRL_REG_9_FIFO_TEMP_EN_MASK 0b00010000
+
+#define CTRL_REG_9_DRDY_MASK_BIT_SHIFT 3
+#define CTRL_REG_9_DRDY_MASK_BIT_MASK 0b00001000
+
+#define CTRL_REG_9_I2C_DISABLE_SHIFT 2
+#define CTRL_REG_9_I2C_DISABLE_MASK 0b00000100
+
+#define CTRL_REG_9_FIFO_EN_SHIFT 1
+#define CTRL_REG_9_FIFO_EN_MASK 0b00000010
+
+#define CTRL_REG_9_STOP_ON_FTH 0
+#define CTRL_REG_9_STOP_ON_MASK 0b00000001
+
 
 ///////////////////////////////////////////////////////////////
 //FIFO_CTRL
 ///////////////////////////////////////////////////////////////
 
+#define FIFO_CTRL_FMODE_SHIFT 5
+#define FIFO_CTRL_FMODE_MASK 0b11100000
+enum fifo_ctrl_fmode
+{
+	FIFO_CTRL_FMODE_BYPASS=0,
+	FIFO_CTRL_FMODE_FIFO=1,
+	FIFO_CTRL_FMODE_CONTINUOUS = 3,
+	FIFO_CTRL_FMODE_BYPASS_2_CONT = 4,
+	FIFO_CTRL_FMODE_CONT_OVERWRITE = 6
+};
+
+#define FIFO_CTRL_FTH_SHIFT 0
+#define FIFO_CTRL_FTH_MASK 0b00011111
+
 ///////////////////////////////////////////////////////////////
 //FIFO_SRC
 ///////////////////////////////////////////////////////////////
+#define FIFO_SRC_FTH_SHIFT 7
+#define FIFO_SRC_FTH_MASK 0b10000000
+
+#define FIFO_SRC_OVRN_SHIFT 6
+#define FIFO_SRC_OVRN_MASK 0b01000000
+
+#define FIFO_SRC_FSS_SHIFT 0
+#define FIFO_SRC_FSS_MASK 0b00111111
+
 
 ///////////////////////////////////////////////////////////////
 //INT1_CTRL
 ///////////////////////////////////////////////////////////////
+#define INT1_CTRL_1G_G_SHIFT 7
+#define INT1_CTRL_1G_G_MASK 0b10000000
+
+#define INT1_CTRL_1G_XL_SHIFT 6
+#define INT1_CTRL_1G_XL_MASK 0b01000000
+
+#define INT1_CTRL_FSS5_SHIFT 5
+#define INT1_CTRL_FSS5_MASK 0b00100000
+
+#define INT1_CTRL_OVR_SHIFT 4
+#define INT1_CTRL_OVR_MASK 0b000010000
+
+#define INT1_CTRL_FTH_SHIFT 3
+#define INT1_CTRL_FTH_MASK 0b00001000
+
+#define INT1_CTRL_BOOT_SHIFT 2
+#define INT1_CTRL_BOOT_MASK 0b00000100
+
+#define INT1_CTRL_DRDY_G_SHIFT 1
+#define INT1_CTRL_DRDY_G_MASK 0b00000010
+
+#define INT1_CTRL_DRDY_XL_SHIFT 0
+#define INT1_CTRL_DRDY_XL_MASK 0b00000001
 
 #endif /* LSM9DS_DEFS_H_ */

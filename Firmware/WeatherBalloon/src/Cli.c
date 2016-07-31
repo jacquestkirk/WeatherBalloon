@@ -35,6 +35,8 @@ enum Commands{
 	Cmd_ReadFlashLoc,
 	Cmd_ReadLastData,
 	Cmd_ReadStartAddr,
+	Cmd_ReadImuRegister,
+	Cmd_WriteImuRegister,
 
 	Cmd_StartRecording,
 	Cmd_StopRecording,
@@ -91,7 +93,8 @@ void ReadFlashLoc(void);
 void ReadLastData(void);
 void ReadStartAddr(void);
 
-
+void ReadImuRegister(void);
+void WriteImuRegister(void);
 
 SL_PACK_START(1)
 typedef struct
@@ -254,6 +257,14 @@ void RunStateMachine(char* usbRxBuff)
 			return;
 		case Cmd_ReadStartAddr:
 			ReadStartAddr();
+			next_state = State_Home;
+			return;
+		case Cmd_ReadImuRegister:
+			ReadImuRegister();
+			next_state = State_Home;
+			return;
+		case Cmd_WriteImuRegister:
+			WriteImuRegister();
 			next_state = State_Home;
 			return;
 		default:
@@ -477,6 +488,49 @@ void ReadStartAddr(void)
 	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
 }
 
+void ReadImuRegister(void)
+{
+	//Todo: Add ReadImuRegister to documentation
+	uint8_t regToRead = usbRxBuff[1];
+	uint8_t regContents = Imu_QueryRegister1Byte(regToRead);
+
+	int startIndex = 0;
+
+	//Write data to Tx buff
+	startIndex = Add8bitIntToTxBuff((uint8_t) Cmd_ReadImuRegister, startIndex);
+	startIndex = Add8bitIntToTxBuff(regContents, startIndex);
+
+	//Write debug message to Tx Buff
+	char message[] = "IMU Register Contents";
+	startIndex = WriteDebugMessage((char*)&message, startIndex, 21);
+
+	//Write the TxBuff over USB
+	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
+
+}
+
+void WriteImuRegister(void)
+{
+	//Todo: Add WriteImuRegister to documentation
+	//Todo: Do we need to save a second buffer for Rx so that we are not reading inputs for a following command. Probably
+	uint8_t regToWrite = usbRxBuff[1];
+	uint8_t byteToWrite = usbRxBuff[2];
+
+	Imu_WriteRegister1Byte(regToWrite, byteToWrite);
+
+	int startIndex = 0;
+
+	//Write data to Tx buff
+	startIndex = Add8bitIntToTxBuff((uint8_t) Cmd_WriteImuRegister, startIndex);
+
+	//Write debug message to Tx Buff
+	char message[] = "IMU Register Written";
+	startIndex = WriteDebugMessage((char*)&message, startIndex, 20);
+
+	//Write the TxBuff over USB
+	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
+
+}
 
 void WriteInvalidCommandMessage(void)
 {

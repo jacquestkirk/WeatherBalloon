@@ -473,6 +473,10 @@ extern void PORTIO_enter_DefaultMode_from_RESET(void) {
 	GPIO->P[2].DOUT |= (1 << 4);
 	GPIO->P[2].MODEL = (GPIO->P[2].MODEL & ~_GPIO_P_MODEL_MODE4_MASK)
 			| GPIO_P_MODEL_MODE4_INPUTPULL;
+
+	/* Pin PC10 is configured to Input enabled */
+	GPIO->P[2].MODEH = (GPIO->P[2].MODEH & ~_GPIO_P_MODEH_MODE10_MASK)
+			| GPIO_P_MODEH_MODE10_INPUT;
 	// [Port C Configuration]$
 
 	// $[Port D Configuration]

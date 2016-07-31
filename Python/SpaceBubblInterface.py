@@ -13,6 +13,10 @@ class Enum_Commands:
     Cmd_ReadFlashLoc = 8
     Cmd_ReadLastData = 9
     Cmd_ReadStartAddr = 10
+    Cmd_ReadImuRegister = 11
+    Cmd_WriteImuRegister = 12
+    Cmd_StartRecording = 13
+    Cmd_StopRecording = 14
     Cmd_ERROR = 255
 
 class SpaceBubbl:
@@ -262,6 +266,47 @@ class SpaceBubbl:
         if (commandEcho == 255):
             self.ParseError(read_bytes, startIndex)
         assert commandEcho == Enum_Commands.Cmd_ReadLastData, "Bubbl responded with an invalid response"
+
+        message = "Message: "
+        for n in range(startIndex, len(read_bytes)):
+            message += chr(read_bytes[n])
+
+        print(message)
+
+    def ReadImuRegister(self, regToRead):
+        self.driver.WriteData([Enum_Commands.Cmd_ReadImuRegister, regToRead])
+        data_size_bytes = 1
+        read_bytes = self.driver.ReadData(data_size_bytes)
+
+        startIndex = 0
+
+
+        # Error Handling
+        [commandEcho, startIndex] = self._Read8bit(read_bytes, startIndex)
+        if (commandEcho == 255):
+            self.ParseError(read_bytes, startIndex)
+        assert commandEcho == Enum_Commands.Cmd_ReadImuRegister, "Bubbl responded with an invalid response"
+
+        [registerContents, startIndex] = self._Read8bit(read_bytes, startIndex);
+        message = "Message: "
+        for n in range(startIndex, len(read_bytes)):
+            message += chr(read_bytes[n])
+
+        print("Register " + hex(regToRead) + " :    " + hex(registerContents))
+        print(message)
+
+    def WriteImuRegister(self, regToWrite, dataToWrite):
+        self.driver.WriteData([Enum_Commands.Cmd_WriteImuRegister, regToWrite, dataToWrite])
+        data_size_bytes = 0
+        read_bytes = self.driver.ReadData(data_size_bytes)
+
+        startIndex = 0
+
+        # Error Handling
+        [commandEcho, startIndex] = self._Read8bit(read_bytes, startIndex)
+        if (commandEcho == 255):
+            self.ParseError(read_bytes, startIndex)
+        assert commandEcho == Enum_Commands.Cmd_WriteImuRegister, "Bubbl responded with an invalid response"
 
         message = "Message: "
         for n in range(startIndex, len(read_bytes)):
