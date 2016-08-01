@@ -32,6 +32,9 @@ void Imu_Initialize_OneShot();//Initialize Imu in one shot mode
 uint8_t Imu_TestFunction();
 uint8_t Imu_QueryRegister1Byte(uint8_t reg);
 void Imu_WriteRegister1Byte(uint8_t reg, uint8_t data);
+void Imu_StartFifo(void);
+void Imu_StopFifo(void);
+void Imu_WriteStreamFifo(void);
 
 //IMU Settings
 

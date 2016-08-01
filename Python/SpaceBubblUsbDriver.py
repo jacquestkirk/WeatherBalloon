@@ -31,8 +31,9 @@ class SpaceBubblUsbDriver:
     def WriteData(self,dataToSend):
         self.dev.write(self.write_address, dataToSend, self.timeout)
 
-    def ReadData(self, data_size_bytes):
-        read_bytes = self.dev.read(self.read_address, data_size_bytes + 1 + self.error_message_size, self.timeout)  #+1 for echo bit
+
+    def ReadData(self, data_size_bytes, timeout_ms = 100):
+        read_bytes = self.dev.read(self.read_address, data_size_bytes + 1 + self.error_message_size, timeout_ms)  #+1 for echo bit
         return read_bytes
 
     def ReadString(self):
@@ -42,4 +43,5 @@ class SpaceBubblUsbDriver:
         for n in range(0,len(read_bytes)):
             read_str += chr(read_bytes[n])
         return(read_str)
+
 

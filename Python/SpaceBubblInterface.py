@@ -1,5 +1,7 @@
 from SpaceBubblUsbDriver import *
 import math
+import numpy as np
+import matplotlib.pyplot as plt
 
 class Enum_Commands:
     Cmd_ReadPress = 0
@@ -17,6 +19,8 @@ class Enum_Commands:
     Cmd_WriteImuRegister = 12
     Cmd_StartRecording = 13
     Cmd_StopRecording = 14
+    Cmd_StartImuStream = 15
+    Cmd_StopImuStream = 16
     Cmd_ERROR = 255
 
 class SpaceBubbl:
@@ -307,6 +311,156 @@ class SpaceBubbl:
         if (commandEcho == 255):
             self.ParseError(read_bytes, startIndex)
         assert commandEcho == Enum_Commands.Cmd_WriteImuRegister, "Bubbl responded with an invalid response"
+
+        message = "Message: "
+        for n in range(startIndex, len(read_bytes)):
+            message += chr(read_bytes[n])
+
+        print(message)
+
+    def StartImuStream(self):
+        self.driver.WriteData([Enum_Commands.Cmd_StartImuStream])
+        data_size_bytes = 0
+        read_bytes = self.driver.ReadData(data_size_bytes)
+
+        startIndex = 0
+
+        # Error Handling
+        [commandEcho, startIndex] = self._Read8bit(read_bytes, startIndex)
+        if (commandEcho == 255):
+            self.ParseError(read_bytes, startIndex)
+        assert commandEcho == Enum_Commands.Cmd_StartImuStream, "Bubbl responded with an invalid response"
+
+        message = "Message: "
+        for n in range(startIndex, len(read_bytes)):
+            message += chr(read_bytes[n])
+
+        print(message)
+
+        while(True):
+            self._PollForImuData()
+
+    def _PollForImuData(self):
+
+        log_size = 256
+        xaccels = np.zeros(log_size)
+        yaccels = np.zeros(log_size)
+        zaccels = np.zeros(log_size)
+        totalAccels = np.zeros(log_size)
+
+        sampleRate_Hz = 14.9
+        times = np.arange(log_size) * 1/sampleRate_Hz
+
+        plt.ion()
+        count = 0;
+
+        while(True):
+            data_size_bytes = 12
+            read_bytes = self.driver.ReadData(data_size_bytes, 5000)
+            startIndex = 0
+
+
+            #Add IMU stream data flag here?
+
+            #parse the response
+            [x_accel, startIndex] = self._Read16bit(read_bytes, startIndex)
+            [y_accel, startIndex] = self._Read16bit(read_bytes, startIndex)
+            [z_accel, startIndex] = self._Read16bit(read_bytes, startIndex)
+            [x_gyro, startIndex]  = self._Read16bit(read_bytes, startIndex)
+            [y_gyro, startIndex]  = self._Read16bit(read_bytes, startIndex)
+            [z_gyro, startIndex]  = self._Read16bit(read_bytes, startIndex)
+
+            accel_scale_g = 8.0;
+            gyro_scale_dps = 500.0;
+
+            x_accel_g = accel_scale_g * self._Convert2sComplement(x_accel , 16) / 32768.0
+            y_accel_g = accel_scale_g * self._Convert2sComplement(y_accel , 16) / 32768.0
+            z_accel_g = accel_scale_g * self._Convert2sComplement(z_accel , 16) / 32768.0
+
+            total_accel_g = math.sqrt(math.pow(x_accel_g, 2) + math.pow( y_accel_g, 2) + math.pow(z_accel_g, 2))
+
+            #Append the new value to the end and remove the first value
+            xaccels = np.append(xaccels, x_accel_g)
+            yaccels = np.append(yaccels, y_accel_g)
+            zaccels = np.append(zaccels, z_accel_g)
+            totalAccels = np.append(totalAccels, total_accel_g)
+
+            xaccels = np.delete(xaccels, 0)
+            yaccels = np.delete(yaccels, 0)
+            zaccels = np.delete(zaccels, 0)
+            totalAccels = np.delete(totalAccels, 0)
+
+
+            count += 1
+            print("Count: ", count)
+
+            if (count%32 == 0):
+                accelFig = plt.figure(1)
+                accelFig.clear();
+                plt.subplot(211)
+                plt.plot(times, xaccels, times, yaccels, times, zaccels)
+                plt.subplot(212)
+                plt.plot(times, totalAccels)
+                plt.pause(0.05)
+
+            print("X Acceletation: ", x_accel_g, " g")
+            print("Y Acceletation: ", y_accel_g, " g")
+            print("Z Acceletation: ", z_accel_g, " g")
+            print("Total Acceleration: ", total_accel_g, " g")
+
+            print("X Angular Velocity: ", gyro_scale_dps * self._Convert2sComplement(x_gyro, 16) / 32768.0, " dps")
+            print("Y Angular Velocity: ", gyro_scale_dps * self._Convert2sComplement(y_gyro, 16) / 32768.0, " dps")
+            print("Z Angular Velocity: ", gyro_scale_dps * self._Convert2sComplement(z_gyro, 16) / 32768.0, " dps")
+
+    def ReadImu(self):
+        self.driver.WriteData([Enum_Commands.Cmd_ReadImu])
+        data_size_bytes = 12
+        read_bytes = self.driver.ReadData(data_size_bytes)
+
+        startIndex = 0
+
+        # parse the response
+        [x_accel, startIndex] = self._Read16bit(read_bytes, startIndex)
+        [y_accel, startIndex] = self._Read16bit(read_bytes, startIndex)
+        [z_accel, startIndex] = self._Read16bit(read_bytes, startIndex)
+        [x_gyro, startIndex] = self._Read16bit(read_bytes, startIndex)
+        [y_gyro, startIndex] = self._Read16bit(read_bytes, startIndex)
+        [z_gyro, startIndex] = self._Read16bit(read_bytes, startIndex)
+
+        accel_scale_g = 8.0;
+        gyro_scale_dps = 500.0;
+
+        x_accel_g = accel_scale_g * self._Convert2sComplement(x_accel, 16) / 32768.0
+        y_accel_g = accel_scale_g * self._Convert2sComplement(y_accel, 16) / 32768.0
+        z_accel_g = accel_scale_g * self._Convert2sComplement(z_accel, 16) / 32768.0
+
+        total_accel_g = math.sqrt(math.pow(x_accel_g, 2) + math.pow(y_accel_g, 2) + math.pow(z_accel_g, 2))
+
+        print("X Acceletation: ", x_accel_g, " g")
+        print("Y Acceletation: ", y_accel_g, " g")
+        print("Z Acceletation: ", z_accel_g, " g")
+        print("Total Acceleration: ", total_accel_g, " g")
+
+        print("X Angular Velocity: ", gyro_scale_dps * self._Convert2sComplement(x_gyro, 16) / 32768.0, " dps")
+        print("Y Angular Velocity: ", gyro_scale_dps * self._Convert2sComplement(y_gyro, 16) / 32768.0, " dps")
+        print("Z Angular Velocity: ", gyro_scale_dps * self._Convert2sComplement(z_gyro, 16) / 32768.0, " dps")
+
+
+
+
+
+    def StopImuStream(self):
+        self.driver.WriteData([Enum_Commands.Cmd_StopImuStream])
+        data_size_bytes = 0
+        read_bytes = self.driver.ReadData(data_size_bytes)
+
+        startIndex = 0
+
+        # Error Handling
+        [commandEcho, startIndex] = self._Read8bit(read_bytes, startIndex)
+        if (commandEcho == 255):
+            self.ParseError(read_bytes, startIndex)
+        assert commandEcho == Enum_Commands.Cmd_StopImuStream, "Bubbl responded with an invalid response"
 
         message = "Message: "
         for n in range(startIndex, len(read_bytes)):

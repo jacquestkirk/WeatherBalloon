@@ -7,6 +7,8 @@
 
 #ifndef CLI_H_
 #define CLI_H_
+#include "Sensors\imu.h"
+
 
 void Cli_Initialize_Cli(void);
 void Cli_WriteUSB(void* message, int dataLen);
@@ -24,6 +26,7 @@ void Cli_ReadFromFlash(void);
 void Cli_ReadFlashLocations(void);
 void Cli_ReadLastFewDataPoints(void);
 void Cli_ReadModuleStartAddresses (void);
+void Cli_Stream_Imu_Data(Imu_Data imuData);
 
 
 #endif /* CLI_H_ */

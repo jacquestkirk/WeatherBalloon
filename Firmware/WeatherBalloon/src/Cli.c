@@ -37,9 +37,10 @@ enum Commands{
 	Cmd_ReadStartAddr,
 	Cmd_ReadImuRegister,
 	Cmd_WriteImuRegister,
-
 	Cmd_StartRecording,
 	Cmd_StopRecording,
+	Cmd_StartImuStream,
+	Cmd_StopImuStream,
 
 };
 
@@ -95,6 +96,9 @@ void ReadStartAddr(void);
 
 void ReadImuRegister(void);
 void WriteImuRegister(void);
+void StopImuStream(void);
+void StartImuStream(void);
+
 
 SL_PACK_START(1)
 typedef struct
@@ -267,6 +271,14 @@ void RunStateMachine(char* usbRxBuff)
 			WriteImuRegister();
 			next_state = State_Home;
 			return;
+		case Cmd_StartImuStream:
+			StartImuStream();
+			next_state = State_Home;
+			return;
+		case Cmd_StopImuStream:
+			StopImuStream();
+			next_state = State_Home;
+			return;
 		default:
 			WriteInvalidCommandMessage();
 			return;
@@ -342,6 +354,22 @@ void WriteImuData(void)
 	//Write the TxBuff over USB
 	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
 
+}
+
+void Cli_Stream_Imu_Data(Imu_Data imuData)
+{
+	int startIndex = 0;
+
+	//Write data to Tx buff
+	startIndex = Add16bitIntToTxBuff(imuData.x_accel, startIndex);
+	startIndex = Add16bitIntToTxBuff(imuData.y_accel, startIndex);
+	startIndex = Add16bitIntToTxBuff(imuData.z_accel, startIndex);
+	startIndex = Add16bitIntToTxBuff(imuData.x_gyro, startIndex);
+	startIndex = Add16bitIntToTxBuff(imuData.y_gyro, startIndex);
+	startIndex = Add16bitIntToTxBuff(imuData.z_gyro, startIndex);
+
+	//Write the TxBuff over USB
+	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
 }
 
 void WriteMagData(void)
@@ -490,7 +518,6 @@ void ReadStartAddr(void)
 
 void ReadImuRegister(void)
 {
-	//Todo: Add ReadImuRegister to documentation
 	uint8_t regToRead = usbRxBuff[1];
 	uint8_t regContents = Imu_QueryRegister1Byte(regToRead);
 
@@ -511,7 +538,6 @@ void ReadImuRegister(void)
 
 void WriteImuRegister(void)
 {
-	//Todo: Add WriteImuRegister to documentation
 	//Todo: Do we need to save a second buffer for Rx so that we are not reading inputs for a following command. Probably
 	uint8_t regToWrite = usbRxBuff[1];
 	uint8_t byteToWrite = usbRxBuff[2];
@@ -530,6 +556,40 @@ void WriteImuRegister(void)
 	//Write the TxBuff over USB
 	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
 
+}
+
+void StartImuStream(void)
+{
+	Imu_StartFifo();
+
+	int startIndex = 0;
+
+	//Write data to Tx buff
+	startIndex = Add8bitIntToTxBuff((uint8_t) Cmd_StartImuStream, startIndex);
+
+	//Write debug message to Tx Buff
+	char message[] = "IMU Stream Started";
+	startIndex = WriteDebugMessage((char*)&message, startIndex, 18);
+
+	//Write the TxBuff over USB
+	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
+}
+
+void StopImuStream(void)
+{
+	Imu_StopFifo();
+
+	int startIndex = 0;
+
+	//Write data to Tx buff
+	startIndex = Add8bitIntToTxBuff((uint8_t) Cmd_StartImuStream, startIndex);
+
+	//Write debug message to Tx Buff
+	char message[] = "IMU Stream Started";
+	startIndex = WriteDebugMessage((char*)&message, startIndex, 18);
+
+	//Write the TxBuff over USB
+	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
 }
 
 void WriteInvalidCommandMessage(void)

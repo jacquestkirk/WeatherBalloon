@@ -14,10 +14,12 @@
 #include "I2CBubbl.h"
 #include "em_assert.h"
 #include "em_gpio.h"
+#include "Cli.h"
 
 
 STATIC_UBUF(imu_data_buff,  FLASH_PAGE_SIZE_BYTES);   /* Allocate USB receive buffer.   */
 Imu_Data fifo_data[IMU_FIFO_SIZE];
+uint8_t _fifoReadyToWrite = 0;
 
 
 Imu_Data QueryAllImuValues(void);
@@ -199,11 +201,25 @@ void Imu_Initialize()
 	uint8_t fifo_ctrl = fmode << FIFO_CTRL_FMODE_SHIFT | fth << FIFO_CTRL_FTH_SHIFT;
 	Imu_WriteRegister1Byte(reg_fifo_ctrl, fifo_ctrl);
 
+	//uint8_t fifo_en = 1;
+	//uint8_t ctrl_reg_9 = fifo_en << CTRL_REG_9_FIFO_EN_SHIFT;
+	//Imu_WriteRegister1Byte(reg_ctrl_reg9, ctrl_reg_9);
+
+
+}
+
+void Imu_StartFifo(void)
+{
 	uint8_t fifo_en = 1;
 	uint8_t ctrl_reg_9 = fifo_en << CTRL_REG_9_FIFO_EN_SHIFT;
 	Imu_WriteRegister1Byte(reg_ctrl_reg9, ctrl_reg_9);
+}
 
-
+void Imu_StopFifo(void)
+{
+	uint8_t fifo_en = 0;
+	uint8_t ctrl_reg_9 = fifo_en << CTRL_REG_9_FIFO_EN_SHIFT;
+	Imu_WriteRegister1Byte(reg_ctrl_reg9, ctrl_reg_9);
 }
 
 void ConfigInterrupt(void)
@@ -332,23 +348,32 @@ void ReadFifo(void)
 
 void Int1_a_g_Callback(void)
 {
-	ReadFifo();
-	WriteFifoOverUsb();
-	ClearFifo();
+	_fifoReadyToWrite = 1;
+}
+
+void Imu_WriteStreamFifo(void)
+{
+	if(_fifoReadyToWrite)
+	{
+		ReadFifo();
+		WriteFifoOverUsb();
+		ClearFifo();
+		_fifoReadyToWrite = 0;
+	}
 }
 
 void WriteFifoOverUsb(void)
 {
-	//todo: Should this live here?
-	uint8_t dataToWrite[IMU_FIFO_SIZE * IMU_DATA_SIZE_BYTES];
-
-	//package data into 8 byte chunks
+	//Stream each element of the fifo block to the cli block to be written over USB
 	for( int i = 0; i< IMU_FIFO_SIZE; i++)
 	{
+		Cli_Stream_Imu_Data(fifo_data[i]);
 
+		//Wait some time
+		for( int j = 0; j < 2048; j++)
+		{
+			__NOP();
+		}
 	}
-
-	//write the data
-	//Cli_WriteUSB((void*) *dataToWrite, IMU_FIFO_SIZE * IMU_DATA_SIZE_BYTES);
 
 }
