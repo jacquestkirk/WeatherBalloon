@@ -342,7 +342,7 @@ class SpaceBubbl:
 
     def _PollForImuData(self):
 
-        log_size = 256
+        log_size = 1028
         xaccels = np.zeros(log_size)
         yaccels = np.zeros(log_size)
         zaccels = np.zeros(log_size)
@@ -402,6 +402,13 @@ class SpaceBubbl:
                 plt.subplot(212)
                 plt.plot(times, totalAccels)
                 plt.pause(0.05)
+
+                #calculate and plot fft
+                fftFig = plt.figure(2)
+                fftFig.clear()
+                fftTotalAccel = np.fft.fft(totalAccels)
+                freq = np.fft.fftfreq(log_size, 1.0/sampleRate_Hz)
+                plt.plot(freq, 20*np.log10(fftTotalAccel))
 
             print("X Acceletation: ", x_accel_g, " g")
             print("Y Acceletation: ", y_accel_g, " g")

@@ -370,7 +370,7 @@ void WriteFifoOverUsb(void)
 		Cli_Stream_Imu_Data(fifo_data[i]);
 
 		//Wait some time
-		for( int j = 0; j < 2048; j++)
+		for( int j = 0; j < 5000; j++)
 		{
 			__NOP();
 		}
