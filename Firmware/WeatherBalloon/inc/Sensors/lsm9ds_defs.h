@@ -8,6 +8,33 @@
 #ifndef LSM9DS_DEFS_H_
 #define LSM9DS_DEFS_H_
 
+enum register_map_mag //register map for magnetometer
+{
+	regm_offset_x_reg_l		=0x05,
+	regm_offset_x_reg_h		=0x06,
+	regm_offset_y_reg_l		=0x07,
+	regm_offset_y_reg_h		=0x08,
+	regm_offset_z_reg_l		=0x09,
+	regm_offset_z_reg_h		=0x0A,
+	regm_who_am_i			=0x0F,
+	regm_ctrl_reg1			=0x20,
+	regm_ctrl_reg2			=0x21,
+	regm_ctrl_reg3			=0x22,
+	regm_ctrl_reg4			=0x23,
+	regm_ctrl_reg5			=0x24,
+	regm_status_reg			=0x27,
+	regm_out_x_l			=0x28,
+	regm_out_x_h			=0x29,
+	regm_out_y_l			=0x2A,
+	regm_out_y_h			=0x2B,
+	regm_out_z_l			=0x2C,
+	regm_out_z_h			=0x2D,
+	regm_int_cfg			=0x30,
+	regm_int_src			=0x30,
+	regm_int_ths_l			=0x32,
+	regm_int_tjs_h			=0x33
+};
+
 enum register_map //Register Map for IMU
 {
 	reg_act_ths				= 0x04,
@@ -330,4 +357,113 @@ enum fifo_ctrl_fmode
 #define INT1_CTRL_DRDY_XL_SHIFT 0
 #define INT1_CTRL_DRDY_XL_MASK 0b00000001
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Magnetometer
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+///////////////////////////////////////////////////////////////
+//CTRL_REG1_M
+///////////////////////////////////////////////////////////////
+
+#define CTRL_REG1_M_TEMP_COMP_SHIFT 7
+#define CTRL_REG1_M_TEMP_COMP_MASH 0b10000000
+
+#define CTRL_REG1_M_OM_SHIFT 5
+#define CTRL_REG1_M_OM_MASK 0b01100000
+enum ctrl_reg1_m_om
+{
+	ctrl1_reg1_m_om_lowPowerMode = 0,
+	ctrl1_reg1_m_om_medPowerMode = 1,
+	ctrl1_reg1_m_om_highPowerMode = 2,
+	ctrl1_reg1_m_om_ultraHighPowerMode = 3,
+};
+
+#define CTRL_REG1_M_DO_SHIFT 2
+#define CTRL_REG1_M_DO_MASK 0b00011100
+enum ctrl_reg1_m_do
+{
+	ctrl_reg1_m_do_0p625_Hz = 0,
+	ctrl_reg1_m_do_1p25_Hz = 1,
+	ctrl_reg1_m_do_2p5_Hz = 2,
+	ctrl_reg1_m_do_5_Hz = 3,
+	ctrl_reg1_m_do_10_Hz = 4,
+	ctrl_reg1_m_do_20_Hz = 5,
+	ctrl_reg1_m_do_40_Hz = 6,
+	ctrl_reg1_m_do_80_Hz = 7,
+};
+
+#define CTRL_REG1_M_FAST_ODR_SHIFT 1
+#define CTRL_REG1_M_FAST_ODR_MASK 0b00000010
+
+#define CTRL_REG1_M_ST_SHIFT 0
+#define CTRL_REG1_M_ST_MASK 0b00000001
+
+
+///////////////////////////////////////////////////////////////
+//CTRL_REG2_M
+///////////////////////////////////////////////////////////////
+
+#define CTRL_REG2_M_FS_SHIFT 5
+#define CTRL_REG2_M_FS_MASK 0b01100000
+
+enum ctrl_reg2_m_fs
+{
+	ctrl_reg2_m_fs_4gauss = 0,
+	ctrl_reg2_m_fs_8gauss = 1,
+	ctrl_reg2_m_fs_12gauss = 2,
+	ctrl_reg2_m_fs_16gauss = 3
+};
+
+#define CTRL_REG2_M_REBOOT_SHIFT 3
+#define CTRL_REG2_M_REBOOT_MASK 0b00001000
+
+#define CTRL_REG2_M_SOFT_RST_SHIFT 2
+#define CTRL_REG2_M_SOFT_RST_MASK 0b00000100
+
+///////////////////////////////////////////////////////////////
+//CTRL_REG3_M
+///////////////////////////////////////////////////////////////
+#define CTRL_REG3_M_LP_SHIFT 5
+#define CTRL_REG3_M_LP_MASK 0b00100000
+
+#define CTRL_REG3_M_MD_SHIFT 0
+#define CTRL_REG3_M_MD_MASK 0b00000011
+
+enum ctrl_reg3_m_md
+{
+	ctrl_reg3_m_md_continuious_conversion = 0,
+	ctrl_reg3_m_md_single_conversion = 1,
+	ctrl_reg3_m_md_power_down = 3
+};
+
+///////////////////////////////////////////////////////////////
+//CTRL_REG4_M
+///////////////////////////////////////////////////////////////
+#define CTRL_REG4_M_OMZ_SHIFT 2
+#define CTRL_REG4_M_OMZ_MASK 0b00001100
+enum ctrl_reg4_m_omz
+{
+	ctrl_reg4_m_omz_lowPower = 0,
+	ctrl_reg4_m_omz_medPower = 1,
+	ctrl_reg4_m_omz_highPower = 2,
+	ctrl_reg4_m_omz_ultraHighPower =3
+};
+
+#define CTRL_REG4_M_BLE_SHIFT 1
+#define CTRL_REG4_M_BLE_MASK 0b00000010
+enum ctrl_reg4_m_ble
+{
+	ctrl_reg4_m_ble_lsbLower = 0,
+	ctrl_reg4_m_ble_msbLower = 1
+};
+
+
+
+
+
 #endif /* LSM9DS_DEFS_H_ */
+
+

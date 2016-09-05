@@ -40,6 +40,7 @@ int main(void)
   //Sch_Run_Scheduler();
 
   Imu_Initialize();
+  Mag_Initialize_OneShot();
   Cli_Initialize_Cli();
 
 

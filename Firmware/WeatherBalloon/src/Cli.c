@@ -41,6 +41,8 @@ enum Commands{
 	Cmd_StopRecording,
 	Cmd_StartImuStream,
 	Cmd_StopImuStream,
+	Cmd_ReadMagRegister,
+	Cmd_WriteMagRegister,
 
 };
 
@@ -98,7 +100,8 @@ void ReadImuRegister(void);
 void WriteImuRegister(void);
 void StopImuStream(void);
 void StartImuStream(void);
-
+void ReadMagRegister(void);
+void WriteMagRegister(void);
 
 SL_PACK_START(1)
 typedef struct
@@ -278,6 +281,12 @@ void RunStateMachine(char* usbRxBuff)
 		case Cmd_StopImuStream:
 			StopImuStream();
 			next_state = State_Home;
+			return;
+		case Cmd_ReadMagRegister:
+			ReadMagRegister();
+			return;
+		case Cmd_WriteMagRegister:
+			WriteMagRegister();
 			return;
 		default:
 			WriteInvalidCommandMessage();
@@ -514,6 +523,49 @@ void ReadStartAddr(void)
 
 	//Write the TxBuff over USB
 	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
+}
+
+
+void ReadMagRegister(void)
+{
+	uint8_t regToRead = usbRxBuff[1];
+	uint8_t regContents = Mag_QueryRegister1Byte(regToRead);
+
+	int startIndex = 0;
+
+	//Write data to Tx buff
+	startIndex = Add8bitIntToTxBuff((uint8_t) Cmd_ReadMagRegister, startIndex);
+	startIndex = Add8bitIntToTxBuff(regContents, startIndex);
+
+	//Write debug message to Tx Buff
+	char message[] = "Magnetometer Register Contents";
+	startIndex = WriteDebugMessage((char*)&message, startIndex, 30);
+
+	//Write the TxBuff over USB
+	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
+
+}
+
+void WriteMagRegister(void)
+{
+	//Todo: Do we need to save a second buffer for Rx so that we are not reading inputs for a following command. Probably
+	uint8_t regToWrite = usbRxBuff[1];
+	uint8_t byteToWrite = usbRxBuff[2];
+
+	Mag_WriteRegister1Byte(regToWrite, byteToWrite);
+
+	int startIndex = 0;
+
+	//Write data to Tx buff
+	startIndex = Add8bitIntToTxBuff((uint8_t) Cmd_WriteMagRegister, startIndex);
+
+	//Write debug message to Tx Buff
+	char message[] = "Magnetometer Register Written";
+	startIndex = WriteDebugMessage((char*)&message, startIndex, 29);
+
+	//Write the TxBuff over USB
+	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
+
 }
 
 void ReadImuRegister(void)

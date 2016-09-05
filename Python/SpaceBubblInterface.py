@@ -21,6 +21,8 @@ class Enum_Commands:
     Cmd_StopRecording = 14
     Cmd_StartImuStream = 15
     Cmd_StopImuStream = 16
+    Cmd_ReadMagRegister = 17
+    Cmd_WriteMagRegister = 18
     Cmd_ERROR = 255
 
 class SpaceBubbl:
@@ -157,9 +159,18 @@ class SpaceBubbl:
         for n in range(startIndex, len(read_bytes)):
             message += chr(read_bytes[n])
 
-        print("X Magnetic Field: ", hex(x_mag))
-        print("Y Magnetic Field: ", hex(y_mag))
-        print("Z Magnetic Field: ", hex(z_mag))
+        mag_scale_g = 4.0;
+
+        x_mag_g = mag_scale_g * self._Convert2sComplement(x_mag, 16) / 32768.0
+        y_mag_g = mag_scale_g * self._Convert2sComplement(y_mag, 16) / 32768.0
+        z_mag_g = mag_scale_g * self._Convert2sComplement(z_mag, 16) / 32768.0
+
+        total_mag_g = math.sqrt(math.pow(x_mag_g, 2) + math.pow(y_mag_g, 2) + math.pow(z_mag_g, 2))
+
+        print("X Magnetic Field: ", x_mag_g, " gauss")
+        print("Y Magnetic Field: ", y_mag_g, " gauss")
+        print("Z Magnetic Field: ", z_mag_g, " gauss")
+        print("Total Magnetic Field: ", total_mag_g, " gauss")
 
         print(message)
 
@@ -270,6 +281,46 @@ class SpaceBubbl:
         if (commandEcho == 255):
             self.ParseError(read_bytes, startIndex)
         assert commandEcho == Enum_Commands.Cmd_ReadLastData, "Bubbl responded with an invalid response"
+
+        message = "Message: "
+        for n in range(startIndex, len(read_bytes)):
+            message += chr(read_bytes[n])
+
+        print(message)
+
+    def ReadMagRegister(self, regToRead):
+        self.driver.WriteData([Enum_Commands.Cmd_ReadMagRegister, regToRead])
+        data_size_bytes = 1
+        read_bytes = self.driver.ReadData(data_size_bytes)
+
+        startIndex = 0
+
+        # Error Handling
+        [commandEcho, startIndex] = self._Read8bit(read_bytes, startIndex)
+        if (commandEcho == 255):
+            self.ParseError(read_bytes, startIndex)
+        assert commandEcho == Enum_Commands.Cmd_ReadMagRegister, "Bubbl responded with an invalid response"
+
+        [registerContents, startIndex] = self._Read8bit(read_bytes, startIndex);
+        message = "Message: "
+        for n in range(startIndex, len(read_bytes)):
+            message += chr(read_bytes[n])
+
+        print("Register " + hex(regToRead) + " :    " + hex(registerContents))
+        print(message)
+
+    def WriteMagRegister(self, regToWrite, dataToWrite):
+        self.driver.WriteData([Enum_Commands.Cmd_WriteMagRegister, regToWrite, dataToWrite])
+        data_size_bytes = 0
+        read_bytes = self.driver.ReadData(data_size_bytes)
+
+        startIndex = 0
+
+        # Error Handling
+        [commandEcho, startIndex] = self._Read8bit(read_bytes, startIndex)
+        if (commandEcho == 255):
+            self.ParseError(read_bytes, startIndex)
+        assert commandEcho == Enum_Commands.Cmd_WriteMagRegister, "Bubbl responded with an invalid response"
 
         message = "Message: "
         for n in range(startIndex, len(read_bytes)):
