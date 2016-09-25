@@ -9,7 +9,6 @@
     <property object="I2C0" propertyId="ABPeripheral.included" value="true"/>
     <property object="I2C0" propertyId="i2c.settings.i2cmaxbusfrequency" value="400 kHz (fast mode)"/>
     <property object="I2C0" propertyId="i2c.settings.lowhighratio" value="6:3 clock ratio"/>
-    <property object="LFXO" propertyId="ABPeripheral.included" value="true"/>
     <property object="LFXO" propertyId="lfxo.circuitcharacteristics.calculatedclpf" value="12.50"/>
     <property object="LFXO" propertyId="lfxo.recommendedoscillatorboostsettings.lfxoboostpercent" value="100%"/>
     <property object="LFXO" propertyId="lfxo.result.rnegesrmaxratio" value="15.574"/>

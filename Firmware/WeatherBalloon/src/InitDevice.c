@@ -31,7 +31,6 @@
 extern void enter_DefaultMode_from_RESET(void) {
 	// $[Config Calls]
 	HFXO_enter_DefaultMode_from_RESET();
-	LFXO_enter_DefaultMode_from_RESET();
 	CMU_enter_DefaultMode_from_RESET();
 	RTC_enter_DefaultMode_from_RESET();
 	USART0_enter_DefaultMode_from_RESET();
@@ -64,12 +63,9 @@ extern void HFXO_enter_DefaultMode_from_RESET(void) {
 extern void LFXO_enter_DefaultMode_from_RESET(void) {
 
 	// $[Use oscillator source]
-	CMU->CTRL = (CMU->CTRL & ~_CMU_CTRL_LFXOMODE_MASK) | CMU_CTRL_LFXOMODE_XTAL;
 	// [Use oscillator source]$
 
 	// $[LFXO Boost Percent]
-	CMU->CTRL = (CMU->CTRL & ~_CMU_CTRL_LFXOBOOST_MASK)
-			| CMU_CTRL_LFXOBOOST_100PCENT;
 	// [LFXO Boost Percent]$
 
 	// $[REDLFXO Boost]
@@ -83,16 +79,17 @@ extern void LFXO_enter_DefaultMode_from_RESET(void) {
 extern void CMU_enter_DefaultMode_from_RESET(void) {
 
 	// $[LFXO enable]
-	CMU_OscillatorEnable(cmuOsc_LFXO, true, true);
 	// [LFXO enable]$
 
 	// $[HFXO enable]
-	CMU_OscillatorEnable(cmuOsc_HFXO, true, true);
 	// [HFXO enable]$
 
 	// $[LFACLK Setup]
-	/* Select LFXO as clock source for LFACLK */
-	CMU_ClockSelectSet(cmuClock_LFA, cmuSelect_LFXO);
+	/* Enable LFRCO oscillator */
+	CMU_OscillatorEnable(cmuOsc_LFRCO, true, true);
+
+	/* Select LFRCO as clock source for LFACLK */
+	CMU_ClockSelectSet(cmuClock_LFA, cmuSelect_LFRCO);
 
 	// [LFACLK Setup]$
 
@@ -108,7 +105,7 @@ extern void CMU_enter_DefaultMode_from_RESET(void) {
 	// $[LF clock tree setup]
 	/* Enable LF clocks */
 	CMU_ClockEnable(cmuClock_CORELE, true);
-	CMU_ClockSelectSet(cmuClock_LFA, cmuSelect_LFXO);
+	CMU_ClockSelectSet(cmuClock_LFA, cmuSelect_LFRCO);
 	// [LF clock tree setup]$
 	// $[Peripheral Clock enables]
 	/* Enable clock for I2C0 */
