@@ -33,7 +33,7 @@ void WriteFifoOverUsb();
 #define ADDR_BUBBL		0xD4
 #define ADDR_BREAKOUT	0xD6
 
-#define ADDR_IMU	ADDR_BREAKOUT	//7 bit address stored in 7MSB
+#define ADDR_IMU	ADDR_BUBBL	//7 bit address stored in 7MSB
 
 
 

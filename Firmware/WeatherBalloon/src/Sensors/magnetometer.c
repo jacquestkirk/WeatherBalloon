@@ -22,7 +22,7 @@ STATIC_UBUF(mag_data_buff,  FLASH_PAGE_SIZE_BYTES);   /* Allocate USB receive bu
 #define ADDR_BUBBL		0x38
 #define ADDR_BREAKOUT	0x3C
 
-#define ADDR_MAG	ADDR_BREAKOUT	//7 bit address stored in 7MSB
+#define ADDR_MAG	ADDR_BUBBL	//7 bit address stored in 7MSB
 
 
 void TriggerNewMagReading();
