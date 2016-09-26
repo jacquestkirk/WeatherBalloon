@@ -248,11 +248,11 @@ int USBD_Init( const USBD_Init_TypeDef *p )
 #else
   CMU_ClockEnable(cmuClock_CORELE, true);
   /* LFC clock is needed to detect USB suspend when LEMIDLE is activated. */
-#if ( USB_USBC_32kHz_CLK == USB_USBC_32kHz_CLK_LFXO )
-  CMU_ClockSelectSet(cmuClock_LFC, cmuSelect_LFXO);
-#else
+//#if ( USB_USBC_32kHz_CLK == USB_USBC_32kHz_CLK_LFXO )
+//  CMU_ClockSelectSet(cmuClock_LFC, cmuSelect_LFXO);
+//#else
   CMU_ClockSelectSet(cmuClock_LFC, cmuSelect_LFRCO);
-#endif
+//#endif
   CMU_ClockEnable(cmuClock_USBLE, true);
 #endif
 

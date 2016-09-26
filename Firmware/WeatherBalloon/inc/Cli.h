@@ -7,7 +7,12 @@
 
 #ifndef CLI_H_
 #define CLI_H_
+#ifndef USB_USBC_32kHz_CLK
+	/* Default clock source is LFRCO. */
+	#define USB_USBC_32kHz_CLK USB_USBC_32kHz_CLK_LFRCO
+#endif
 #include "Sensors\imu.h"
+
 
 
 void Cli_Initialize_Cli(void);
