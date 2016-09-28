@@ -18,4 +18,8 @@ typedef struct Press_Data{
 Press_Data Press_Read(void);//Read and return
 void Press_Read_Tsk(void);//Read and store in local ram
 
+uint32_t Press_QueryRegister3Byte(uint8_t command);
+uint16_t Press_QueryRegister2Byte(uint8_t command);
+void Press_WriteCommandByte(uint8_t command);
+
 #endif /* PRESSURE_H_ */

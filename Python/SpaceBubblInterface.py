@@ -2,6 +2,7 @@ from SpaceBubblUsbDriver import *
 import math
 import numpy as np
 import matplotlib.pyplot as plt
+from PressureCalculator import *
 
 class Enum_Commands:
     Cmd_ReadPress = 0
@@ -23,6 +24,9 @@ class Enum_Commands:
     Cmd_StopImuStream = 16
     Cmd_ReadMagRegister = 17
     Cmd_WriteMagRegister = 18
+    Cmd_ReadPress2Byte = 19
+    Cmd_ReadPress3Byte = 20
+    Cmd_WritePressRegister = 21
     Cmd_ERROR = 255
 
 class SpaceBubbl:
@@ -281,6 +285,75 @@ class SpaceBubbl:
         if (commandEcho == 255):
             self.ParseError(read_bytes, startIndex)
         assert commandEcho == Enum_Commands.Cmd_ReadLastData, "Bubbl responded with an invalid response"
+
+        message = "Message: "
+        for n in range(startIndex, len(read_bytes)):
+            message += chr(read_bytes[n])
+
+        print(message)
+
+    def ReadPressureTemp (self):
+        press = PressureCalculator()
+        pressResult = press.ReadPressureSensor( self.ReadPress2Byte, self.ReadPress3Byte, self.WritePressRegister)
+        print("Pressure: {:.2f} mbar".format(pressResult.pressure_mbar))
+        print("Temperature: {:.2f} degC".format(pressResult.temperature_degC))
+
+    def ReadPress2Byte(self, regToRead):
+        self.driver.WriteData([Enum_Commands.Cmd_ReadPress2Byte, regToRead])
+        data_size_bytes = 2
+        read_bytes = self.driver.ReadData(data_size_bytes)
+
+        startIndex = 0
+
+        # Error Handling
+        [commandEcho, startIndex] = self._Read8bit(read_bytes, startIndex)
+        if (commandEcho == 255):
+            self.ParseError(read_bytes, startIndex)
+        assert commandEcho == Enum_Commands.Cmd_ReadPress2Byte, "Bubbl responded with an invalid response"
+
+        [registerContents, startIndex] = self._Read16bit(read_bytes, startIndex);
+        message = "Message: "
+        for n in range(startIndex, len(read_bytes)):
+            message += chr(read_bytes[n])
+
+        print("Register " + hex(regToRead) + " :    " + hex(registerContents))
+        print(message)
+        return registerContents
+
+    def ReadPress3Byte(self, regToRead):
+        self.driver.WriteData([Enum_Commands.Cmd_ReadPress3Byte, regToRead])
+        data_size_bytes = 4
+        read_bytes = self.driver.ReadData(data_size_bytes)
+
+        startIndex = 0
+
+        # Error Handling
+        [commandEcho, startIndex] = self._Read8bit(read_bytes, startIndex)
+        if (commandEcho == 255):
+            self.ParseError(read_bytes, startIndex)
+        assert commandEcho == Enum_Commands.Cmd_ReadPress3Byte, "Bubbl responded with an invalid response"
+
+        [registerContents, startIndex] = self._Read32bit(read_bytes, startIndex);
+        message = "Message: "
+        for n in range(startIndex, len(read_bytes)):
+            message += chr(read_bytes[n])
+
+        print("Register " + hex(regToRead) + " :    " + hex(registerContents))
+        print(message)
+        return registerContents
+
+    def WritePressRegister(self, regToWrite):
+        self.driver.WriteData([Enum_Commands.Cmd_WritePressRegister, regToWrite])
+        data_size_bytes = 0
+        read_bytes = self.driver.ReadData(data_size_bytes)
+
+        startIndex = 0
+
+        # Error Handling
+        [commandEcho, startIndex] = self._Read8bit(read_bytes, startIndex)
+        if (commandEcho == 255):
+            self.ParseError(read_bytes, startIndex)
+        assert commandEcho == Enum_Commands.Cmd_WritePressRegister, "Bubbl responded with an invalid response"
 
         message = "Message: "
         for n in range(startIndex, len(read_bytes)):

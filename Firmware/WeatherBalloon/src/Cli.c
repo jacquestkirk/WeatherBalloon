@@ -43,6 +43,9 @@ enum Commands{
 	Cmd_StopImuStream,
 	Cmd_ReadMagRegister,
 	Cmd_WriteMagRegister,
+	Cmd_ReadPress2Byte,
+	Cmd_ReadPress3Byte,
+	Cmd_WritePressRegister,
 
 };
 
@@ -102,6 +105,9 @@ void StopImuStream(void);
 void StartImuStream(void);
 void ReadMagRegister(void);
 void WriteMagRegister(void);
+void ReadPress2Byte(void);
+void ReadPress3Byte(void);
+void WritePressRegister(void);
 
 SL_PACK_START(1)
 typedef struct
@@ -287,6 +293,15 @@ void RunStateMachine(char* usbRxBuff)
 			return;
 		case Cmd_WriteMagRegister:
 			WriteMagRegister();
+			return;
+		case Cmd_ReadPress2Byte:
+			ReadPress2Byte();
+			return;
+		case Cmd_ReadPress3Byte:
+			ReadPress3Byte();
+			return;
+		case Cmd_WritePressRegister:
+			WritePressRegister();
 			return;
 		default:
 			WriteInvalidCommandMessage();
@@ -525,6 +540,66 @@ void ReadStartAddr(void)
 	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
 }
 
+void ReadPress2Byte(void)
+{
+	uint8_t regToRead = usbRxBuff[1];
+	uint16_t regContents = Press_QueryRegister2Byte(regToRead);
+
+	int startIndex = 0;
+
+	//Write data to Tx buff
+	startIndex = Add8bitIntToTxBuff((uint8_t) Cmd_ReadPress2Byte, startIndex);
+	startIndex = Add16bitIntToTxBuff(regContents, startIndex);
+
+	//Write debug message to Tx Buff
+	char message[] = "Barometer Register Contents";
+	startIndex = WriteDebugMessage((char*)&message, startIndex, 30);
+
+	//Write the TxBuff over USB
+	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
+
+}
+
+void ReadPress3Byte(void)
+{
+	uint8_t regToRead = usbRxBuff[1];
+	uint32_t regContents = Press_QueryRegister3Byte(regToRead);
+
+	int startIndex = 0;
+
+	//Write data to Tx buff
+	startIndex = Add8bitIntToTxBuff((uint8_t) Cmd_ReadPress3Byte, startIndex);
+	startIndex = Add32bitIntToTxBuff(regContents, startIndex);
+
+	//Write debug message to Tx Buff
+	char message[] = "Barometer Register Contents";
+	startIndex = WriteDebugMessage((char*)&message, startIndex, 30);
+
+	//Write the TxBuff over USB
+	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
+
+}
+
+void WritePressRegister(void)
+{
+	//Todo: Do we need to save a second buffer for Rx so that we are not reading inputs for a following command. Probably
+	uint8_t command = usbRxBuff[1];
+
+	Press_WriteCommandByte(command);
+
+	int startIndex = 0;
+
+	//Write data to Tx buff
+	startIndex = Add8bitIntToTxBuff((uint8_t) Cmd_WritePressRegister, startIndex);
+
+	//Write debug message to Tx Buff
+	char message[] = "Barometer Register Written";
+	startIndex = WriteDebugMessage((char*)&message, startIndex, 29);
+
+	//Write the TxBuff over USB
+	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
+
+}
 
 void ReadMagRegister(void)
 {

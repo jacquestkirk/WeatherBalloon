@@ -49,7 +49,7 @@ int main(void)
 	  //Temporary while loop
 	  //Imu_TestFunction();
 	  //Imu_Read();
-	  Imu_WriteStreamFifo();
+	  //Imu_WriteStreamFifo();
   }
 
 }
