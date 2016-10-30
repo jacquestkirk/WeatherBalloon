@@ -68,8 +68,8 @@ void Imu_Initialize_OneShot()
 	//No need to initialize I2C, this should be done in InitDevice module
 
 	//Throw away first query, some startup glitches
-	uint8_t id = QueryRegister1Byte(reg_who_am_i);
-	id = QueryRegister1Byte(reg_who_am_i);
+	uint8_t id = Imu_QueryRegister1Byte(reg_who_am_i);
+	id = Imu_QueryRegister1Byte(reg_who_am_i);
 	EFM_ASSERT(id == WHO_AM_I_RESPONSE); //todo: How should I handle this? Should I just continue since there is nothing we can do anyway? Does this line actually do anyting?
 
 	//Write the CTRL REGISTERS
@@ -78,46 +78,46 @@ void Imu_Initialize_OneShot()
 	uint8_t fs_g = CTRL_REG_1_G_FS_500DPS;
 	uint8_t bw_g = 0;//N/A for 14.9Hz data rate
 	uint8_t ctrl_reg_1_g = odr_g << CTRL_REG_1_G_ODR_G_SHIFT | fs_g << CTRL_REG_1_G_FS_SHIFT | bw_g << CTRL_REG_1_G_BW_G1_SHIFT;
-	WriteRegister1Byte(reg_ctrl_reg1_g, ctrl_reg_1_g);
+	Imu_WriteRegister1Byte(reg_ctrl_reg1_g, ctrl_reg_1_g);
 
 	uint8_t int_sel = CTRL_REG_2_G_INT_SEL_LPF1;
 	uint8_t out_sel = CTRL_REG_2_G_OUT_SEL_LPF1;
 	uint8_t ctrl_reg_2_g = int_sel << CTRL_REG_2_G_INT_SEL_SHIFT | out_sel << CTRL_REG_2_G_OUT_SEL_SHIFT;
-	WriteRegister1Byte(reg_ctrl_reg2_g, ctrl_reg_2_g);
+	Imu_WriteRegister1Byte(reg_ctrl_reg2_g, ctrl_reg_2_g);
 
 	uint8_t lp_mode = 1;
 	uint8_t high_pass_en = 0;
 	uint8_t high_pass_cutoff = 0;
 	uint8_t ctrl_reg_3_g = lp_mode << CTRL_REG_3_G_LPMODE_SHIFT | high_pass_en << CTRL_REG_3_G_HP_EN_SHIFT | high_pass_cutoff << CTRL_REG_3_G_HPCF_SHIFT;
-	WriteRegister1Byte(reg_ctrl_reg3_g, ctrl_reg_3_g);
+	Imu_WriteRegister1Byte(reg_ctrl_reg3_g, ctrl_reg_3_g);
 
 	uint8_t zen_g = 1;
 	uint8_t yen_g = 1;
 	uint8_t xen_g = 1;
 	uint8_t lir_xl = 1;
 	uint8_t ctrl_reg_4 = zen_g << CTRL_REG_4_ZEN_G_SHIFT | yen_g << CTRL_REG_4_YEN_G_SHIFT | xen_g << CTRL_REG_4_XEN_G_SHIFT | lir_xl << CTRL_REG_4_LIR_XL1_SHIFT;
-	WriteRegister1Byte(reg_ctrl_reg4, ctrl_reg_4);
+	Imu_WriteRegister1Byte(reg_ctrl_reg4, ctrl_reg_4);
 
 	uint8_t dec = CTRL_REG_5_XL_DEC_NONE;
 	uint8_t zen_xl = 1;
 	uint8_t yen_xl = 1;
 	uint8_t xen_xl = 1;
 	uint8_t ctrl_reg_5 = zen_xl << CTRL_REG_5_XL_ZEN_XL_SHIFT | yen_xl << CTRL_REG_5_XL_YEN_XL_SHIFT | xen_xl << CTRL_REG_5_XL_XEN_XL_SHIFT | dec << CTRL_REG_5_XL_DEC_SHIFT;
-	WriteRegister1Byte(reg_ctrl_reg5_xl, ctrl_reg_5);
+	Imu_WriteRegister1Byte(reg_ctrl_reg5_xl, ctrl_reg_5);
 
 	uint8_t odr_xl = CTRL_REG_6_XL_ODR_XL_10HZ; //Not sure if this does anything if you're not using accel only mode, but I think you need to have it not in power down mode
 	uint8_t fs_xl = CTRL_REG_6_XL_FS_XL_8g;
 	uint8_t bw_scale_with_odr = 0;
 	uint8_t bw_xl = CTRL_REG_6_XL_BW_XL_50Hz; //Todo: Can't get anti aliasing filter closer? Is output data rate sampling rate?
 	uint8_t ctrl_reg_6_xl = odr_xl << CTRL_REG_6_XL_ODR_XL_SHIFT | fs_xl << CTRL_REG_6_XL_FS_XL_SHIFT | bw_scale_with_odr << CTRL_REG_6_XL_BW_SCAL_ODR_SHIFT | bw_xl << CTRL_REG_6_XL_BW_XL_SHIFT;
-	WriteRegister1Byte(reg_ctrl_reg6_xl, ctrl_reg_6_xl);
+	Imu_WriteRegister1Byte(reg_ctrl_reg6_xl, ctrl_reg_6_xl);
 
 	uint8_t high_res_mode = 1;
 	uint8_t dig_filt = 0; //Does not do anything with filter disabled?
 	uint8_t filt_dat_en = 0; //don't use filter
 	uint8_t high_pass_xl_en = 0;
 	uint8_t ctrl_reg7_xl = high_res_mode << CTRL_REG_7_XL_HR_EN_SHIFT| dig_filt << CTRL_REG_7_XL_DCF_SHIFT | filt_dat_en << CTRL_REG_7_XL_FDS_EN_SHIFT | high_pass_xl_en << CTRL_REG_7_XL_HPIS_EN_SHIFT;
-	WriteRegister1Byte(reg_ctrl_reg7_xl, ctrl_reg7_xl);
+	Imu_WriteRegister1Byte(reg_ctrl_reg7_xl, ctrl_reg7_xl);
 
 	//todo: add fifo configs
 	//uint8_t
