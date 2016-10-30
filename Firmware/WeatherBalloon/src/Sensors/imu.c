@@ -17,10 +17,12 @@
 #include "Cli.h"
 
 
-STATIC_UBUF(imu_data_buff,  FLASH_PAGE_SIZE_BYTES);   /* Allocate USB receive buffer.   */
+STATIC_UBUF(imu_data_buff1,  FLASH_PAGE_SIZE_BYTES);   /* Allocate USB receive buffer.   */
+STATIC_UBUF(imu_data_buff2,  FLASH_PAGE_SIZE_BYTES);   /* Allocate USB receive buffer.   */
 Imu_Data fifo_data[IMU_FIFO_SIZE];
 uint8_t _fifoReadyToWrite = 0;
-
+uint8_t _imuActiveBuffer = 1;
+uint8_t _imuReadyToWriteFlash = 0;
 
 Imu_Data QueryAllImuValues(void);
 void ConfigInterrupt(void);
@@ -237,7 +239,7 @@ void ConfigInterrupt(void)
 
 uint8_t Imu_TestFunction()
 {
-	return QueryRegister1Byte(reg_who_am_i);
+	return Imu_QueryRegister1Byte(reg_who_am_i);
 }
 
 Imu_Data QueryAllImuValues()
@@ -376,4 +378,24 @@ void WriteFifoOverUsb(void)
 		}
 	}
 
+}
+
+uint8_t Imu_QueryReadyToWriteFlashFlag(void)
+{
+	return _imuReadyToWriteFlash;
+}
+void Imu_ClearReadyToWriteFlashFlag(void)
+{
+	_imuReadyToWriteFlash = 0;
+}
+uint8_t* Imu_GetBufferAddress(void)
+{
+	if(_imuActiveBuffer == 1)
+	{
+		return imu_data_buff1;
+	}
+	else
+	{
+		return imu_data_buff2;
+	}
 }

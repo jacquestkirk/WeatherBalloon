@@ -14,8 +14,10 @@
 #include "em_assert.h"
 
 
-STATIC_UBUF(mag_data_buff,  FLASH_PAGE_SIZE_BYTES);   /* Allocate USB receive buffer.   */
-
+STATIC_UBUF(mag_data_buff1,  FLASH_PAGE_SIZE_BYTES);   /* Allocate USB receive buffer.   */
+STATIC_UBUF(mag_data_buff2,  FLASH_PAGE_SIZE_BYTES);   /* Allocate USB receive buffer.   */
+uint8_t _magActiveBuffer = 1;
+uint8_t _magReadyToWriteFlash = 0;
 
 #define WHO_AM_I_RESPONSE 0b00111101
 
@@ -177,5 +179,24 @@ void Mag_WriteRegister1Byte(uint8_t reg, uint8_t data)
 	if (ret != i2cTransferDone)
 	{
 	  data = 0xff;
+	}
+}
+uint8_t Mag_QueryReadyToWriteFlashFlag(void)
+{
+	return _magReadyToWriteFlash;
+}
+void Mag_ClearReadyToWriteFlashFlag(void)
+{
+	_magReadyToWriteFlash = 0;
+}
+uint8_t* Mag_GetBufferAddress(void)
+{
+	if(_magActiveBuffer == 1)
+	{
+		return mag_data_buff1;
+	}
+	else
+	{
+		return mag_data_buff2;
 	}
 }
