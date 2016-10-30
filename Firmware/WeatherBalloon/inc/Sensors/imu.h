@@ -36,6 +36,10 @@ void Imu_StartFifo(void);
 void Imu_StopFifo(void);
 void Imu_WriteStreamFifo(void);
 
+uint8_t Imu_QueryReadyToWriteFlashFlag(void);
+void Imu_ClearReadyToWriteFlashFlag(void);
+uint8_t* Imu_GetBufferAddress(void);
+
 //IMU Settings
 
 #endif /* IMU_H_ */

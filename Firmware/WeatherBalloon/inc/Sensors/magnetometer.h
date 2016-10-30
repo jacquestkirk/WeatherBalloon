@@ -25,4 +25,8 @@ uint8_t Mag_QueryRegister1Byte(uint8_t reg);
 Mag_Data QueryAllMagValues();
 void Mag_Initialize_OneShot();
 
+uint8_t Mag_QueryReadyToWriteFlashFlag(void);
+void Mag_ClearReadyToWriteFlashFlag(void);
+uint8_t* Mag_GetBufferAddress(void);
+
 #endif /* MAGNETOMETER_H_ */
