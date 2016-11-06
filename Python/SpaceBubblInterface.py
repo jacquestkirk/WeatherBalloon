@@ -218,7 +218,7 @@ class SpaceBubbl:
 
     def ReadTimeStamp(self):
         self.driver.WriteData([Enum_Commands.Cmd_ReadTimestamp])
-        data_size_bytes = 0
+        data_size_bytes = 4
         read_bytes = self.driver.ReadData(data_size_bytes)
 
         startIndex = 0
@@ -228,6 +228,10 @@ class SpaceBubbl:
         if (commandEcho == 255):
             self.ParseError(read_bytes, startIndex)
         assert commandEcho == Enum_Commands.Cmd_ReadTimestamp, "Bubbl responded with an invalid response"
+
+        [timestamp, startIndex] = self._Read32bit(read_bytes, startIndex)
+
+        print("Timestamp: " + str(timestamp))
 
         message = "Message: "
         for n in range(startIndex, len(read_bytes)):

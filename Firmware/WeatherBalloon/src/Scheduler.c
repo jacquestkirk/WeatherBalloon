@@ -7,12 +7,12 @@
  */
 
 #include "em_emu.h"
-#include "em_cmu.h"
-#include "em_rtc.h"
+//#include "em_cmu.h"
+//#include "em_rtc.h"
 #include <stdint.h>
 #include <stdbool.h>
 #include "InitDevice.h"
-#include "rtcdriver.h"
+//#include "rtcdriver.h"
 #include "Scheduler.h"
 #include "Sensors/imu.h"
 #include "Sensors/led.h"
@@ -26,7 +26,7 @@
 void RunTasks(void);
 void DecrementTaskTimer(void);
 void SetSleepClockState(int);
-void RtcCallback( RTCDRV_TimerID_t, void*);
+
 
 // Task Functions
 // (should these live in the the other modules? I'll just leave these here and call into other modules in case these are needed. can refactor later)
@@ -88,7 +88,7 @@ enum Tasks
 
 int TaskTimer[TotalNumOfTasks]; //count down to 0 when it's time to run a task. Index of the timer corresponds to Tasks enum.
 char _continue_running_scheduler = 0;
-RTCDRV_TimerID_t id;
+
 int junk = 0; //For some reason some driver functions need a value that I don't care about. This does that.
 
 //public functions
@@ -350,10 +350,3 @@ void test_function(void)
 
 
 
-void RtcCallback( RTCDRV_TimerID_t ignore_me, void* ignore_me_too)
-{
-  // Timer has elapsed !
-
-  // Restart timer
-  RTCDRV_StartTimer( id, rtcdrvTimerTypeOneshot, SCH_SCHEDULERPERIOD_MS, RtcCallback, (void*)junk);
-}

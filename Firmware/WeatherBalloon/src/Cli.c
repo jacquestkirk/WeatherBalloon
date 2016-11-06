@@ -19,6 +19,7 @@
 #include "Sensors\magnetometer.h"
 #include "Sensors\pressure.h"
 #include "Sensors\temperature.h"
+#include "timestamp.h"
 
 #define USB_TIMEOUT 100
 
@@ -458,11 +459,12 @@ void WriteTimestamp(void)
 {
 	int startIndex = 0;
 
-	//Execute the command
-	//Todo: Place command here
+	//Get timestamp
+	uint32_t timestamp = Time_Get_TimeStamp();
 
 	//Write data to Tx buff
 	startIndex = Add8bitIntToTxBuff((uint8_t) Cmd_ReadTimestamp, startIndex);
+	startIndex = Add32bitIntToTxBuff(timestamp, startIndex);
 
 	//Write debug message to Tx Buff
 	char message[] = "This command doesn't do anything yet";

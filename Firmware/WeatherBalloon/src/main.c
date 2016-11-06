@@ -22,9 +22,11 @@
 #include "Scheduler.h"
 #include "Cli.h"
 #include "InitDevice.h"
+#include "timestamp.h"
 
 //Eventually remove these
 #include "Sensors/imu.h"
+#include "Sensors/magnetometer.h"
 /**************************************************************************//**
  * @brief  Main function
  *****************************************************************************/
@@ -36,12 +38,16 @@ int main(void)
   enter_DefaultMode_from_RESET();
 
 
-  /* Infinite loop */
-  //Sch_Run_Scheduler();
-
   Imu_Initialize();
+  //Imu_Initialize_OneShot();
   Mag_Initialize_OneShot();
   Cli_Initialize_Cli();
+  Time_Initilize_TimeStamp();
+  Sch_Initilize_Scheduler();
+  /* Infinite loop */
+  Sch_Run_Scheduler();
+
+
 
 
   while(1)
@@ -49,7 +55,7 @@ int main(void)
 	  //Temporary while loop
 	  //Imu_TestFunction();
 	  //Imu_Read();
-	  //Imu_WriteStreamFifo();
+	  Imu_WriteStreamFifo();
   }
 
 }
