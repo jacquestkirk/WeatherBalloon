@@ -97,11 +97,11 @@ void Sch_Initilize_Scheduler(void)
 	_continue_running_scheduler = 1;
 
 	/* Setup RTC with selected clock source and prescaler. */
-	RTCDRV_Init();
-	RTCDRV_AllocateTimer( &id );
+	//RTCDRV_Init();
+	//RTCDRV_AllocateTimer( &id );
 	// Start a oneshot timer with 100 millisecond timeout
 	// Todo: I should move this somewhere else
-	RTCDRV_StartTimer( id, rtcdrvTimerTypeOneshot, SCH_SCHEDULERPERIOD_MS, RtcCallback,(void*)junk);
+	//RTCDRV_StartTimer( id, rtcdrvTimerTypeOneshot, SCH_SCHEDULERPERIOD_MS, RtcCallback,(void*)junk);
 
 
 	//tbd
@@ -173,7 +173,7 @@ void RunTasks(void)
 	//ReadImu
 	if (TaskTimer[ReadImu] == 0)
 	{
-		TskReadAccel();
+		TskReadImu();
 		TaskTimer[ReadImu] = READ_IMU_RESET;
 	}
 

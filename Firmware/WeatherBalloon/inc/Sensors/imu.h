@@ -12,7 +12,7 @@
 #include "Sensors/lsm9ds_defs.h"
 
 #define IMU_DATA_SIZE_BYTES 12
-#define IMU_FIFO_SIZE 32
+#define IMU_FIFO_SIZE 21
 
 
 typedef struct Imu_Data {

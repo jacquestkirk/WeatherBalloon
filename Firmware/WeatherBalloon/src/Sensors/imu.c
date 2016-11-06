@@ -17,18 +17,26 @@
 #include "Cli.h"
 
 
-STATIC_UBUF(imu_data_buff1,  FLASH_PAGE_SIZE_BYTES);   /* Allocate USB receive buffer.   */
-STATIC_UBUF(imu_data_buff2,  FLASH_PAGE_SIZE_BYTES);   /* Allocate USB receive buffer.   */
+// Setup two switching buffers to temporarily store imu data in ram
+STATIC_UBUF(imu_data_buff1,  FLASH_PAGE_SIZE_BYTES-1);   /* Allocate USB receive buffer.   */
+STATIC_UBUF(imu_data_buff2,  FLASH_PAGE_SIZE_BYTES-1);   /* Allocate USB receive buffer.   */
+uint8_t *imu_data_buffs [2] = {imu_data_buff1, imu_data_buff2};
+uint8_t *imu_curent_data_buffer = imu_data_buff1;
+uint8_t *imu_data_buffer_to_write = imu_data_buff1;
+
 Imu_Data fifo_data[IMU_FIFO_SIZE];
 uint8_t _fifoReadyToWrite = 0;
-uint8_t _imuActiveBuffer = 1;
 uint8_t _imuReadyToWriteFlash = 0;
+uint8_t _imuActiveBuffer = 0;
 
 Imu_Data QueryAllImuValues(void);
 void ConfigInterrupt(void);
 void Int1_a_g_Callback(void);
+void ReadFifo(void);
 void ClearFifo(void);
 void WriteFifoOverUsb();
+void WriteFifoDataToBuffer(void);
+int Write_16bit_To_Buffer(uint8_t *buffer, int starting_location, int value_to_write);
 
 #define WHO_AM_I_RESPONSE 0x68
 
@@ -59,7 +67,10 @@ Imu_Data Imu_Read(void)
 }
 void Imu_Read_Tsk(void)
 {
-	//Read
+	//Read fifo
+	ReadFifo();
+	WriteFifoDataToBuffer();
+
 	//Write to tem_dat_buff
 	//If address gets to FLASH_PAGE_SIZE_BYTES
 	//then write temp_data_buff to flash
@@ -199,13 +210,13 @@ void Imu_Initialize()
 	Imu_WriteRegister1Byte(reg_int1_ctrl, int1_ctrl);
 
 	uint8_t fmode = FIFO_CTRL_FMODE_CONT_OVERWRITE;
-	uint8_t fth = 31;
+	uint8_t fth = IMU_FIFO_SIZE-1;
 	uint8_t fifo_ctrl = fmode << FIFO_CTRL_FMODE_SHIFT | fth << FIFO_CTRL_FTH_SHIFT;
 	Imu_WriteRegister1Byte(reg_fifo_ctrl, fifo_ctrl);
 
-	//uint8_t fifo_en = 1;
-	//uint8_t ctrl_reg_9 = fifo_en << CTRL_REG_9_FIFO_EN_SHIFT;
-	//Imu_WriteRegister1Byte(reg_ctrl_reg9, ctrl_reg_9);
+	uint8_t fifo_en = 1;
+	uint8_t ctrl_reg_9 = fifo_en << CTRL_REG_9_FIFO_EN_SHIFT;
+	Imu_WriteRegister1Byte(reg_ctrl_reg9, ctrl_reg_9);
 
 
 }
@@ -348,6 +359,53 @@ void ReadFifo(void)
 	}
 }
 
+void WriteFifoDataToBuffer(void)
+{
+	static int location_in_buffer = 0;
+
+	//check if this write will overflow the current buffer.
+	//If it does, move to the next buffer and signal that the old buffer is ready to be written to flash
+
+	for( int i= 0; i< IMU_FIFO_SIZE; i++)
+	{
+		if(location_in_buffer + IMU_DATA_SIZE_BYTES > FLASH_PAGE_SIZE_BYTES - 1)
+			{
+				imu_data_buffer_to_write = imu_curent_data_buffer;
+				_imuReadyToWriteFlash = 1;
+
+				if(_imuActiveBuffer)
+				{
+					imu_curent_data_buffer = imu_data_buffs[0];
+					_imuActiveBuffer = 0;
+				}
+				else
+				{
+					imu_curent_data_buffer = imu_data_buffs[1];;
+					_imuActiveBuffer = 1;
+				}
+				location_in_buffer = 0;
+
+			}
+		location_in_buffer = Write_16bit_To_Buffer(imu_curent_data_buffer, location_in_buffer, fifo_data[i].x_accel);
+		location_in_buffer = Write_16bit_To_Buffer(imu_curent_data_buffer, location_in_buffer, fifo_data[i].y_accel);
+		location_in_buffer = Write_16bit_To_Buffer(imu_curent_data_buffer, location_in_buffer, fifo_data[i].z_accel);
+		location_in_buffer = Write_16bit_To_Buffer(imu_curent_data_buffer, location_in_buffer, fifo_data[i].x_gyro);
+		location_in_buffer = Write_16bit_To_Buffer(imu_curent_data_buffer, location_in_buffer, fifo_data[i].y_gyro);
+		location_in_buffer = Write_16bit_To_Buffer(imu_curent_data_buffer, location_in_buffer, fifo_data[i].z_gyro);
+	}
+}
+
+int Write_16bit_To_Buffer(uint8_t *buffer, int starting_location, int value_to_write)
+{
+	int location = starting_location;
+
+	buffer [location] = (uint8_t) (value_to_write>>8);
+	buffer [location+1] = (uint8_t) (value_to_write);
+
+	location += 2;
+	return location;
+}
+
 void Int1_a_g_Callback(void)
 {
 	_fifoReadyToWrite = 1;
@@ -390,12 +448,5 @@ void Imu_ClearReadyToWriteFlashFlag(void)
 }
 uint8_t* Imu_GetBufferAddress(void)
 {
-	if(_imuActiveBuffer == 1)
-	{
-		return imu_data_buff1;
-	}
-	else
-	{
-		return imu_data_buff2;
-	}
+	return imu_data_buffer_to_write;
 }
