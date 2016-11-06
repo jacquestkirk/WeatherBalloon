@@ -14,7 +14,7 @@ void SPIBubbl_Initalize(void);
 // I2C_TransferReturn_TypeDef I2CBubbl_Transfer(I2C_TypeDef *i2c, I2C_TransferSeq_TypeDef *seq);
 
 void SPIBubbl_Transmit(uint8_t buffer, int size);
-
+void SPIBubbl_Receive_Page(uint8_t page_data, int page);
 
 
 #endif /* SPIBUBBL_H_ */

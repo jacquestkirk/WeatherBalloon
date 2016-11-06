@@ -20,14 +20,19 @@ void SPIBubbl_Initalize(void)
 	SPIDRV_Init( handle, &initData );
 }
 
-void SPIBubbl_Transmit(uint8_t buffer, int size)
+void SPIBubbl_Transmit(void *buffer, int size)
 {
 	// Transmit data using a blocking transmit function
 	SPIDRV_MTransmitB(handle, buffer, size);
 
 }
 
+SPIBubbl_Receive_Page(void *page_data, int page)
+{
+	// Receive data using a blocking transmit function
+	SPIDRV_MReceiveB(handle, page_data, 256);
 
+}
 
 /*******************************************************
  * API EXAMPLE CODE
