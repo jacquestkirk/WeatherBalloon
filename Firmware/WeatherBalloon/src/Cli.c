@@ -7,11 +7,13 @@
 
 
 #include <stdio.h>
+#include <string.h>
 #include "em_usb.h"
 #include "em_cmu.h"
 #include "em_usb.h"
 //#include "cdc.h"
 #include "descriptors.h"
+
 
 #include "Cli.h"
 #include "Sensors\imu.h"
@@ -85,7 +87,7 @@ int Add8bitIntToTxBuff(int8_t data, int offset);
 int Add16bitIntToTxBuff(int16_t data, int offset);
 int Add32bitIntToTxBuff(int32_t data, int offset);
 
-int WriteDebugMessage(char* message, int offset, int length);
+int WriteDebugMessage(char* message, int offset);
 void WriteInvalidCommandMessage(void);
 void WriteTempData(void);
 void WritePressData(void);
@@ -327,7 +329,7 @@ void WritePressData(void)
 
 	//Write debug message to Tx Buff
 	char message[] = "ThisIsDebugData";
-	startIndex = WriteDebugMessage((char*)&message, startIndex, 16);
+	startIndex = WriteDebugMessage((char*)&message, startIndex);
 
 	//Write the TxBuff over USB
 	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
@@ -349,7 +351,7 @@ void WriteTempData(void)
 
 	//Write debug message to Tx Buff
 	char message[] = "ThisIsDebugData";
-	startIndex = WriteDebugMessage((char*)&message, startIndex, 16);
+	startIndex = WriteDebugMessage((char*)&message, startIndex);
 
 	//Write the TxBuff over USB
 	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
@@ -374,7 +376,7 @@ void WriteImuData(void)
 
 	//Write debug message to Tx Buff
 	char message[] = "ThisIsDebugData";
-	startIndex = WriteDebugMessage((char*)&message, startIndex, 16);
+	startIndex = WriteDebugMessage((char*)&message, startIndex);
 
 	//Write the TxBuff over USB
 	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
@@ -412,7 +414,7 @@ void WriteMagData(void)
 
 	//Write debug message to Tx Buff
 	char message[] = "ThisIsDebugData";
-	startIndex = WriteDebugMessage((char*)&message, startIndex, 16);
+	startIndex = WriteDebugMessage((char*)&message, startIndex);
 
 	//Write the TxBuff over USB
 	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
@@ -431,7 +433,7 @@ void BlinkLed1(void)
 
 	//Write debug message to Tx Buff
 	char message[] = "This command doesn't do anything yet";
-	startIndex = WriteDebugMessage((char*)&message, startIndex, 36);
+	startIndex = WriteDebugMessage((char*)&message, startIndex);
 
 	//Write the TxBuff over USB
 	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
@@ -449,7 +451,7 @@ void BlinkLed2(void)
 
 	//Write debug message to Tx Buff
 	char message[] = "This command doesn't do anything yet";
-	startIndex = WriteDebugMessage((char*)&message, startIndex, 36);
+	startIndex = WriteDebugMessage((char*)&message, startIndex);
 
 	//Write the TxBuff over USB
 	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
@@ -467,8 +469,8 @@ void WriteTimestamp(void)
 	startIndex = Add32bitIntToTxBuff(timestamp, startIndex);
 
 	//Write debug message to Tx Buff
-	char message[] = "This command doesn't do anything yet";
-	startIndex = WriteDebugMessage((char*)&message, startIndex, 36);
+	char message[] = "See above line for time since reset";
+	startIndex = WriteDebugMessage((char*)&message, startIndex);
 
 	//Write the TxBuff over USB
 	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
@@ -485,7 +487,7 @@ void EraseFlash(void)
 
 	//Write debug message to Tx Buff
 	char message[] = "This command doesn't do anything yet";
-	startIndex = WriteDebugMessage((char*)&message, startIndex, 36);
+	startIndex = WriteDebugMessage((char*)&message, startIndex);
 
 	//Write the TxBuff over USB
 	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
@@ -502,7 +504,7 @@ void ReadFlashLoc(void)
 
 	//Write debug message to Tx Buff
 	char message[] = "This command doesn't do anything yet";
-	startIndex = WriteDebugMessage((char*)&message, startIndex, 36);
+	startIndex = WriteDebugMessage((char*)&message, startIndex);
 
 	//Write the TxBuff over USB
 	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
@@ -519,7 +521,7 @@ void ReadLastData(void)
 
 	//Write debug message to Tx Buff
 	char message[] = "This command doesn't do anything yet";
-	startIndex = WriteDebugMessage((char*)&message, startIndex, 36);
+	startIndex = WriteDebugMessage((char*)&message, startIndex);
 
 	//Write the TxBuff over USB
 	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
@@ -536,7 +538,7 @@ void ReadStartAddr(void)
 
 	//Write debug message to Tx Buff
 	char message[] = "This command doesn't do anything yet";
-	startIndex = WriteDebugMessage((char*)&message, startIndex, 36);
+	startIndex = WriteDebugMessage((char*)&message, startIndex);
 
 	//Write the TxBuff over USB
 	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
@@ -555,7 +557,7 @@ void ReadPress2Byte(void)
 
 	//Write debug message to Tx Buff
 	char message[] = "Barometer Register Contents";
-	startIndex = WriteDebugMessage((char*)&message, startIndex, 30);
+	startIndex = WriteDebugMessage((char*)&message, startIndex);
 
 	//Write the TxBuff over USB
 	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
@@ -575,7 +577,7 @@ void ReadPress3Byte(void)
 
 	//Write debug message to Tx Buff
 	char message[] = "Barometer Register Contents";
-	startIndex = WriteDebugMessage((char*)&message, startIndex, 30);
+	startIndex = WriteDebugMessage((char*)&message, startIndex);
 
 	//Write the TxBuff over USB
 	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
@@ -596,7 +598,7 @@ void WritePressRegister(void)
 
 	//Write debug message to Tx Buff
 	char message[] = "Barometer Register Written";
-	startIndex = WriteDebugMessage((char*)&message, startIndex, 29);
+	startIndex = WriteDebugMessage((char*)&message, startIndex);
 
 	//Write the TxBuff over USB
 	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
@@ -616,7 +618,7 @@ void ReadMagRegister(void)
 
 	//Write debug message to Tx Buff
 	char message[] = "Magnetometer Register Contents";
-	startIndex = WriteDebugMessage((char*)&message, startIndex, 30);
+	startIndex = WriteDebugMessage((char*)&message, startIndex);
 
 	//Write the TxBuff over USB
 	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
@@ -638,7 +640,7 @@ void WriteMagRegister(void)
 
 	//Write debug message to Tx Buff
 	char message[] = "Magnetometer Register Written";
-	startIndex = WriteDebugMessage((char*)&message, startIndex, 29);
+	startIndex = WriteDebugMessage((char*)&message, startIndex);
 
 	//Write the TxBuff over USB
 	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
@@ -658,7 +660,7 @@ void ReadImuRegister(void)
 
 	//Write debug message to Tx Buff
 	char message[] = "IMU Register Contents";
-	startIndex = WriteDebugMessage((char*)&message, startIndex, 21);
+	startIndex = WriteDebugMessage((char*)&message, startIndex);
 
 	//Write the TxBuff over USB
 	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
@@ -680,7 +682,7 @@ void WriteImuRegister(void)
 
 	//Write debug message to Tx Buff
 	char message[] = "IMU Register Written";
-	startIndex = WriteDebugMessage((char*)&message, startIndex, 20);
+	startIndex = WriteDebugMessage((char*)&message, startIndex);
 
 	//Write the TxBuff over USB
 	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
@@ -698,7 +700,7 @@ void StartImuStream(void)
 
 	//Write debug message to Tx Buff
 	char message[] = "IMU Stream Started";
-	startIndex = WriteDebugMessage((char*)&message, startIndex, 18);
+	startIndex = WriteDebugMessage((char*)&message, startIndex);
 
 	//Write the TxBuff over USB
 	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
@@ -715,7 +717,7 @@ void StopImuStream(void)
 
 	//Write debug message to Tx Buff
 	char message[] = "IMU Stream Started";
-	startIndex = WriteDebugMessage((char*)&message, startIndex, 18);
+	startIndex = WriteDebugMessage((char*)&message, startIndex);
 
 	//Write the TxBuff over USB
 	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
@@ -727,7 +729,7 @@ void WriteInvalidCommandMessage(void)
 	char message[] = "Invalid Command Sent";
 	int startIndex = 0;
 	startIndex = Add8bitIntToTxBuff(ERROR_MESSAGE_ENUM, startIndex);
-	startIndex = WriteDebugMessage((char*)&message, startIndex, 20);
+	startIndex = WriteDebugMessage((char*)&message, startIndex);
 
 	//Write the TxBuff over USB
 	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
@@ -761,8 +763,10 @@ int Add32bitIntToTxBuff(int32_t data, int offset)
 	return offset;
 }
 
-int WriteDebugMessage(char* message, int offset, int length)
+int WriteDebugMessage(char* message, int offset)
 {
+	int length = strlen(message);
+
 	for( int i = 0; i<length; i++)
 	{
 		usbTxBuff[offset + i ] = message[i];
