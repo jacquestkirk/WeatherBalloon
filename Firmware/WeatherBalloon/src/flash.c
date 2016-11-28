@@ -26,24 +26,24 @@ uint8_t page_read[256];
 uint8_t SPIWrite[260];
 uint8_t FlashRead[256];
 
-Flash_Write_Imu(int offset)
+void Flash_Write_Imu(int offset)
 {
 	// Ping Query... If ready... then
-		// getbufferaddress...
+		// getbufferaddress... ask IMU block which of the two buffers to get data from
 		// Write the data by invoking FlashWritePage()
-	// ... Then when all good, clearreadytowrite
+	// ... Then when all good, clearreadytowrite in IMU module
 
 /*
- * uint8_t Imu_QueryReadyToWriteFlashFlag(void)
+ * uint8_t Imu_QueryReadyToWriteFlashFlag(void) // stored in IMU module
 {
 	return _imuReadyToWriteFlash;
 }
-uint8_t* Imu_GetBufferAddress(void)
+uint8_t* Imu_GetBufferAddress(void) // stored in IMU module
 {
 	return imu_data_buffer_to_write;
 }
 
-void Imu_ClearReadyToWriteFlashFlag(void)
+void Imu_ClearReadyToWriteFlashFlag(void) // stored in IMU module
 {
 	_imuReadyToWriteFlash = 0;
 }
@@ -55,23 +55,23 @@ void Imu_ClearReadyToWriteFlashFlag(void)
 
 }
 
-Flash_Write_Mag(int offset)
+void Flash_Write_Mag(int offset)
 {
 
 }
 
-Flash_Write_Pressure(int offset)
+void Flash_Write_Pressure(int offset)
 {
 
 }
 
-Flash_Write_Temp(int offset)
+void Flash_Write_Temp(int offset)
 {
 
 }
 
-
-Flash_Write_Page(int pagenum)
+// Used for both CLI debug and normal operation.
+void Flash_Write_Page(int pagenum)
 {
 		// Flash command: Byte0 = Write Instruction = 0x02.
 		SPIWrite[0] = 0x02;
@@ -88,13 +88,15 @@ Flash_Write_Page(int pagenum)
 		//		SPIBubbl_Transmit(SPIWrite, 260);
 }
 
+// Only used for CLI mode of operation
 void * Flash_Read_Page(int pagenum)
 {
 	// Do the reading at pagenum and store into FlashRead[]
-	return *FlashRead;
+	return FlashRead;
 }
 
+// Only used for CLI mode of operation
 void * Flash_GetWriteBufferAddress()
 {
-	return *SPIWrite[5];
+	return &SPIWrite[5];
 }

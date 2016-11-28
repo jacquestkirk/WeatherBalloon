@@ -27,7 +27,7 @@ void SPIBubbl_Transmit(void *buffer, int size)
 
 }
 
-SPIBubbl_Receive_Page(void *page_data, int page)
+void SPIBubbl_Receive_Page(void *page_data, int page)
 {
 	// Receive data using a blocking transmit function
 	SPIDRV_MReceiveB(handle, page_data, 256);

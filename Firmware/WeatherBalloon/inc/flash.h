@@ -23,13 +23,15 @@
 #define FLASH_PAGE0_TEMP_MCU 32517
 
 // Current Offsets
-
+// DEFINE here
 
 void Flash_Write_Imu(int offset);
 void Flash_Write_Mag(int offset);
 void Flash_Write_Pressure(int offset);
 void Flash_Write_Temp(int offset);
 void Flash_Write_Page0Test();
-void Flash_Read_Page(uint8_t[] buffer, int offset);
+void Flash_Write_Page(int pagenum);
+void * Flash_Read_Page(int pagenum);
+void * Flash_GetWriteBufferAddress();
 
 #endif /* FLASH_H_ */
