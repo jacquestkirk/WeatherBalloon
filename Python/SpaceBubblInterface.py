@@ -27,6 +27,8 @@ class Enum_Commands:
     Cmd_ReadPress2Byte = 19
     Cmd_ReadPress3Byte = 20
     Cmd_WritePressRegister = 21
+    Cmd_ReadFlashPage = 22
+    Cmd_WriteFlashPage = 23
     Cmd_ERROR = 255
 
 class SpaceBubbl:
@@ -445,6 +447,43 @@ class SpaceBubbl:
             message += chr(read_bytes[n])
 
         print(message)
+
+    def ReadFlashPage(self, pageNumber):
+
+        assert(pageNumber< 2**15)
+
+        pageNumber_high = (pageNumber >> 8) & 0xFF
+        pageNumber_low = pageNumber & 0xFF
+
+        self.driver.WriteData([Enum_Commands.Cmd_ReadFlashPage, pageNumber_high, pageNumber_low])
+        data_size_bytes = 257
+        read_bytes = self.driver.ReadData(data_size_bytes)
+
+        startIndex = 0
+
+        # Error Handling
+        [commandEcho, startIndex] = self._Read8bit(read_bytes, startIndex)
+        if (commandEcho == 255):
+            self.ParseError(read_bytes, startIndex)
+        assert commandEcho == Enum_Commands.Cmd_ReadFlashPage, "Bubbl responded with an invalid response"
+
+        page_contents = []
+
+        for i in range(0,256):
+            [value, startIndex] = self._Read8bit(read_bytes, startIndex)
+            page_contents.append(value)
+            #print(value)
+
+        message = "Message: "
+        for n in range(startIndex, len(read_bytes)):
+            message += chr(read_bytes[n])
+
+        print(message)
+
+        return page_contents
+
+    def WriteFlashPage(self):
+        print("Not implemented")
 
     def StartImuStream(self):
         self.driver.WriteData([Enum_Commands.Cmd_StartImuStream])

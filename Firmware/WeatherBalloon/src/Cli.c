@@ -22,8 +22,10 @@
 #include "Sensors\pressure.h"
 #include "Sensors\temperature.h"
 #include "timestamp.h"
+#include "flash.h"
 
 #define USB_TIMEOUT 100
+#define USB_TX_BUFFER_SIZE 300
 
 //CLI commands
 enum Commands{
@@ -49,6 +51,8 @@ enum Commands{
 	Cmd_ReadPress2Byte,
 	Cmd_ReadPress3Byte,
 	Cmd_WritePressRegister,
+	Cmd_ReadFlashPage,
+	Cmd_WriteFlashPage,
 
 };
 
@@ -80,6 +84,9 @@ enum States{
 static void StateChangeCallback( USBD_State_TypeDef oldState, USBD_State_TypeDef newState );
 static int  UsbDataReceived(USB_Status_TypeDef status, uint32_t xferred,
                             uint32_t remaining);
+static int UsbDataTransmitted(USB_Status_TypeDef status,
+                           uint32_t xferred,
+                           uint32_t remaining);
 void RunStateMachine(char* usbRxBuff);
 int ParseCommand(char* usbRxBuff);
 
@@ -111,6 +118,8 @@ void WriteMagRegister(void);
 void ReadPress2Byte(void);
 void ReadPress3Byte(void);
 void WritePressRegister(void);
+void ReadFlashPage(void);
+void WriteFlashPage(void);
 
 SL_PACK_START(1)
 typedef struct
@@ -126,7 +135,7 @@ SL_PACK_END()
 
 SL_ALIGN(4)
 STATIC_UBUF(usbRxBuff,  USB_FS_BULK_EP_MAXSIZE);   /* Allocate USB receive buffer.   */
-STATIC_UBUF(usbTxBuff,  USB_FS_BULK_EP_MAXSIZE);   /* Allocate USB transmit buffer.   */
+STATIC_UBUF(usbTxBuff,  USB_TX_BUFFER_SIZE);   /* Allocate USB transmit buffer.   */
 
 static const USBD_Callbacks_TypeDef callbacks =
 {
@@ -191,6 +200,16 @@ static void StateChangeCallback( USBD_State_TypeDef oldState, USBD_State_TypeDef
 }
 
 
+static int UsbDataTransmitted(USB_Status_TypeDef status,
+                           uint32_t xferred,
+                           uint32_t remaining)
+{
+  (void) remaining;            /* Unused parameter. */
+  (void) xferred;
+  (void) status;
+  return USB_STATUS_OK;
+}
+
 static int UsbDataReceived(USB_Status_TypeDef status,
                            uint32_t xferred,
                            uint32_t remaining)
@@ -217,7 +236,7 @@ static int UsbDataReceived(USB_Status_TypeDef status,
 void Cli_WriteUSB(void* message, int dataLen)
 {
 
-	USBD_Write(CDC_EP_DATA_IN, message, dataLen, NULL);
+	USBD_Write(CDC_EP_DATA_IN, message, dataLen, UsbDataTransmitted);
 }
 
 
@@ -305,6 +324,12 @@ void RunStateMachine(char* usbRxBuff)
 			return;
 		case Cmd_WritePressRegister:
 			WritePressRegister();
+			return;
+		case Cmd_ReadFlashPage:
+			ReadFlashPage();
+			return;
+		case Cmd_WriteFlashPage:
+			WriteFlashPage();
 			return;
 		default:
 			WriteInvalidCommandMessage();
@@ -687,6 +712,50 @@ void WriteImuRegister(void)
 	//Write the TxBuff over USB
 	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
 
+}
+
+void ReadFlashPage(void)
+{
+	uint8_t *flashBuffer;
+
+	//Todo: Do we need to save a second buffer for Rx so that we are not reading inputs for a following command. Probably
+	uint8_t pageNum_high = usbRxBuff[1];
+	uint8_t pageNum_low = usbRxBuff[2];
+
+	int pageNum = ((int)pageNum_high << 8) + pageNum_low;
+
+	flashBuffer = (uint8_t *)Flash_Read_Page(pageNum);
+
+	int startIndex = 0;
+
+	//Echo command
+	startIndex = Add8bitIntToTxBuff((uint8_t) Cmd_ReadFlashPage, startIndex);
+
+	//Write data to tx buffer
+	for( int i = 0; i < FLASH_PAGE_SIZE_BYTES; i++) //The size of the data should be the flash size
+	{
+		//if ( startIndex >= USB_FS_BULK_EP_MAXSIZE+38 ) //check if we are overflowing, then we need to move to a new buffer
+		//{
+		//	//Todo: make this use a new buffer instead of breaking
+		//	break;
+		//}
+
+		startIndex = Add8bitIntToTxBuff(flashBuffer[i] , startIndex);
+	}
+
+	//Todo: add back message once we get multiple tx buffers working
+	//Write debug message to Tx Buff
+	//char message[] = "IMU Register Written";
+	//startIndex = WriteDebugMessage((char*)&message, startIndex);
+
+	//Write the TxBuff over USB
+	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
+}
+
+void WriteFlashPage(void)
+{
+	//Todo: fill this out
+	return;
 }
 
 void StartImuStream(void)
