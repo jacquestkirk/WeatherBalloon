@@ -22,6 +22,13 @@
 #define FLASH_PAGE0_TEMP4 32493
 #define FLASH_PAGE0_TEMP_MCU 32517
 
+typedef enum {
+    FLASH_ENUM_ALLZEROS,
+    FLASH_ENUM_ALLONES,
+    FLASH_ENUM_PRIMES,
+    FLASH_ENUM_RANDOM
+} Flash_Enum_Test_Data_type;
+
 void Flash_Initilize();
 void Flash_Run();
 void Flash_Write_Time(int offset);
@@ -31,8 +38,9 @@ void Flash_Write_Pressure(int offset);
 void Flash_Write_Temp(int offset);
 void Flash_Write_Page0Test();
 void Flash_Write_Page(int pagenum);
+void Flash_Write_Page(int pagenum, Flash_Enum_Test_Data_type write_dataset);
 uint8_t Flash_Read_FirstByte(int pagenum);
 uint8_t * Flash_Read_Page(int pagenum);
-unit8_t * Flash_GetWriteBufferAddress();
+uint8_t * Flash_GetWriteBufferAddress();
 
 #endif /* FLASH_H_ */

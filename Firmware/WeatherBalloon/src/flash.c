@@ -30,6 +30,8 @@ int Flash_Offset_Temp_MCU = 0;
 uint8_t page_read[256];
 uint8_t SPIWrite[260];
 uint8_t FlashRead[256];
+// Add a few dummy arrays that can be written to flash via CLI command
+
 
 void Flash_Initilize()
 {
@@ -87,7 +89,6 @@ void Flash_Run()
 	//    also keep track of last module flash invoked so appropriate flag can be cleared
 	//	If not middle of write, then go through the list of Flash_Write_Imu, Flash_Write_Mag, etc
 }
-
 
 void Flash_Write_Time(int offset)
 {
@@ -212,6 +213,27 @@ void Flash_Write_Page(int pagenum)
 	// Invoke SPI write with *SPIWrite
 	//		SPIBubbl_Transmit(SPIWrite, 260);
 }
+// Have an overloaded version of Flash_Write_Page() with an enum for debug-writing one
+// of the dummy arrays... overloaded version will set up the SPIWrite array and
+// then call the original Flash_Write_Page() function.
+// Passing
+void Flash_Write_Page(int pagenum, Flash_Enum_Test_Data_type write_dataset)
+{
+	if (write_dataset == FLASH_ENUM_ALLZEROS)
+	{
+		for(int k = 5; k < (FLASH_PAGE_SIZE_BYTES+4); k++)
+		SPIWrite[k] = 0;
+	}
+	if (write_dataset == FLASH_ENUM_ALLONES)
+		{
+			for(int k = 5; k < (FLASH_PAGE_SIZE_BYTES+4); k++)
+			SPIWrite[k] = 1;
+		}
+
+    //FLASH_ENUM_PRIMES
+    //FLASH_ENUM_RANDOM
+}
+
 
 // Returns byte .. Used in normal mode of operation
 uint8_t Flash_Read_FirstByte(int pagenum)
@@ -227,13 +249,4 @@ uint8_t * Flash_Read_Page(int pagenum)
 	// Do the reading at pagenum and store into FlashRead[]
 	return FlashRead;
 }
-
-// Only used for CLI mode of operation
-uint8_t * Flash_GetWriteBufferAddress()
-{
-	return &SPIWrite[5];
-}
-
-/// NEED ANOTHER CLI task for erasing
-// Should it be bulk erase of full 64kB or sector-based (512 Kbits)?
 
