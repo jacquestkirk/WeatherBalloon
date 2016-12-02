@@ -748,13 +748,40 @@ void ReadFlashPage(void)
 	//char message[] = "IMU Register Written";
 	//startIndex = WriteDebugMessage((char*)&message, startIndex);
 
+	//Write debug message to Tx Buff
+	char message[] = "Data Read from Flash";
+	startIndex = WriteDebugMessage((char*)&message, startIndex);
+
 	//Write the TxBuff over USB
 	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
 }
 
 void WriteFlashPage(void)
 {
-	//Todo: fill this out
+	uint8_t *flashBuffer;
+
+	//Todo: Do we need to save a second buffer for Rx so that we are not reading inputs for a following command. Probably
+	uint8_t pageNum_high = usbRxBuff[1];
+	uint8_t pageNum_low = usbRxBuff[2];
+	uint8_t packet_Type_Enum = (Flash_Enum_Test_Data_type) usbRxBuff[3];
+
+
+	int pageNum = ((int)pageNum_high << 8) + pageNum_low;
+
+	Flash_Write_Page_Test_Data(pageNum, packet_Type_Enum);
+
+
+	//Echo command
+	int startIndex = 0;
+
+	startIndex = Add8bitIntToTxBuff((uint8_t) Cmd_WriteFlashPage, startIndex);
+
+	//Write debug message to Tx Buff
+	char message[] = "IMU Register Written";
+	startIndex = WriteDebugMessage((char*)&message, startIndex);
+
+	//Write the TxBuff over USB
+	Cli_WriteUSB((void*)usbTxBuff, startIndex);
 	return;
 }
 

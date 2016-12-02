@@ -3,33 +3,8 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 from PressureCalculator import *
+from CosmicBubblDefines import *
 
-class Enum_Commands:
-    Cmd_ReadPress = 0
-    Cmd_ReadTemp = 1
-    Cmd_ReadImu = 2
-    Cmd_ReadMag = 3
-    Cmd_BlinkLed1 = 4
-    Cmd_BlinkLed2 = 5
-    Cmd_ReadTimestamp = 6
-    Cmd_EraseFlash = 7
-    Cmd_ReadFlashLoc = 8
-    Cmd_ReadLastData = 9
-    Cmd_ReadStartAddr = 10
-    Cmd_ReadImuRegister = 11
-    Cmd_WriteImuRegister = 12
-    Cmd_StartRecording = 13
-    Cmd_StopRecording = 14
-    Cmd_StartImuStream = 15
-    Cmd_StopImuStream = 16
-    Cmd_ReadMagRegister = 17
-    Cmd_WriteMagRegister = 18
-    Cmd_ReadPress2Byte = 19
-    Cmd_ReadPress3Byte = 20
-    Cmd_WritePressRegister = 21
-    Cmd_ReadFlashPage = 22
-    Cmd_WriteFlashPage = 23
-    Cmd_ERROR = 255
 
 class SpaceBubbl:
 
@@ -482,8 +457,33 @@ class SpaceBubbl:
 
         return page_contents
 
-    def WriteFlashPage(self):
-        print("Not implemented")
+    def WriteFlashPage(self, pageNumber, flashTestDataEnum):
+        assert (pageNumber < 2 ** 15)
+
+        pageNumber_high = (pageNumber >> 8) & 0xFF
+        pageNumber_low = pageNumber & 0xFF
+
+        data_to_write= [Enum_Commands.Cmd_WriteFlashPage, pageNumber_high, pageNumber_low, flashTestDataEnum] #first elements of the data to write
+
+        self.driver.WriteData(data_to_write)
+        data_size_bytes = 1
+        read_bytes = self.driver.ReadData(data_size_bytes)
+
+        startIndex = 0
+
+        # Error Handling
+        [commandEcho, startIndex] = self._Read8bit(read_bytes, startIndex)
+        if (commandEcho == 255):
+            self.ParseError(read_bytes, startIndex)
+        assert commandEcho == Enum_Commands.Cmd_WriteFlashPage, "Bubbl responded with an invalid response"
+
+        message = "Message: "
+        for n in range(startIndex, len(read_bytes)):
+            message += chr(read_bytes[n])
+
+        print(message)
+
+        return
 
     def StartImuStream(self):
         self.driver.WriteData([Enum_Commands.Cmd_StartImuStream])
