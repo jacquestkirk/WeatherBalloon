@@ -8,6 +8,8 @@
 #ifndef FLASH_H_
 #define FLASH_H_
 
+#include <stdint.h>
+
 #define FLASH_PAGE_SIZE_BYTES 256
 
 // Flash data page0 per dataset
@@ -38,7 +40,7 @@ void Flash_Write_Pressure(int offset);
 void Flash_Write_Temp(int offset);
 void Flash_Write_Page0Test();
 void Flash_Write_Page(int pagenum);
-void Flash_Write_Page(int pagenum, Flash_Enum_Test_Data_type write_dataset);
+void Flash_Write_Page_Test_Data(int pagenum, Flash_Enum_Test_Data_type write_dataset);
 uint8_t Flash_Read_FirstByte(int pagenum);
 uint8_t * Flash_Read_Page(int pagenum);
 uint8_t * Flash_GetWriteBufferAddress();

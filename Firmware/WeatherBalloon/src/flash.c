@@ -217,7 +217,7 @@ void Flash_Write_Page(int pagenum)
 // of the dummy arrays... overloaded version will set up the SPIWrite array and
 // then call the original Flash_Write_Page() function.
 // Passing
-void Flash_Write_Page(int pagenum, Flash_Enum_Test_Data_type write_dataset)
+void Flash_Write_Page_Test_Data(int pagenum, Flash_Enum_Test_Data_type write_dataset)
 {
 	if (write_dataset == FLASH_ENUM_ALLZEROS)
 	{
