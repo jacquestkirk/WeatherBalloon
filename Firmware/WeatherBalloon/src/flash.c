@@ -30,7 +30,7 @@ typedef enum {
 	Flash_Currently_Writing_Nothing
 } Flash_Enum_Current_Write_Block;
 
-Flash_Enum_Current_Write_Block Current_Write_Block;
+Flash_Enum_Current_Write_Block Flash_Current_Write_Block;
 
 // Current offsets in Flash
 int Flash_Offset_Timestamp = 0;
@@ -61,7 +61,7 @@ uint8_t *Flash_data_to_write;
 void Flash_Initilize()
 {
 
-	Flash_Enum_Current_Write_Block = Flash_Currently_Writing_Nothing;
+	Flash_Current_Write_Block = Flash_Currently_Writing_Nothing;
 
 	Flash_Offset_Timestamp = FLASH_PAGE0_TIMESTAMP;
 	Flash_Offset_Imu = FLASH_PAGE0_IMU;
@@ -127,11 +127,10 @@ void Flash_Initilize()
 void Flash_Run_Periodic()
 {
 
-	if (Current_Write_Block != Flash_Currently_Writing_Nothing) // as in it's writing something
+	if (Flash_Current_Write_Block != Flash_Currently_Writing_Nothing) // as in it's writing something
 	{
 		/*Check if the flash writing is done.  If so, then
-		 *       1. Set Current_Write_Block = Flash_Currently_Writing_Nothing
-		 *       		// ... Then when all good:
+		 *       1. Set Flash_Current_Write_Block = Flash_Currently_Writing_Nothing
 			// increase current offset and check for overflow
 			// then clearreadytowrite in IMU module
 		 *
@@ -142,17 +141,31 @@ void Flash_Run_Periodic()
 
 	if (Imu_QueryReadyToWriteFlashFlag())
 	{
-		if (FLASH_PAGE0_TIMESTAMP + Flash_Offset_Timestamp < FLASH_PAGE0_IMU)
+		if (FLASH_PAGE0_IMU + Flash_Offset_Imu < FLASH_PAGE0_MAGNETOMETER)
 		{
 			// Record Error code ().. then...
 			Imu_ClearReadyToWriteFlashFlag();
 		}
 		else
-			Current_Write_Block = Flash_Currently_Writing_Imu;
+			Flash_Current_Write_Block = Flash_Currently_Writing_Imu;
 			Flash_Write_Imu();
 			Flash_Offset_Imu++;
 		// Break out of Flash_Run() function... is "return;" a valid statement for this??
 	}
+
+	if (Mag_QueryReadyToWriteFlashFlag())
+		{
+			if (FLASH_PAGE0_MAGNETOMETER + Flash_Offset_Magnetometer < FLASH_PAGE0_PRESSURE)
+			{
+				// Record Error code ().. then...
+				Mag_ClearReadyToWriteFlashFlag();
+			}
+			else
+				Flash_Current_Write_Block = Flash_Currently_Writing_Magnetometer;
+				Flash_Write_Mag();
+				Flash_Offset_Magnetometer++;
+			// Break out of Flash_Run() function... is "return;" a valid statement for this??
+		}
 
 }
 
@@ -162,7 +175,7 @@ void Flash_Run_Periodic()
  * Description: Populates SPIWrite buffer with current data buffer.
  */
 
-void Flash_Write_Time(int offset)
+void Flash_Write_Time()
 {
 	// Ping Query... If ready... then
 	//if (Time_QueryReadyToWriteFlashFlag())
@@ -181,63 +194,35 @@ void Flash_Write_Time(int offset)
 
 void Flash_Write_Imu()
 {
-		// Get sensor data buffer address; transfer its content to flash write buffer; write data.
-		Flash_data_to_write = Imu_GetBufferAddress();
-		Flash_Populate_Write_Buffer();
-		Flash_Write_Page(FLASH_PAGE0_IMU + Flash_Offset_Imu);
-		//  SHOULD THIS BE IN FLASH_RUN() ??? Imu_ClearReadyToWriteFlashFlag();
+	Flash_data_to_write = Imu_GetBufferAddress();
+	Flash_Populate_Write_Buffer();
+	Flash_Write_Page(FLASH_PAGE0_IMU + Flash_Offset_Imu);
+	//  SHOULD THIS BE IN FLASH_RUN() ??? Imu_ClearReadyToWriteFlashFlag();
 }
 
-void Flash_Write_Mag(int offset)
+void Flash_Write_Mag()
 {
-	// Ping Query... If ready... then
-	//if (Mag_QueryReadyToWriteFlashFlag())
-	{
-		// getbufferaddress... ask IMU block which of the two buffers to get data from
-		// Write the data by invoking FlashWritePage()
-		// ... Then when all good, clearreadytowrite in IMU module
-
-		//Mag_GetBufferAddress(void)
-
-	}
-
-	//Mag_ClearReadyToWriteFlashFlag(void) // This should prob be in the Flash management function
-
+	Flash_data_to_write = Mag_GetBufferAddress();
+	Flash_Populate_Write_Buffer();
+	Flash_Write_Page(FLASH_PAGE0_MAGNETOMETER + Flash_Offset_Magnetometer);
+	//  SHOULD THIS BE IN FLASH_RUN() ??? Mag_ClearReadyToWriteFlashFlag();
 }
 
-void Flash_Write_Pressure(int offset)
+void Flash_Write_Pressure()
 {
-
-	// Ping Query... If ready... then
-	//if (Press_QueryReadyToWriteFlashFlag())
-	{
-		// getbufferaddress... ask IMU block which of the two buffers to get data from
-		// Write the data by invoking FlashWritePage()
-		// ... Then when all good, clearreadytowrite in IMU module
-
-		//Press_GetBufferAddress(void)
-
-	}
-
-	//Press_ClearReadyToWriteFlashFlag(void) // This should prob be in the Flash management function
-
+	//Flash_data_to_write = Press_GetBufferAddress();
+	//Flash_Populate_Write_Buffer();
+	//Flash_Write_Page(FLASH_PAGE0_PRESSURE + Flash_Offset_Pressure);
+	//  SHOULD THIS BE IN FLASH_RUN() ??? Press_ClearReadyToWriteFlashFlag();
 }
 
-void Flash_Write_Temp(int offset)
+void Flash_Write_Temp()
 {
-	// Ping Query... If ready... then
-	//if (Temp_QueryReadyToWriteFlashFlag())
-	{
-		// getbufferaddress... ask IMU block which of the two buffers to get data from
-		// Write the data by invoking FlashWritePage()
-		// ... Then when all good, clearreadytowrite in IMU module
-
-		//Temp_GetBufferAddress(void)
-
-	}
-
-	//Temp_ClearReadyToWriteFlashFlag(void) // This should prob be in the Flash management function
-
+	//Flash_data_to_write = Temp_GetBufferAddress();
+	//Flash_Populate_Write_Buffer();
+	//Flash_Write_Page(FLASH_PAGE0_TEMP_PRESSURE + Flash_Offset_Temp_Pressure);
+	//  SHOULD THIS BE IN FLASH_RUN() ??? ..._ClearReadyToWriteFlashFlag();
+	// Should also do for TEMP1,2,3,4, and MCU
 }
 
 void Flash_Populate_Write_Buffer()
@@ -274,15 +259,15 @@ void Flash_Write_Page_Test_Data(int pagenum, Flash_Enum_Test_Data_type write_dat
 	// Fill SPIWrite array with data to be written to page pagenum
 	switch (write_dataset)
 	{
-	case FLASH_ENUM_ALLZEROS:
+	case ALLZEROS:
 		for(int k = 5; k < (FLASH_PAGE_SIZE_BYTES+4); k++)
 				SPIWrite[k] = 0;
 		break;
-	case FLASH_ENUM_ALLONES:
+	case ALLONES:
 		for(int k = 5; k < (FLASH_PAGE_SIZE_BYTES+4); k++)
 						SPIWrite[k] = 1;
 		break;
-	case FLASH_ENUM_RANDOM:
+	case RANDOM:
 		for(int k = 5; k < (FLASH_PAGE_SIZE_BYTES+4); k++)
 						SPIWrite[k] = (uint8_t) (rand() % 256);
 		break;
