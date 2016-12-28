@@ -14,6 +14,24 @@
 #include "Sensors/pressure.h"
 #include "Sensors/temperature.h"
 
+// Current Flash write block
+typedef enum {
+	Flash_Currently_Writing_Timestamp,
+	Flash_Currently_Writing_Imu,
+	Flash_Currently_Writing_Magnetometer,
+	Flash_Currently_Writing_Pressure,
+	Flash_Currently_Writing_Temp_Pressure,
+	Flash_Currently_Writing_Temp1,
+	Flash_Currently_Writing_Temp2,
+	Flash_Currently_Writing_Temp3,
+	Flash_Currently_Writing_Temp4,
+	Flash_Currently_Writing_Temp_MCU,
+	Flash_Currently_Writing_Test_Data,
+	Flash_Currently_Writing_Nothing
+} Flash_Enum_Current_Write_Block;
+
+Flash_Enum_Current_Write_Block Current_Write_Block;
+
 // Current offsets in Flash
 int Flash_Offset_Timestamp = 0;
 int Flash_Offset_Imu = 0;
@@ -30,65 +48,119 @@ int Flash_Offset_Temp_MCU = 0;
 uint8_t page_read[256];
 uint8_t SPIWrite[260];
 uint8_t FlashRead[256];
+uint8_t *Flash_data_to_write;
 // Add a few dummy arrays that can be written to flash via CLI command
 
 
+/* void Flash_Initialize()
+ * Parameters: None
+ * Return: void
+ * Description: Flash initialize.  At every power-up, read first byte of every page.
+ * Populate current_offsets accordingly.
+ */
 void Flash_Initilize()
 {
-	/*
-	 * Flash initialize... every power-up, read first byte of every page.
-	 * Populate current_offsets accordingly.
-	 */
+
+	Flash_Enum_Current_Write_Block = Flash_Currently_Writing_Nothing;
+
+	Flash_Offset_Timestamp = FLASH_PAGE0_TIMESTAMP;
+	Flash_Offset_Imu = FLASH_PAGE0_IMU;
+	Flash_Offset_Magnetometer = FLASH_PAGE0_MAGNETOMETER;
+	Flash_Offset_Pressure = FLASH_PAGE0_PRESSURE;
+	Flash_Offset_Temp_Pressure = FLASH_PAGE0_TEMP_PRESSURE;
+	Flash_Offset_Temp1 = FLASH_PAGE0_TEMP1;
+	Flash_Offset_Temp2 = FLASH_PAGE0_TEMP2;
+	Flash_Offset_Temp3 = FLASH_PAGE0_TEMP3;
+	Flash_Offset_Temp4 = FLASH_PAGE0_TEMP4;
+	Flash_Offset_Temp_MCU = FLASH_PAGE0_TEMP_MCU;
 
 	for (int k = FLASH_PAGE0_TIMESTAMP; k < FLASH_PAGE0_IMU; k++)
 	{
-		if (Flash_Read_FirstByte(k) == 0) {Flash_Offset_Timestamp = k - FLASH_PAGE0_TIMESTAMP;}
+		if (Flash_Read_FirstByte(k) == 0) {Flash_Offset_Timestamp = k - FLASH_PAGE0_TIMESTAMP + 1;}
 	}
 	for (int k = FLASH_PAGE0_IMU; k < FLASH_PAGE0_MAGNETOMETER; k++)
 	{
-		if (Flash_Read_FirstByte(k) == 0) {Flash_Offset_Imu = k - FLASH_PAGE0_IMU;}
+		if (Flash_Read_FirstByte(k) == 0) {Flash_Offset_Imu = k - FLASH_PAGE0_IMU + 1;}
 	}
 	for (int k = FLASH_PAGE0_MAGNETOMETER; k < FLASH_PAGE0_PRESSURE; k++)
 	{
-		if (Flash_Read_FirstByte(k) == 0) {Flash_Offset_Timestamp = k - FLASH_PAGE0_TIMESTAMP;}
+		if (Flash_Read_FirstByte(k) == 0) {Flash_Offset_Magnetometer = k - FLASH_PAGE0_MAGNETOMETER + 1;}
 	}
 	for (int k = FLASH_PAGE0_PRESSURE; k < FLASH_PAGE0_TEMP_PRESSURE; k++)
 	{
-		if (Flash_Read_FirstByte(k) == 0) {Flash_Offset_Pressure = k - FLASH_PAGE0_PRESSURE;}
+		if (Flash_Read_FirstByte(k) == 0) {Flash_Offset_Pressure = k - FLASH_PAGE0_PRESSURE + 1;}
 	}
 	for (int k = FLASH_PAGE0_TEMP_PRESSURE; k < FLASH_PAGE0_TEMP1; k++)
 	{
-		if (Flash_Read_FirstByte(k) == 0) {Flash_Offset_Temp_Pressure = k - FLASH_PAGE0_TEMP_PRESSURE;}
+		if (Flash_Read_FirstByte(k) == 0) {Flash_Offset_Temp_Pressure = k - FLASH_PAGE0_TEMP_PRESSURE + 1;}
 	}
 	for (int k = FLASH_PAGE0_TEMP1; k < FLASH_PAGE0_TEMP2; k++)
 	{
-		if (Flash_Read_FirstByte(k) == 0) {Flash_Offset_Temp1 = k - FLASH_PAGE0_TEMP1;}
+		if (Flash_Read_FirstByte(k) == 0) {Flash_Offset_Temp1 = k - FLASH_PAGE0_TEMP1 + 1;}
 	}
 	for (int k = FLASH_PAGE0_TEMP2; k < FLASH_PAGE0_TEMP3; k++)
 	{
-		if (Flash_Read_FirstByte(k) == 0) {Flash_Offset_Temp2 = k - FLASH_PAGE0_TEMP2;}
+		if (Flash_Read_FirstByte(k) == 0) {Flash_Offset_Temp2 = k - FLASH_PAGE0_TEMP2 + 1;}
 	}
 	for (int k = FLASH_PAGE0_TEMP3; k < FLASH_PAGE0_TEMP4; k++)
 	{
-		if (Flash_Read_FirstByte(k) == 0) {Flash_Offset_Temp3 = k - FLASH_PAGE0_TEMP3;}
+		if (Flash_Read_FirstByte(k) == 0) {Flash_Offset_Temp3 = k - FLASH_PAGE0_TEMP3 + 1;}
 	}
 	for (int k = FLASH_PAGE0_TEMP4; k < FLASH_PAGE0_TEMP_MCU; k++)
 	{
-		if (Flash_Read_FirstByte(k) == 0) {Flash_Offset_Temp4 = k - FLASH_PAGE0_TEMP4;}
+		if (Flash_Read_FirstByte(k) == 0) {Flash_Offset_Temp4 = k - FLASH_PAGE0_TEMP4 + 1;}
 	}
 	for (int k = FLASH_PAGE0_TEMP_MCU; k < 32767; k++)
 	{
-		if (Flash_Read_FirstByte(k) == 0) {Flash_Offset_Temp_MCU = k - FLASH_PAGE0_TEMP_MCU;}
+		if (Flash_Read_FirstByte(k) == 0) {Flash_Offset_Temp_MCU = k - FLASH_PAGE0_TEMP_MCU + 1;}
 	}
 }
 
-void Flash_Run()
+/* void Flash_Run_Periodic()
+ * Parameters: None
+ * Return: void
+ * Description: Flash manager.  Checks to see if flash is in the middle of write.
+ * If not in the middle of a write, then it goes through the list of Flash_Write_xxxxx()
+ * functions, where xxxxx is the appropriate sensor.
+ * Also keeps track of last module flash invoked so appropriate flag can be cleared.
+ */
+void Flash_Run_Periodic()
 {
-	// Add function here manage the whole module
-	// Check to see if flash is in the middle of write
-	//    also keep track of last module flash invoked so appropriate flag can be cleared
-	//	If not middle of write, then go through the list of Flash_Write_Imu, Flash_Write_Mag, etc
+
+	if (Current_Write_Block != Flash_Currently_Writing_Nothing) // as in it's writing something
+	{
+		/*Check if the flash writing is done.  If so, then
+		 *       1. Set Current_Write_Block = Flash_Currently_Writing_Nothing
+		 *       		// ... Then when all good:
+			// increase current offset and check for overflow
+			// then clearreadytowrite in IMU module
+		 *
+		 *    else break out of Flash_Run()... is "return;" okay for this??
+		*/
+	}
+
+
+	if (Imu_QueryReadyToWriteFlashFlag())
+	{
+		if (FLASH_PAGE0_TIMESTAMP + Flash_Offset_Timestamp < FLASH_PAGE0_IMU)
+		{
+			// Record Error code ().. then...
+			Imu_ClearReadyToWriteFlashFlag();
+		}
+		else
+			Current_Write_Block = Flash_Currently_Writing_Imu;
+			Flash_Write_Imu();
+			Flash_Offset_Imu++;
+		// Break out of Flash_Run() function... is "return;" a valid statement for this??
+	}
+
 }
+
+/* void Flash_Populate_Write_Buffer()
+ * Parameters: None
+ * Return: void
+ * Description: Populates SPIWrite buffer with current data buffer.
+ */
 
 void Flash_Write_Time(int offset)
 {
@@ -107,41 +179,13 @@ void Flash_Write_Time(int offset)
 
 }
 
-void Flash_Write_Imu(int offset)
+void Flash_Write_Imu()
 {
-	// Ping Query... If ready... then
-	if (Imu_QueryReadyToWriteFlashFlag())
-	{
-			// getbufferaddress... ask IMU block which of the two buffers to get data from
-		//Imu_GetBufferAddress(void)
-
-		// Write the data by invoking FlashWritePage( ... )
-
-		// ... Then when all good, clearreadytowrite in IMU module
-	}
-
-	//Imu_ClearReadyToWriteFlashFlag(void) // This should prob be in the Flash management function
-
-/*
- * uint8_t Imu_QueryReadyToWriteFlashFlag(void) // stored in IMU module
-{
-	return _imuReadyToWriteFlash;
-}
-uint8_t* Imu_GetBufferAddress(void) // stored in IMU module
-{
-	return imu_data_buffer_to_write;
-}
-
-void Imu_ClearReadyToWriteFlashFlag(void) // stored in IMU module
-{
-	_imuReadyToWriteFlash = 0;
-}
-
- *
- *
- */
-
-
+		// Get sensor data buffer address; transfer its content to flash write buffer; write data.
+		Flash_data_to_write = Imu_GetBufferAddress();
+		Flash_Populate_Write_Buffer();
+		Flash_Write_Page(FLASH_PAGE0_IMU + Flash_Offset_Imu);
+		//  SHOULD THIS BE IN FLASH_RUN() ??? Imu_ClearReadyToWriteFlashFlag();
 }
 
 void Flash_Write_Mag(int offset)
@@ -196,7 +240,16 @@ void Flash_Write_Temp(int offset)
 
 }
 
-// Used for both CLI debug and normal operation.
+void Flash_Populate_Write_Buffer()
+{
+	SPIWrite[4] = 0x00;
+	for(int k = 5; k < (FLASH_PAGE_SIZE_BYTES+4); k++)
+	{
+		SPIWrite[k] = Flash_data_to_write[k-5];
+	}
+}
+
+// Sets up and invoke SPI command to write a full page in flash
 void Flash_Write_Page(int pagenum)
 {
 	// Flash command: Byte0 = Write Instruction = 0x02.
@@ -211,35 +264,41 @@ void Flash_Write_Page(int pagenum)
 	SPIWrite[4] = 0x00;
 
 	// Invoke SPI write with *SPIWrite
-	//		SPIBubbl_Transmit(SPIWrite, 260);
+	SPIBubbl_Transmit(SPIWrite, 260);
 }
-// Have an overloaded version of Flash_Write_Page() with an enum for debug-writing one
-// of the dummy arrays... overloaded version will set up the SPIWrite array and
-// then call the original Flash_Write_Page() function.
-// Passing
+
+// Writes test data of a type defined in Flash_Enum_Test_Data_type in page # pagenum
 void Flash_Write_Page_Test_Data(int pagenum, Flash_Enum_Test_Data_type write_dataset)
 {
-	if (write_dataset == FLASH_ENUM_ALLZEROS)
-	{
-		for(int k = 5; k < (FLASH_PAGE_SIZE_BYTES+4); k++)
-		SPIWrite[k] = 0;
-	}
-	if (write_dataset == FLASH_ENUM_ALLONES)
-		{
-			for(int k = 5; k < (FLASH_PAGE_SIZE_BYTES+4); k++)
-			SPIWrite[k] = 1;
-		}
 
-    //FLASH_ENUM_PRIMES
-    //FLASH_ENUM_RANDOM
+	// Fill SPIWrite array with data to be written to page pagenum
+	switch (write_dataset)
+	{
+	case FLASH_ENUM_ALLZEROS:
+		for(int k = 5; k < (FLASH_PAGE_SIZE_BYTES+4); k++)
+				SPIWrite[k] = 0;
+		break;
+	case FLASH_ENUM_ALLONES:
+		for(int k = 5; k < (FLASH_PAGE_SIZE_BYTES+4); k++)
+						SPIWrite[k] = 1;
+		break;
+	case FLASH_ENUM_RANDOM:
+		for(int k = 5; k < (FLASH_PAGE_SIZE_BYTES+4); k++)
+						SPIWrite[k] = (uint8_t) (rand() % 256);
+		break;
+	}
+
+	// Write page
+	Flash_Write_Page(pagenum);
 }
 
 
 // Returns byte .. Used in normal mode of operation
 uint8_t Flash_Read_FirstByte(int pagenum)
 {
-	int readbyte;
+	uint8_t readbyte;
 	// Read byte 0 at pagenum
+	readbyte = 0x00;
 	return readbyte;
 }
 
