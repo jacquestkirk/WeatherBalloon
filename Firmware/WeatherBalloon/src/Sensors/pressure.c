@@ -15,17 +15,49 @@
 #include "em_assert.h"
 
 
-STATIC_UBUF(press_data_buff,  FLASH_PAGE_SIZE_BYTES);   /* Allocate USB receive buffer.   */
+STATIC_UBUF(press_data_buff1,  FLASH_PAGE_SIZE_BYTES);   /* Allocate USB receive buffer.   */
+STATIC_UBUF(press_data_buff2,  FLASH_PAGE_SIZE_BYTES);   /* Allocate USB receive buffer.   */
+uint8_t *press_data_buffs [2] = {press_data_buff1, press_data_buff2};
+uint8_t *press_curent_data_buffer = press_data_buff1;
+uint8_t *press_data_buffer_to_write = press_data_buff1;
+
+
+uint8_t _pressActiveBuffer = 0;
+uint8_t _pressReadyToWriteFlash = 0;
+
+
+
+
+
+
 
 #define ADDR_PRESS	0xEE	//7 bit address stored in 7MSB (0xEE?)
+
+
+
 
 Press_Data Press_Read(void)
 {
 	Press_Data pressdata;
 
+
+
+
+
 	//Todo: actually read this data
 	pressdata.pressure = 0xFFFFAAAA;
 	pressdata.temperature = 0xABCD1234;
+
+	Press_WriteCommandByte(0x1E);
+
+	//Todo: Remove this delay if not needed or shorten it, or break it up into two parts
+	for( int i; i<10000; i++)
+	{
+		//Delay
+	}
+
+
+
 
 
 	return pressdata;
@@ -117,4 +149,26 @@ void Press_WriteCommandByte(uint8_t command)
 
 
 	ret = I2CBubbl_Transfer(I2C0, &seq);
+}
+
+uint8_t Press_QueryReadyToWriteFlashFlag(void)
+{
+	return _pressReadyToWriteFlash;
+}
+
+void Press_ClearReadyToWriteFlashFlag(void)
+{
+	_pressReadyToWriteFlash = 0;
+}
+
+uint8_t* Press_GetBufferAddress(void)
+{
+	if(_pressActiveBuffer == 1)
+	{
+		return press_data_buff1;
+	}
+	else
+	{
+		return press_data_buff2;
+	}
 }

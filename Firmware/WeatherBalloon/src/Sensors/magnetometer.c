@@ -12,11 +12,15 @@
 #include "em_i2c.h"
 #include "I2CBubbl.h"
 #include "em_assert.h"
-
+#include "HelperFunctions.h"
 
 STATIC_UBUF(mag_data_buff1,  FLASH_PAGE_SIZE_BYTES);   /* Allocate USB receive buffer.   */
 STATIC_UBUF(mag_data_buff2,  FLASH_PAGE_SIZE_BYTES);   /* Allocate USB receive buffer.   */
-uint8_t _magActiveBuffer = 1;
+uint8_t *mag_data_buffs [2] = {mag_data_buff1, mag_data_buff2};
+uint8_t *mag_curent_data_buffer = mag_data_buff1;
+uint8_t *mag_data_buffer_to_write = mag_data_buff1;
+
+uint8_t _magActiveBuffer = 0;
 uint8_t _magReadyToWriteFlash = 0;
 
 #define WHO_AM_I_RESPONSE 0b00111101
@@ -29,7 +33,7 @@ uint8_t _magReadyToWriteFlash = 0;
 
 void TriggerNewMagReading();
 Mag_Data QueryAllMagValues();
-
+void WriteMagDataToFlashBuffer(Mag_Data dataToWrite);
 
 Mag_Data Mag_Read(void)
 {
@@ -39,9 +43,44 @@ Mag_Data Mag_Read(void)
 void Mag_Read_Tsk(void)
 {
 	//Read
-	//Write to tem_dat_buff
-	//If address gets to FLASH_PAGE_SIZE_BYTES
-	//then write temp_data_buff to flash
+	TriggerNewMagReading();
+	Mag_Data Mag_Data = QueryAllMagValues();
+
+	//Buffer data in ram array that can be read by flash
+	WriteMagDataToFlashBuffer(Mag_Data);
+
+
+}
+
+void WriteMagDataToFlashBuffer(Mag_Data dataToWrite)
+{
+	static int location_in_buffer = 0;
+
+	//check if this write will overflow the current buffer.
+	//If it does, move to the next buffer and signal that the old buffer is ready to be written to flash
+
+	if(location_in_buffer + MAG_DATA_SIZE_BYTES > FLASH_PAGE_SIZE_BYTES - 1)
+	{
+		mag_data_buffer_to_write = mag_curent_data_buffer;
+		_magReadyToWriteFlash = 1;
+
+		if(_magActiveBuffer)
+		{
+			mag_curent_data_buffer = mag_data_buffs[0];
+			_magActiveBuffer = 0;
+		}
+		else
+		{
+			mag_curent_data_buffer = mag_data_buffs[1];;
+			_magActiveBuffer = 1;
+		}
+		location_in_buffer = 0;
+
+	}
+	location_in_buffer = Helper_Write_16bit_To_Buffer(mag_curent_data_buffer, location_in_buffer, dataToWrite.x_mag);
+	location_in_buffer = Helper_Write_16bit_To_Buffer(mag_curent_data_buffer, location_in_buffer, dataToWrite.y_mag);
+	location_in_buffer = Helper_Write_16bit_To_Buffer(mag_curent_data_buffer, location_in_buffer, dataToWrite.z_mag);
+
 }
 
 void Mag_Initialize_OneShot()
@@ -200,3 +239,4 @@ uint8_t* Mag_GetBufferAddress(void)
 		return mag_data_buff2;
 	}
 }
+
