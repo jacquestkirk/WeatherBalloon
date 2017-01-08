@@ -593,6 +593,12 @@ class SpaceBubbl:
 
         startIndex = 0
 
+        # Error Handling
+        [commandEcho, startIndex] = self._Read8bit(read_bytes, startIndex)
+        if (commandEcho == 255):
+            self.ParseError(read_bytes, startIndex)
+        assert commandEcho == Enum_Commands.Cmd_ReadImu, "Bubbl responded with an invalid response"
+
         # parse the response
         [x_accel, startIndex] = self._Read16bit(read_bytes, startIndex)
         [y_accel, startIndex] = self._Read16bit(read_bytes, startIndex)
@@ -610,9 +616,13 @@ class SpaceBubbl:
 
         total_accel_g = math.sqrt(math.pow(x_accel_g, 2) + math.pow(y_accel_g, 2) + math.pow(z_accel_g, 2))
 
-        print("X Acceletation: ", x_accel_g, " g")
-        print("Y Acceletation: ", y_accel_g, " g")
-        print("Z Acceletation: ", z_accel_g, " g")
+        print("X Acceleration: ", hex(x_accel))
+        print("Y Acceleration: ", hex (y_accel))
+        print("Z Acceleration: ", hex(z_accel))
+
+        print("X Acceleration: ", x_accel_g, " g")
+        print("Y Acceleration: ", y_accel_g, " g")
+        print("Z Acceleration: ", z_accel_g, " g")
         print("Total Acceleration: ", total_accel_g, " g")
 
         print("X Angular Velocity: ", gyro_scale_dps * self._Convert2sComplement(x_gyro, 16) / 32768.0, " dps")
