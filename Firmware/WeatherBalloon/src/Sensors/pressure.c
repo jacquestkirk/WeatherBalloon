@@ -9,7 +9,6 @@
 #include "Sensors/pressure.h"
 #include "descriptors.h"
 #include "flash.h"
-#include "flash.h"
 #include "em_i2c.h"
 #include "I2CBubbl.h"
 #include "em_assert.h"
