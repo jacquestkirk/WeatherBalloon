@@ -14,5 +14,8 @@ void Time_Initilize_TimeStamp(void);
 
 uint32_t Time_Get_TimeStamp(void);
 
+uint8_t TimeStamp_QueryReadyToWriteFlashFlag(void);
+void TimeStamp_ClearReadyToWriteFlashFlag(void);
+uint8_t* TimeStamp_GetBufferAddress(void);
 
 #endif /* TIMESTAMP_H_ */
