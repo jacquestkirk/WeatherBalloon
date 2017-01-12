@@ -380,7 +380,7 @@ void WriteFifoDataToBuffer(void)
 				}
 				else
 				{
-					imu_curent_data_buffer = imu_data_buffs[1];;
+					imu_curent_data_buffer = imu_data_buffs[1];
 					_imuActiveBuffer = 1;
 				}
 				location_in_buffer = 0;
