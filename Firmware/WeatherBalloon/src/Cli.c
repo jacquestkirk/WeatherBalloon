@@ -758,7 +758,6 @@ void ReadFlashPage(void)
 
 void WriteFlashPage(void)
 {
-	uint8_t *flashBuffer;
 
 	//Todo: Do we need to save a second buffer for Rx so that we are not reading inputs for a following command. Probably
 	uint8_t pageNum_high = usbRxBuff[1];

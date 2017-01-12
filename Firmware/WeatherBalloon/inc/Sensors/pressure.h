@@ -22,4 +22,8 @@ uint32_t Press_QueryRegister3Byte(uint8_t command);
 uint16_t Press_QueryRegister2Byte(uint8_t command);
 void Press_WriteCommandByte(uint8_t command);
 
+uint8_t Press_QueryReadyToWriteFlashFlag(void);
+void Press_ClearReadyToWriteFlashFlag(void);
+uint8_t* Press_GetBufferAddress(void);
+
 #endif /* PRESSURE_H_ */
