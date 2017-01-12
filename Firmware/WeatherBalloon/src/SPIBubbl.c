@@ -15,8 +15,20 @@ SPIDRV_Handle_t handle = &handleData;
 // Initilize SPI
 void SPIBubbl_Initalize(void)
 {
-	SPIDRV_Init_t initData = SPIDRV_MASTER_USART1;
+	// Set up the necessary peripheral clocks
+	CMU_ClockEnable(cmuClock_GPIO, true);
 
+	GPIO_DriveModeSet(gpioPortA, gpioDriveModeLow);
+
+	// Enable the GPIO pins for the misc signals, leave pulled high
+	GPIO_PinModeSet(gpioPortA, 9, gpioModePushPullDrive, 1);          // WP#
+	GPIO_PinModeSet(gpioPortA, 10, gpioModePushPullDrive, 1);          // HOLD#
+
+    // Initialize and enable the SPIDRV
+	SPIDRV_Init_t initData = SPIDRV_MASTER_USART1;
+	initData.clockMode = spidrvClockMode0;  // Flash can operate in mode 0 or 1
+
+	// Initialize a SPI driver instance
 	SPIDRV_Init( handle, &initData );
 }
 
