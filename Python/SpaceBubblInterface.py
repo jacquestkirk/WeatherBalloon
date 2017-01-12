@@ -738,3 +738,10 @@ class SpaceBubbl:
             return number - (1 << num_bits)
         else:
             return number
+
+
+
+if __name__ == "__main__":
+    from SpaceBubblInterface import *
+    sb = SpaceBubbl()
+    sb.initiate()
