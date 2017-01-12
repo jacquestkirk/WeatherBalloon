@@ -16,5 +16,6 @@ void SPIBubbl_Initalize(void);
 
 void SPIBubbl_Transmit(void *buffer, int size);
 void SPIBubbl_Receive_Page(void *page_data, int page);
+void SPIBubbl_Read_ID(void *readID);
 
 #endif /* SPIBUBBL_H_ */

@@ -47,7 +47,8 @@ int Flash_Offset_Temp_MCU = 0;
 
 uint8_t page_read[256];
 uint8_t SPIWrite[260];
-uint8_t FlashRead[256];
+uint8_t FlashRead[260];
+uint8_t FlashReadID[4];
 uint8_t *Flash_data_to_write;
 // Add a few dummy arrays that can be written to flash via CLI command
 
@@ -291,6 +292,25 @@ uint8_t Flash_Read_FirstByte(int pagenum)
 uint8_t * Flash_Read_Page(int pagenum)
 {
 	// Do the reading at pagenum and store into FlashRead[]
-	return FlashRead;
+	// Then copy FlashRead[4..259] to page_read[0..255]
+
+	for(int i=0; i<=255; i++)
+	{
+		page_read[i] = FlashRead[i+4];
+	}
+	return page_read;
 }
 
+// Returns first 3 bytes of Flash Identification
+// 0x20 20 17
+uint8_t * Flash_Read_ID()
+{
+	// Do the reading at pagenum and store into FlashRead[]
+	// Then copy FlashRead[4..6] to page_read[0..2]
+
+	Flash_Initialize();
+
+	SPIBubbl_Read_ID(FlashReadID);
+
+	return &FlashReadID[1];
+}
