@@ -45,6 +45,7 @@ void Flash_Write_Page(int pagenum);
 void Flash_Write_Page_Test_Data(int pagenum, Flash_Enum_Test_Data_type write_dataset);
 uint8_t Flash_Read_FirstByte(int pagenum);
 uint8_t * Flash_Read_Page(int pagenum);
+uint8_t * Flash_Read_ID();
 uint8_t * Flash_GetWriteBufferAddress();
 
 #endif /* FLASH_H_ */
