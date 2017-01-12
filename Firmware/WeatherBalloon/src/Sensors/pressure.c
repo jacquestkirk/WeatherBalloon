@@ -12,6 +12,7 @@
 #include "em_i2c.h"
 #include "I2CBubbl.h"
 #include "em_assert.h"
+#include "rtcdriver.h"
 
 
 STATIC_UBUF(press_data_buff1,  FLASH_PAGE_SIZE_BYTES);   /* Allocate USB receive buffer.   */
@@ -42,20 +43,14 @@ Press_Data Press_Read(void)
 	//Read Values
 	Press_WriteCommandByte(0x48);
 
-	for( int i; i<10000; i++)
-	{
-		//Delay
-	}
+	RTCDRV_Delay(10);
 
 	int32_t D1 = Press_QueryRegister3Byte(0x00);
 
 	//Read Values
 	Press_WriteCommandByte(0x58);
 
-	for( int i; i<10000; i++)
-	{
-		//Delay
-	}
+	RTCDRV_Delay(10);
 
 	int32_t D2 = Press_QueryRegister3Byte(0x00);
 
