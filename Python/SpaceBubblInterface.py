@@ -16,6 +16,43 @@ class SpaceBubbl:
 
 
     def ReadPressure(self):
+
+        ##Read calibration Values
+        self.driver.WriteData([Enum_Commands.Cmd_ReadPressCal])
+        data_size_bytes = 13
+        read_bytes = self.driver.ReadData(data_size_bytes)
+
+        startIndex = 0
+
+        # Error Handling
+        [commandEcho, startIndex] = self._Read8bit(read_bytes, startIndex)
+        if (commandEcho == 255):
+            self.ParseError(read_bytes, startIndex)
+        assert commandEcho == Enum_Commands.Cmd_ReadPressCal, "Bubbl responded with an invalid response"
+
+        # parse the response
+        C1 = self._Read16bit(read_bytes, startIndex)
+        C2 = self._Read16bit(read_bytes, startIndex)
+        C3 = self._Read16bit(read_bytes, startIndex)
+        C4 = self._Read16bit(read_bytes, startIndex)
+        C5 = self._Read16bit(read_bytes, startIndex)
+        C6 = self._Read16bit(read_bytes, startIndex)
+
+        message = "Message: "
+        for n in range(startIndex, len(read_bytes)):
+            message += chr(read_bytes[n])
+
+        print(C1)
+        print(C2)
+        print(C3)
+        print(C4)
+        print(C5)
+        print(C6)
+        print(message)
+
+
+        ## Read Pressure and Temperature
+
         self.driver.WriteData([Enum_Commands.Cmd_ReadPress])
         data_size_bytes = 8
         read_bytes = self.driver.ReadData(data_size_bytes)

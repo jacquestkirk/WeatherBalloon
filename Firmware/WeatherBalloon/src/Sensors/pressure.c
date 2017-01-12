@@ -26,7 +26,7 @@ uint8_t _pressReadyToWriteFlash = 0;
 
 
 
-
+uint16_t CalibrationValues[6];
 
 
 
@@ -39,28 +39,40 @@ Press_Data Press_Read(void)
 {
 	Press_Data pressdata;
 
+	//Read Values
+	Press_WriteCommandByte(0x48);
 
-
-
-
-	//Todo: actually read this data
-	pressdata.pressure = 0xFFFFAAAA;
-	pressdata.temperature = 0xABCD1234;
-
-	Press_WriteCommandByte(0x1E);
-
-	//Todo: Remove this delay if not needed or shorten it, or break it up into two parts
 	for( int i; i<10000; i++)
 	{
 		//Delay
 	}
 
+	int32_t D1 = Press_QueryRegister3Byte(0x00);
+
+	//Read Values
+	Press_WriteCommandByte(0x58);
+
+	for( int i; i<10000; i++)
+	{
+		//Delay
+	}
+
+	int32_t D2 = Press_QueryRegister3Byte(0x00);
 
 
+	//Todo: actually read this data
+	pressdata.pressure = D1;
+	pressdata.temperature = D2;
 
 
 	return pressdata;
 }
+
+void Press_Read_Cal(void)
+{
+
+}
+
 void Press_Read_Tsk(void)
 {
 	//Read
@@ -68,6 +80,30 @@ void Press_Read_Tsk(void)
 	//If address gets to FLASH_PAGE_SIZE_BYTES
 	//then write temp_data_buff to flash
 }
+
+
+uint16_t Press_ReadCalibrations(int calibration_num)
+{
+	switch(calibration_num)
+	{
+		case 1:
+			return Press_QueryRegister2Byte(0b10100010);
+		case 2:
+			return Press_QueryRegister2Byte(0b10100100);
+		case 3:
+			return Press_QueryRegister2Byte(0b10100110);
+		case 4:
+			return Press_QueryRegister2Byte(0b10101000);
+		case 5:
+			return Press_QueryRegister2Byte(0b10101010);
+		case 6:
+			return Press_QueryRegister2Byte(0b10101100);
+		default:
+			return 0;
+	}
+
+}
+
 
 uint16_t Press_QueryRegister2Byte(uint8_t command)
 {

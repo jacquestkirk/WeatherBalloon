@@ -25,5 +25,6 @@ void Press_WriteCommandByte(uint8_t command);
 uint8_t Press_QueryReadyToWriteFlashFlag(void);
 void Press_ClearReadyToWriteFlashFlag(void);
 uint8_t* Press_GetBufferAddress(void);
+uint16_t Press_ReadCalibrations(int calibration_num);
 
 #endif /* PRESSURE_H_ */

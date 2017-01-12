@@ -53,6 +53,7 @@ enum Commands{
 	Cmd_WritePressRegister,
 	Cmd_ReadFlashPage,
 	Cmd_WriteFlashPage,
+	Cmd_ReadPressCal,
 
 };
 
@@ -120,6 +121,7 @@ void ReadPress3Byte(void);
 void WritePressRegister(void);
 void ReadFlashPage(void);
 void WriteFlashPage(void);
+void ReadPressCal(void);
 
 SL_PACK_START(1)
 typedef struct
@@ -331,6 +333,9 @@ void RunStateMachine(char* usbRxBuff)
 		case Cmd_WriteFlashPage:
 			WriteFlashPage();
 			return;
+		case Cmd_ReadPressCal:
+			ReadPressCal();
+			return;
 		default:
 			WriteInvalidCommandMessage();
 			return;
@@ -350,6 +355,36 @@ void WritePressData(void)
 	startIndex = Add8bitIntToTxBuff((uint8_t) Cmd_ReadPress, startIndex);
 	startIndex = Add32bitIntToTxBuff(pressData.pressure, startIndex);
 	startIndex = Add32bitIntToTxBuff(pressData.temperature, startIndex);
+
+
+	//Write debug message to Tx Buff
+	char message[] = "ThisIsDebugData";
+	startIndex = WriteDebugMessage((char*)&message, startIndex);
+
+	//Write the TxBuff over USB
+	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
+}
+
+void ReadPressCal(void)
+{
+	int startIndex = 0;
+
+	uint16_t C1 = Press_ReadCalibrations(1);
+	uint16_t C2 = Press_ReadCalibrations(2);
+	uint16_t C3 = Press_ReadCalibrations(3);
+	uint16_t C4 = Press_ReadCalibrations(4);
+	uint16_t C5 = Press_ReadCalibrations(5);
+	uint16_t C6 = Press_ReadCalibrations(6);
+
+	//Write data to Tx buff
+	startIndex = Add8bitIntToTxBuff((uint8_t) Cmd_ReadPressCal, startIndex);
+	startIndex = Add16bitIntToTxBuff(C1, startIndex);
+	startIndex = Add16bitIntToTxBuff(C2, startIndex);
+	startIndex = Add16bitIntToTxBuff(C3, startIndex);
+	startIndex = Add16bitIntToTxBuff(C4, startIndex);
+	startIndex = Add16bitIntToTxBuff(C5, startIndex);
+	startIndex = Add16bitIntToTxBuff(C6, startIndex);
+
 
 
 	//Write debug message to Tx Buff
