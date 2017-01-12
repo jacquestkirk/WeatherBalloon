@@ -32,7 +32,7 @@ typedef enum {
     RANDOM
 } Flash_Enum_Test_Data_type;
 
-void Flash_Initilize();
+void Flash_Initialize();
 void Flash_Run_Periodic();
 void Flash_Populate_Write_Buffer();
 void Flash_Write_Time();

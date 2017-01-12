@@ -59,7 +59,7 @@ uint8_t *Flash_data_to_write;
  * Description: Flash initialize.  At every power-up, read first byte of every page.
  * Populate current_offsets accordingly.
  */
-void Flash_Initilize()
+void Flash_Initialize()
 {
 
 	Flash_Current_Write_Block = Flash_Currently_Writing_Nothing;

@@ -27,7 +27,7 @@ void SPIBubbl_Initalize(void)
     // Initialize and enable the SPIDRV
 	SPIDRV_Init_t initData = SPIDRV_MASTER_USART1;
 	initData.clockMode = spidrvClockMode0;  // Flash can operate in mode 0 or 1
-	initData.csControl = spidrvCsControlApplication
+	initData.csControl = spidrvCsControlApplication;
 
 	// Initialize a SPI driver instance
 	SPIDRV_Init( handle, &initData );
@@ -54,7 +54,5 @@ void SPIBubbl_Read_ID(void *readID)
 	tx_data[0] = 0x40; //JEDEC_ID_CMD
 
 	SPIDRV_MTransferB( handle, &tx_data, readID, 4);
-
-}
 
 }
