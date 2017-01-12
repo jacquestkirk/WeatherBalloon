@@ -26,6 +26,7 @@ class Enum_Commands:
     Cmd_ReadFlashPage = 22
     Cmd_WriteFlashPage = 23
     Cmd_ReadPressCal = 24
+    Cmd_ReadFlashId = 25
     Cmd_ERROR = 255
 
 class Enum_Flash_TestData:

@@ -708,6 +708,29 @@ class SpaceBubbl:
 
         print(message)
 
+    def ReadFlashId(self):
+        self.driver.WriteData([Enum_Commands.Cmd_ReadFlashId])
+        data_size_bytes = 0
+        read_bytes = self.driver.ReadData(data_size_bytes)
+
+        startIndex = 0
+
+        # Error Handling
+        [commandEcho, startIndex] = self._Read8bit(read_bytes, startIndex)
+        if (commandEcho == 255):
+            self.ParseError(read_bytes, startIndex)
+        assert commandEcho == Enum_Commands.Cmd_ReadFlashId, "Bubbl responded with an invalid response"
+
+        [id, startIndex] = self._Read32bit(read_bytes, startIndex)
+
+        print (hex(id))
+
+        message = "Message: "
+        for n in range(startIndex, len(read_bytes)):
+            message += chr(read_bytes[n])
+
+        print(message)
+
     def ParseError(self, read_bytes, startIndex):
         message = "Bubbl Error: "
         for n in range(startIndex, len(read_bytes)):

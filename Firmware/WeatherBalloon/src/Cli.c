@@ -54,7 +54,7 @@ enum Commands{
 	Cmd_ReadFlashPage,
 	Cmd_WriteFlashPage,
 	Cmd_ReadPressCal,
-
+	Cmd_ReadFlashId,
 };
 
 #define ERROR_MESSAGE_ENUM  255
@@ -122,6 +122,7 @@ void WritePressRegister(void);
 void ReadFlashPage(void);
 void WriteFlashPage(void);
 void ReadPressCal(void);
+void ReadFlashId(void);
 
 SL_PACK_START(1)
 typedef struct
@@ -335,6 +336,9 @@ void RunStateMachine(char* usbRxBuff)
 			return;
 		case Cmd_ReadPressCal:
 			ReadPressCal();
+			return;
+		case Cmd_ReadFlashId:
+			ReadFlashId();
 			return;
 		default:
 			WriteInvalidCommandMessage();
@@ -747,6 +751,49 @@ void WriteImuRegister(void)
 	//Write the TxBuff over USB
 	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
 
+}
+
+void ReadFlashId(void)
+{
+	uint8_t *flashIdBuffer;
+
+	//Todo: Do we need to save a second buffer for Rx so that we are not reading inputs for a following command. Probably
+
+	flashIdBuffer = (uint8_t *)Flash_Read_ID();
+
+	int startIndex = 0;
+
+	//Echo command
+	startIndex = Add8bitIntToTxBuff((uint8_t) Cmd_ReadFlashId, startIndex);
+
+	//Add another bit to make it 32 bits
+	startIndex = Add8bitIntToTxBuff(0 , startIndex);
+
+	//Write data to tx buffer
+	for( int i = 0; i < 3; i++) //The size of the data should be the flash size
+	{
+		//if ( startIndex >= USB_FS_BULK_EP_MAXSIZE+38 ) //check if we are overflowing, then we need to move to a new buffer
+		//{
+		//	//Todo: make this use a new buffer instead of breaking
+		//	break;
+		//}
+
+		startIndex = Add8bitIntToTxBuff(flashIdBuffer[i] , startIndex);
+	}
+
+
+
+	//Todo: add back message once we get multiple tx buffers working
+	//Write debug message to Tx Buff
+	//char message[] = "IMU Register Written";
+	//startIndex = WriteDebugMessage((char*)&message, startIndex);
+
+	//Write debug message to Tx Buff
+	char message[] = "Flash Id Read from Flash";
+	startIndex = WriteDebugMessage((char*)&message, startIndex);
+
+	//Write the TxBuff over USB
+	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
 }
 
 void ReadFlashPage(void)
