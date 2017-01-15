@@ -48,7 +48,7 @@ void TskCheckCli(void);
 #define READ_PRESSURE_RESET			1
 #define READ_TEMPS_RESET			1
 #define READ_IMU_RESET				1
-#define READ_MAGNETOMETER_RESET		1
+#define READ_MAGNETOMETER_RESET		25
 #define TURN_ON_LED1_RESET			1
 #define TURN_ON_LED2_RESET			1
 #define TURN_OFF_LED1_RESET			1
@@ -156,6 +156,13 @@ void SetSleepClockState(int enable)
 
 void RunTasks(void)
 {
+	//ReadImu
+	if (TaskTimer[ReadImu] == 0)
+	{
+		TskReadImu();
+		TaskTimer[ReadImu] = READ_IMU_RESET;
+	}
+
 	//ReadPressure
 	if (TaskTimer[ReadPressure] == 0)							//If it is time to run the task
 	{
@@ -164,18 +171,13 @@ void RunTasks(void)
 	}
 
 	//ReadTemps
-	if (TaskTimer[ReadTemps] == 0)
+	/*if (TaskTimer[ReadTemps] == 0)
 	{
 		TskReadTemps();
 		TaskTimer[ReadTemps] = READ_TEMPS_RESET;
-	}
+	}*/
 
-	//ReadImu
-	if (TaskTimer[ReadImu] == 0)
-	{
-		TskReadImu();
-		TaskTimer[ReadImu] = READ_IMU_RESET;
-	}
+
 
 	//ReadMagnetometer
 	if (TaskTimer[ReadMagnetometer] == 0)
@@ -297,7 +299,7 @@ void TskPollBtn2(void)
 }
 void TskTimeStamp(void)
 {
-	//TBD
+	Time_Read_Tsk();
 }
 void TskWriteToFlash(void)
 {
