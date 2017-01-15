@@ -9,6 +9,9 @@
 #define PRESSURE_H_
 
 #define PRESS_DATA_SIZE_BYTES 8
+#define PRESS_ONLY_DATA_SIZE_BYTES 4
+#define PRESS_TEMP_DATA_SIZE_BYTES 4
+
 #include <stdint.h>
 typedef struct Press_Data{
 	int32_t pressure;
@@ -26,5 +29,8 @@ uint8_t Press_QueryReadyToWriteFlashFlag(void);
 void Press_ClearReadyToWriteFlashFlag(void);
 uint8_t* Press_GetBufferAddress(void);
 uint16_t Press_ReadCalibrations(int calibration_num);
+void WritePressDataToFlashBuffer(Press_Data dataToWrite);
+void WritePressTempDataToFlashBuffer(Press_Data dataToWrite);
+
 
 #endif /* PRESSURE_H_ */
