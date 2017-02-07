@@ -27,6 +27,7 @@ void SPIBubbl_Initalize(void)
     // Initialize and enable the SPIDRV
 	SPIDRV_Init_t initData = SPIDRV_MASTER_USART1;
 	initData.clockMode = spidrvClockMode0;  // Flash can operate in mode 0 or 1
+	initData.csControl = spidrvCsControlApplication;
 
 	// Initialize a SPI driver instance
 	SPIDRV_Init( handle, &initData );
@@ -46,40 +47,12 @@ void SPIBubbl_Receive_Page(void *page_data, int page)
 
 }
 
-/*******************************************************
- * API EXAMPLE CODE
- *******************************************************
-
-#include "spidrv.h"
-
-SPIDRV_HandleData_t handleData;
-SPIDRV_Handle_t handle = &handleData;
-
-void TransferComplete( SPIDRV_Handle_t handle,
-                       Ecode_t transferStatus,
-                       int itemsTransferred )
+void SPIBubbl_Read_ID(void *readID)
 {
-  if ( transferStatus == ECODE_EMDRV_SPIDRV_OK )
-  {
-    // Success !
-  }
+	uint8_t tx_data[4];
+
+	tx_data[0] = 0x40; //JEDEC_ID_CMD
+
+	SPIDRV_MTransferB( handle, &tx_data, readID, 4);
+
 }
-
-int main( void )
-{
-  uint8_t buffer[10];
-  SPIDRV_Init_t initData = SPIDRV_MASTER_USART2;
-
-  // Initialize a SPI driver instance
-  SPIDRV_Init( handle, &initData );
-
-  // Transmit data using a blocking transmit function
-  SPIDRV_MTransmitB( handle, buffer, 10 );
-
-  // Transmit data using a callback to catch transfer completion.
-  SPIDRV_MTransmit( handle, buffer, 10, TransferComplete );
-}
-
- *******************************************************
- *******************************************************
-********************************************************/
