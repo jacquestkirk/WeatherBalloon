@@ -11,6 +11,7 @@
 //#include "em_rtc.h"
 #include <stdint.h>
 #include <stdbool.h>
+#include "ErrorHandler.h"
 #include "InitDevice.h"
 //#include "rtcdriver.h"
 #include "Scheduler.h"
@@ -114,6 +115,7 @@ void Sch_Run_Scheduler(void)
 
 	while(_continue_running_scheduler)
 	{
+		ErrorHandler_NewCycle();
 		RunTasks();
 		DecrementTaskTimer();
 

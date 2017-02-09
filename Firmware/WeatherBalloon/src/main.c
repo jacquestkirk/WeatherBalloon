@@ -23,6 +23,7 @@
 #include "Cli.h"
 #include "InitDevice.h"
 #include "timestamp.h"
+#include "ErrorHandler.h"
 
 //Eventually remove these
 #include "Sensors/imu.h"
