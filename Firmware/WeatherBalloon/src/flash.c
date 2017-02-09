@@ -314,3 +314,8 @@ uint8_t * Flash_Read_ID()
 
 	return &FlashReadID[1];
 }
+
+uint16_t Flash_Get_ResetCount()
+{
+	return 0xAAAA;
+}

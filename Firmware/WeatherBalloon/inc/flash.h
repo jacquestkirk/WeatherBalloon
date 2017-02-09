@@ -47,5 +47,7 @@ uint8_t Flash_Read_FirstByte(int pagenum);
 uint8_t * Flash_Read_Page(int pagenum);
 uint8_t * Flash_Read_ID();
 uint8_t * Flash_GetWriteBufferAddress();
+uint16_t Flash_Get_ResetCount();
+
 
 #endif /* FLASH_H_ */
