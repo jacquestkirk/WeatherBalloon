@@ -31,23 +31,23 @@ class SpaceBubbl:
         assert commandEcho == Enum_Commands.Cmd_ReadPressCal, "Bubbl responded with an invalid response"
 
         # parse the response
-        C1 = self._Read16bit(read_bytes, startIndex)
-        C2 = self._Read16bit(read_bytes, startIndex)
-        C3 = self._Read16bit(read_bytes, startIndex)
-        C4 = self._Read16bit(read_bytes, startIndex)
-        C5 = self._Read16bit(read_bytes, startIndex)
-        C6 = self._Read16bit(read_bytes, startIndex)
+        [C1, startIndex] = self._Read16bit(read_bytes, startIndex)
+        [C2, startIndex] = self._Read16bit(read_bytes, startIndex)
+        [C3, startIndex] = self._Read16bit(read_bytes, startIndex)
+        [C4, startIndex] = self._Read16bit(read_bytes, startIndex)
+        [C5, startIndex] = self._Read16bit(read_bytes, startIndex)
+        [C6, startIndex] = self._Read16bit(read_bytes, startIndex)
 
         message = "Message: "
         for n in range(startIndex, len(read_bytes)):
             message += chr(read_bytes[n])
 
-        print(C1)
-        print(C2)
-        print(C3)
-        print(C4)
-        print(C5)
-        print(C6)
+        print(hex(C1))
+        print(hex(C2))
+        print(hex(C3))
+        print(hex(C4))
+        print(hex(C5))
+        print(hex(C6))
         print(message)
 
 
@@ -55,7 +55,7 @@ class SpaceBubbl:
 
         self.driver.WriteData([Enum_Commands.Cmd_ReadPress])
         data_size_bytes = 8
-        read_bytes = self.driver.ReadData(data_size_bytes)
+        read_bytes = self.driver.ReadData(data_size_bytes, timeout_ms=5000)
 
         startIndex = 0
 
@@ -66,15 +66,26 @@ class SpaceBubbl:
         assert commandEcho == Enum_Commands.Cmd_ReadPress, "Bubbl responded with an invalid response"
 
         # parse the response
-        [pressure, startIndex] = self._Read32bit(read_bytes, startIndex)
-        [temperature, startIndex] = self._Read32bit(read_bytes, startIndex)
+        [D1, startIndex] = self._Read32bit(read_bytes, startIndex)
+        [D2, startIndex] = self._Read32bit(read_bytes, startIndex)
+
+        tempRef = C5 * math.pow(2, 8)
+        deltaTemp = D2 - tempRef
+        temp = 2000 + deltaTemp * C6 / math.pow(2, 23)
+        temp_degC = temp / 100
+
+        pressOffset = C2 * math.pow(2, 17) + C4 * deltaTemp / math.pow(2, 6)
+        pressSens = C1 * math.pow(2, 16) + (C3 * deltaTemp) / math.pow(2, 7)
+        pressure = (D1 * pressSens / pow(2, 21) - pressOffset) / math.pow(2, 15)
+        pressure_mbar = pressure / 100
+
 
         message = "Message: "
         for n in range(startIndex, len(read_bytes)):
             message += chr(read_bytes[n])
 
-        print("Pressure: ", hex(pressure))
-        print("Temperature: ", hex(temperature))
+        print("Pressure: ", pressure_mbar)
+        print("Temperature: ", temp_degC)
         print(message)
 
     def ReadTemp(self):

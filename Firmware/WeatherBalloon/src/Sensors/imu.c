@@ -15,7 +15,7 @@
 #include "em_assert.h"
 #include "em_gpio.h"
 #include "Cli.h"
-
+#include "timestamp.h"
 
 // Setup two switching buffers to temporarily store imu data in ram
 STATIC_UBUF(imu_data_buff1,  FLASH_PAGE_SIZE_BYTES-1);   /* Allocate USB receive buffer.   */
@@ -408,7 +408,9 @@ int Write_16bit_To_Buffer(uint8_t *buffer, int starting_location, int value_to_w
 
 void Int1_a_g_Callback(void)
 {
+	Time_Record_TimeStamp();
 	_fifoReadyToWrite = 1;
+
 }
 
 void Imu_WriteStreamFifo(void)

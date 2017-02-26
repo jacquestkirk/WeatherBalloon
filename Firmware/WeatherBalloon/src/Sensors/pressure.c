@@ -12,8 +12,10 @@
 #include "em_i2c.h"
 #include "I2CBubbl.h"
 #include "em_assert.h"
+#include "rtcdriver.h"
+#include "HelperFunctions.h"
 
-
+//Pressure buffers
 STATIC_UBUF(press_data_buff1,  FLASH_PAGE_SIZE_BYTES);   /* Allocate USB receive buffer.   */
 STATIC_UBUF(press_data_buff2,  FLASH_PAGE_SIZE_BYTES);   /* Allocate USB receive buffer.   */
 uint8_t *press_data_buffs [2] = {press_data_buff1, press_data_buff2};
@@ -23,6 +25,17 @@ uint8_t *press_data_buffer_to_write = press_data_buff1;
 
 uint8_t _pressActiveBuffer = 0;
 uint8_t _pressReadyToWriteFlash = 0;
+
+//Temperature Buffers
+STATIC_UBUF(pressTemp_data_buff1,  FLASH_PAGE_SIZE_BYTES);   /* Allocate USB receive buffer.   */
+STATIC_UBUF(pressTemp_data_buff2,  FLASH_PAGE_SIZE_BYTES);   /* Allocate USB receive buffer.   */
+uint8_t *pressTemp_data_buffs [2] = {pressTemp_data_buff1, pressTemp_data_buff2};
+uint8_t *pressTemp_curent_data_buffer = pressTemp_data_buff1;
+uint8_t *pressTemp_data_buffer_to_write = pressTemp_data_buff1;
+
+
+uint8_t _pressTempActiveBuffer = 0;
+uint8_t _pressTempReadyToWriteFlash = 0;
 
 
 
@@ -42,20 +55,14 @@ Press_Data Press_Read(void)
 	//Read Values
 	Press_WriteCommandByte(0x48);
 
-	for( int i; i<10000; i++)
-	{
-		//Delay
-	}
+	RTCDRV_Delay(10);
 
 	int32_t D1 = Press_QueryRegister3Byte(0x00);
 
 	//Read Values
 	Press_WriteCommandByte(0x58);
 
-	for( int i; i<10000; i++)
-	{
-		//Delay
-	}
+	RTCDRV_Delay(10);
 
 	int32_t D2 = Press_QueryRegister3Byte(0x00);
 
@@ -68,19 +75,75 @@ Press_Data Press_Read(void)
 	return pressdata;
 }
 
-void Press_Read_Cal(void)
-{
-
-}
-
 void Press_Read_Tsk(void)
 {
 	//Read
+	Press_Data result = Press_Read();
+
 	//Write to tem_dat_buff
+	WritePressDataToFlashBuffer(result);
+	WritePressTempDataToFlashBuffer(result);
 	//If address gets to FLASH_PAGE_SIZE_BYTES
 	//then write temp_data_buff to flash
 }
 
+void WritePressDataToFlashBuffer(Press_Data dataToWrite)
+{
+	static int location_in_buffer = 0;
+
+	//check if this write will overflow the current buffer.
+	//If it does, move to the next buffer and signal that the old buffer is ready to be written to flash
+
+	if(location_in_buffer + PRESS_ONLY_DATA_SIZE_BYTES/2 > FLASH_PAGE_SIZE_BYTES - 1)
+	{
+		press_data_buffer_to_write = press_curent_data_buffer;
+		_pressReadyToWriteFlash = 1;
+
+		if(_pressActiveBuffer)
+		{
+			press_curent_data_buffer = press_data_buffs[0];
+			_pressActiveBuffer = 0;
+		}
+		else
+		{
+			press_curent_data_buffer = press_data_buffs[1];;
+			_pressActiveBuffer = 1;
+		}
+		location_in_buffer = 0;
+
+	}
+	location_in_buffer = Helper_Write_32bit_To_Buffer(press_curent_data_buffer, location_in_buffer, dataToWrite.pressure);
+
+}
+
+void WritePressTempDataToFlashBuffer(Press_Data dataToWrite)
+{
+	static int location_in_buffer = 0;
+
+	//check if this write will overflow the current buffer.
+	//If it does, move to the next buffer and signal that the old buffer is ready to be written to flash
+
+	if(location_in_buffer + PRESS_TEMP_DATA_SIZE_BYTES/2 > FLASH_PAGE_SIZE_BYTES - 1)
+	{
+		pressTemp_data_buffer_to_write = pressTemp_curent_data_buffer;
+		_pressTempReadyToWriteFlash = 1;
+
+		if(_pressTempActiveBuffer)
+		{
+			pressTemp_curent_data_buffer = pressTemp_data_buffs[0];
+			_pressTempActiveBuffer = 0;
+		}
+		else
+		{
+			pressTemp_curent_data_buffer = pressTemp_data_buffs[1];;
+			_pressTempActiveBuffer = 1;
+		}
+		location_in_buffer = 0;
+
+	}
+	location_in_buffer = Helper_Write_32bit_To_Buffer(pressTemp_curent_data_buffer, location_in_buffer, dataToWrite.temperature);
+
+}
 
 uint16_t Press_ReadCalibrations(int calibration_num)
 {
@@ -205,5 +268,27 @@ uint8_t* Press_GetBufferAddress(void)
 	else
 	{
 		return press_data_buff2;
+	}
+}
+
+uint8_t Press_QueryTempReadyToWriteFlashFlag(void)
+{
+	return _pressTempReadyToWriteFlash;
+}
+
+void Press_ClearTempReadyToWriteFlashFlag(void)
+{
+	_pressTempReadyToWriteFlash = 0;
+}
+
+uint8_t* Press_GetTempBufferAddress(void)
+{
+	if(_pressTempActiveBuffer == 1)
+	{
+		return pressTemp_data_buff1;
+	}
+	else
+	{
+		return pressTemp_data_buff2;
 	}
 }
