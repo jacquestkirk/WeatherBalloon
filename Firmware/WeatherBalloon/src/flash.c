@@ -125,7 +125,7 @@ void Flash_Initialize()
  * functions, where xxxxx is the appropriate sensor.
  * Also keeps track of last module flash invoked so appropriate flag can be cleared.
  */
-void Flash_Run_Periodic()
+void Flash_Run_Periodic_Task()
 {
 
 	if (Flash_Current_Write_Block != Flash_Currently_Writing_Nothing) // as in it's writing something
@@ -308,7 +308,7 @@ uint8_t * Flash_Read_ID()
 	// Do the reading at pagenum and store into FlashRead[]
 	// Then copy FlashRead[4..6] to page_read[0..2]
 
-	//SPIBubbl_Initalize();
+	SPIBubbl_Initalize();
 
 	SPIBubbl_Read_ID(FlashReadID);
 

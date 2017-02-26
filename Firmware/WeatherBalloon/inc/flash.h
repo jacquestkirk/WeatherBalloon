@@ -33,7 +33,7 @@ typedef enum {
 } Flash_Enum_Test_Data_type;
 
 void Flash_Initialize();
-void Flash_Run_Periodic();
+void Flash_Run_Periodic_Task();
 void Flash_Populate_Write_Buffer();
 void Flash_Write_Time();
 void Flash_Write_Imu();
