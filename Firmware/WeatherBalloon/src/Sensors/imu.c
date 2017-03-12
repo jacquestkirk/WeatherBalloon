@@ -16,6 +16,8 @@
 #include "em_gpio.h"
 #include "Cli.h"
 #include "timestamp.h"
+#include "rtcdriver.h"
+#include "Sensors/led.h"
 
 // Setup two switching buffers to temporarily store imu data in ram
 STATIC_UBUF(imu_data_buff1,  FLASH_PAGE_SIZE_BYTES-1);   /* Allocate USB receive buffer.   */
@@ -25,7 +27,7 @@ uint8_t *imu_curent_data_buffer = imu_data_buff1;
 uint8_t *imu_data_buffer_to_write = imu_data_buff1;
 
 Imu_Data fifo_data[IMU_FIFO_SIZE];
-uint8_t _fifoReadyToWrite = 0;
+uint8_t _fifoFilled = 0;
 uint8_t _imuReadyToWriteFlash = 0;
 uint8_t _imuActiveBuffer = 0;
 
@@ -184,7 +186,7 @@ void Imu_Initialize()
 	uint8_t zen_g = 1;
 	uint8_t yen_g = 1;
 	uint8_t xen_g = 1;
-	uint8_t lir_xl = 1;
+	uint8_t lir_xl = 0;
 	uint8_t ctrl_reg_4 = zen_g << CTRL_REG_4_ZEN_G_SHIFT | yen_g << CTRL_REG_4_YEN_G_SHIFT | xen_g << CTRL_REG_4_XEN_G_SHIFT | lir_xl << CTRL_REG_4_LIR_XL1_SHIFT;
 	Imu_WriteRegister1Byte(reg_ctrl_reg4, ctrl_reg_4);
 
@@ -214,6 +216,10 @@ void Imu_Initialize()
 	uint8_t int1_fth = 1;
 	uint8_t int1_ctrl =  int1_fth << INT1_CTRL_FTH_SHIFT;
 	Imu_WriteRegister1Byte(reg_int1_ctrl, int1_ctrl);
+
+	uint8_t int2_ovr = 1;
+	uint8_t int2_ctrl = int2_ovr << INT2_CTRL_OVR_SHIFT;
+	Imu_WriteRegister1Byte(reg_int2_ctrl, int2_ctrl);
 
 	uint8_t fmode = FIFO_CTRL_FMODE_CONT_OVERWRITE;
 	uint8_t fth = IMU_FIFO_SIZE-1;
@@ -363,6 +369,10 @@ void ReadFifo(void)
 	{
 		fifo_data[i] = QueryAllImuValues();
 	}
+	_fifoFilled = 0;
+	Led_Off_1();
+
+
 }
 
 void WriteFifoDataToBuffer(void)
@@ -415,18 +425,19 @@ int Write_16bit_To_Buffer(uint8_t *buffer, int starting_location, int value_to_w
 void Int1_a_g_Callback(void)
 {
 	Time_Record_TimeStamp();
-	_fifoReadyToWrite = 1;
+	_fifoFilled = 1;
+	Led_On_1();
 
 }
 
 void Imu_WriteStreamFifo(void)
 {
-	if(_fifoReadyToWrite)
+	if(_fifoFilled)
 	{
 		ReadFifo();
 		WriteFifoOverUsb();
 		ClearFifo();
-		_fifoReadyToWrite = 0;
+		_fifoFilled = 0;
 	}
 }
 
