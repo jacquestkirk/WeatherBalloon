@@ -12,6 +12,7 @@
 
 #define TIMESTAMP_SIZE_BYTES 4
 
+
 void Time_Initilize_TimeStamp(void);
 void WriteTimestampToFlashBuffer(uint32_t dataToWrite);
 
@@ -22,6 +23,7 @@ uint8_t TimeStamp_QueryReadyToWriteFlashFlag(void);
 void TimeStamp_ClearReadyToWriteFlashFlag(void);
 uint8_t* TimeStamp_GetBufferAddress(void);
 
+void Time_ReArm_Timeout(void);
 
 
 #endif /* TIMESTAMP_H_ */

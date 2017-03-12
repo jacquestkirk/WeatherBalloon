@@ -67,9 +67,15 @@ Imu_Data Imu_Read(void)
 }
 void Imu_Read_Tsk(void)
 {
-	//Read fifo
-	ReadFifo();
-	WriteFifoDataToBuffer();
+
+	if(_fifoFilled)
+	{
+		Time_ReArm_Timeout();
+		//Read fifo
+		ReadFifo();
+		WriteFifoDataToBuffer();
+	}
+
 
 	//Write to tem_dat_buff
 	//If address gets to FLASH_PAGE_SIZE_BYTES

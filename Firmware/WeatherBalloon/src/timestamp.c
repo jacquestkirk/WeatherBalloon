@@ -13,6 +13,10 @@
 #include "descriptors.h"
 #include "flash.h"
 #include "HelperFunctions.h"
+#include "Sensors/led.h"
+
+
+#define LOOPTIMEOUT_MS 1500
 
 void RtcCallback( RTCDRV_TimerID_t, void*);
 
@@ -34,15 +38,18 @@ void Time_Initilize_TimeStamp(void)
 {
 	/* Setup RTC with selected clock source and prescaler. */
 	RTCDRV_Init();
-	/*RTCDRV_AllocateTimer( &id );
+
+	RTCDRV_AllocateTimer( &id );
 	// Start a oneshot timer with 100 millisecond timeout
 	// Todo: I should move this somewhere else
-	RTCDRV_StartTimer( id, rtcdrvTimerTypeOneshot, SCH_SCHEDULERPERIOD_MS, RtcCallback,(void*)junk);
-	*/
-
+	RTCDRV_StartTimer( id, rtcdrvTimerTypeOneshot, LOOPTIMEOUT_MS, RtcCallback,NULL);
 	//tbd
 }
 
+void Time_ReArm_Timeout(void)
+{
+	RTCDRV_StartTimer( id, rtcdrvTimerTypeOneshot, LOOPTIMEOUT_MS, RtcCallback,NULL);
+}
 
 uint32_t Time_Get_TimeStamp(void)
 {
@@ -89,13 +96,14 @@ void WriteTimestampToFlashBuffer(uint32_t dataToWrite)
 
 }
 
-/*void RtcCallback( RTCDRV_TimerID_t ignore_me, void* ignore_me_too)
+void RtcCallback( RTCDRV_TimerID_t ignore_me, void* ignore_me_too)
 {
   // Timer has elapsed !
 
   // Restart timer
-  RTCDRV_StartTimer( id, rtcdrvTimerTypePeriodic, SCH_SCHEDULERPERIOD_MS, RtcCallback, (void*)junk);
-}*/
+  RTCDRV_StartTimer( id, rtcdrvTimerTypePeriodic, LOOPTIMEOUT_MS, RtcCallback, NULL);
+  Led_Toggle_2();
+}
 
 uint8_t TimeStamp_QueryReadyToWriteFlashFlag(void)
 {
