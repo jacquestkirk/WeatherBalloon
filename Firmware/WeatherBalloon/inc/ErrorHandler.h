@@ -16,6 +16,7 @@
 typedef enum ErrorHandler_Enum_Error{
 	ErrorHandler_Enum_Error_TestError,
 	ErrorHandler_Enum_Error_SchedulerNotComplete,
+	ErrorHandler_Enum_Error_Imu_Buffer_Timeout,
 }ErrorHandler_Enum_Error;
 
 typedef struct ErrorHandler_Error{
@@ -24,10 +25,14 @@ typedef struct ErrorHandler_Error{
 	uint16_t errorEnum;
 }ErrorHandler_Error;
 
+typedef struct ErrorHandler_BufferInfo{
+	uint8_t* BufferAddress;
+	uint8_t NumberOfErrors;
+}ErrorHandler_BufferInfo;
 
 void ErrorHandler_Throw(uint16_t ErrorEnum);
-uint8_t ErrorHandler_QueryNumberOfErrors(void);
-void ErrorHandler_ClearNumberOfErrors(void);
-void ErrorHandler_NewCycle(void);
-uint8_t* ErrorHandler_GetBufferAddress(void);
+
+
+ErrorHandler_BufferInfo ErrorHandler_GetBufferAddress(void);
+ErrorHandler_BufferInfo ErrorHandler_GetBufferAddressAndClearBuffer(void);
 #endif /* ERRORHANDLER_H_ */

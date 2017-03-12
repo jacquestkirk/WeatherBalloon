@@ -23,6 +23,9 @@ uint8_t _errorHandlerActiveBuffer = 0;
 uint8_t _errorHandlerNumberOfErrors = 0;
 
 
+void NewCycle(void);
+void ClearNumberOfErrors(void);
+
 void ErrorHandler_Throw(uint16_t ErrorEnum)
 {
 	if(_errorHandlerNumberOfErrors >= ERRORHANDLER_MAX_ERRORS_PER_CYCLE)
@@ -48,12 +51,12 @@ uint8_t ErrorHandler_QueryNumberOfErrors(void)
 
 
 
-void ErrorHandler_ClearNumberOfErrors(void)
+void ClearNumberOfErrors(void)
 {
 	_errorHandlerNumberOfErrors = 0;
 }
 
-void ErrorHandler_NewCycle(void)
+void NewCycle(void)
 {
 	//Call this function when you start a new scheduler cycle
 
@@ -70,18 +73,33 @@ void ErrorHandler_NewCycle(void)
 	}
 
 	//Clear number of errors
-	ErrorHandler_ClearNumberOfErrors();
+	ClearNumberOfErrors();
 }
 
-uint8_t* ErrorHandler_GetBufferAddress(void)
+ErrorHandler_BufferInfo ErrorHandler_GetBufferAddress(void)
 {
+	ErrorHandler_BufferInfo bufferInfo;
+
 	if(_errorHandlerActiveBuffer == 1)
 	{
-		return errorHandler_data_buff1;
+		bufferInfo.BufferAddress = errorHandler_data_buff1;
 	}
 	else
 	{
-		return errorHandler_data_buff2;
+		bufferInfo.BufferAddress = errorHandler_data_buff2;
 	}
+
+	bufferInfo.NumberOfErrors = _errorHandlerNumberOfErrors;
+
+	return bufferInfo;
+}
+
+ErrorHandler_BufferInfo ErrorHandler_GetBufferAddressAndClearBuffer(void)
+{
+	ErrorHandler_BufferInfo bufferInfo = ErrorHandler_GetBufferAddress();
+
+
+
+	return bufferInfo;
 }
 

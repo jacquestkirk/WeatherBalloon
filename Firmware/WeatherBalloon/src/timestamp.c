@@ -14,7 +14,7 @@
 #include "flash.h"
 #include "HelperFunctions.h"
 #include "Sensors/led.h"
-
+#include "ErrorHandler.h"
 
 #define LOOPTIMEOUT_MS 1500
 
@@ -102,6 +102,7 @@ void RtcCallback( RTCDRV_TimerID_t ignore_me, void* ignore_me_too)
 
   // Restart timer
   RTCDRV_StartTimer( id, rtcdrvTimerTypePeriodic, LOOPTIMEOUT_MS, RtcCallback, NULL);
+  ErrorHandler_Throw(ErrorHandler_Enum_Error_Imu_Buffer_Timeout);
   Led_Toggle_2();
 }
 
