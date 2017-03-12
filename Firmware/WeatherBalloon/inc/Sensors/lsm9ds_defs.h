@@ -357,6 +357,32 @@ enum fifo_ctrl_fmode
 #define INT1_CTRL_DRDY_XL_SHIFT 0
 #define INT1_CTRL_DRDY_XL_MASK 0b00000001
 
+
+
+///////////////////////////////////////////////////////////////
+//INT2_CTRL
+///////////////////////////////////////////////////////////////
+#define INT2_CTRL_ACT_SHIFT 7
+#define INT2_CTRL_ACT_MASK 0b10000000
+
+#define INT2_CTRL_FSS5_SHIFT 5
+#define INT2_CTRL_FSS5_MASK 0b00100000
+
+#define INT2_CTRL_OVR_SHIFT 4
+#define INT2_CTRL_OVR_MASK 0b000010000
+
+#define INT2_CTRL_FTH_SHIFT 3
+#define INT2_CTRL_FTH_MASK 0b00001000
+
+#define INT2_CTRL_DRDY_TEMP_SHIFT 2
+#define INT2_CTRL_DRDY_TEMP_MASK 0b00000100
+
+#define INT2_CTRL_DRDY_G_SHIFT 1
+#define INT2_CTRL_DRDY_G_MASK 0b00000010
+
+#define INT2_CTRL_DRDY_XL_SHIFT 0
+#define INT2_CTRL_DRDY_XL_MASK 0b00000001
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Magnetometer
