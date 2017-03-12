@@ -46,6 +46,7 @@ void TskWriteToFlash(void);
 void TskCheckCli(void);
 
 //defines
+//setting the define to 1 means it runs every cycle since we decrement after resetting timers
 #define READ_PRESSURE_RESET			1
 #define READ_TEMPS_RESET			1
 #define READ_IMU_RESET				1
@@ -110,18 +111,29 @@ void Sch_Initilize_Scheduler(void)
 
 void Sch_Run_Scheduler(void)
 {
-
+	static bool loop_complete = true;
 
 
 	while(_continue_running_scheduler)
 	{
-		ErrorHandler_NewCycle();
+		if(!loop_complete)
+		{
+			ErrorHandler_Throw(ErrorHandler_Enum_Error_SchedulerNotComplete);
+		}
+
+		loop_complete = false;
 		RunTasks();
 		DecrementTaskTimer();
+
+		//while(1);
+
+		loop_complete = true;
+
 
 		//Delay, enter EM2 while waiting
 		SetSleepClockState(1);
 		//RTCDRV_Delay(SCH_SCHEDULERPERIOD_MS ,true);
+		//EMU_EnterEM1();  //Todo: See if we can make this EM2
 		EMU_EnterEM2(true);
 		SetSleepClockState(0);
 	}
@@ -164,6 +176,8 @@ void RunTasks(void)
 		TskReadImu();
 		TaskTimer[ReadImu] = READ_IMU_RESET;
 	}
+
+
 
 	//ReadPressure
 	if (TaskTimer[ReadPressure] == 0)							//If it is time to run the task
@@ -241,6 +255,8 @@ void RunTasks(void)
 		TskCheckCli();
 		TaskTimer[CheckCli] = CHECK_CLI_RESET;
 	}
+
+
 
 }
 
