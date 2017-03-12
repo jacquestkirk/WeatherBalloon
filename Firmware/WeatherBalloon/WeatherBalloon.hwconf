@@ -18,6 +18,16 @@
     <property object="PC0" propertyId="ports.settings.pinmode" value="Push-pull"/>
     <property object="PC1" propertyId="ports.settings.pinmode" value="Input"/>
     <property object="PC10" propertyId="ports.settings.pinmode" value="Input"/>
+    <property object="PC2" propertyId="ports.settings.dout" value="1"/>
+    <property object="PC2" propertyId="ports.settings.filter" value="Enabled"/>
+    <property object="PC2" propertyId="ports.settings.pinmode" value="Push-pull"/>
+    <property object="PC2" propertyId="ports.settings.pulldirection" value="Pullup"/>
+    <property object="PC2" propertyId="ports.settings.pullup" value="Enabled"/>
+    <property object="PC3" propertyId="ports.settings.dout" value="1"/>
+    <property object="PC3" propertyId="ports.settings.filter" value="Enabled"/>
+    <property object="PC3" propertyId="ports.settings.pinmode" value="Push-pull"/>
+    <property object="PC3" propertyId="ports.settings.pulldirection" value="Pullup"/>
+    <property object="PC3" propertyId="ports.settings.pullup" value="Enabled"/>
     <property object="PC4" propertyId="ports.settings.custompinname" value=""/>
     <property object="PC4" propertyId="ports.settings.dout" value="1"/>
     <property object="PC4" propertyId="ports.settings.filter" value="Enabled"/>
