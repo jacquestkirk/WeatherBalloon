@@ -61,7 +61,7 @@ void Led_On_2(void)
 void Led_Off_2(void)
 {
 	GPIO_PinOutSet(gpioPortC,3);
-	_led2_state = 1;
+	_led2_state = 0;
 }
 
 void Led_Toggle_1(void)
