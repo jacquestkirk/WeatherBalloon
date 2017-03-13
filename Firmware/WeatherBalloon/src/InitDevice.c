@@ -466,6 +466,16 @@ extern void PORTIO_enter_DefaultMode_from_RESET(void) {
 	GPIO->P[2].MODEL = (GPIO->P[2].MODEL & ~_GPIO_P_MODEL_MODE1_MASK)
 			| GPIO_P_MODEL_MODE1_INPUT;
 
+	/* Pin PC2 is configured to Push-pull */
+	GPIO->P[2].DOUT |= (1 << 2);
+	GPIO->P[2].MODEL = (GPIO->P[2].MODEL & ~_GPIO_P_MODEL_MODE2_MASK)
+			| GPIO_P_MODEL_MODE2_PUSHPULL;
+
+	/* Pin PC3 is configured to Push-pull */
+	GPIO->P[2].DOUT |= (1 << 3);
+	GPIO->P[2].MODEL = (GPIO->P[2].MODEL & ~_GPIO_P_MODEL_MODE3_MASK)
+			| GPIO_P_MODEL_MODE3_PUSHPULL;
+
 	/* Pin PC4 is configured to Input enabled with pull-up */
 	GPIO->P[2].DOUT |= (1 << 4);
 	GPIO->P[2].MODEL = (GPIO->P[2].MODEL & ~_GPIO_P_MODEL_MODE4_MASK)
