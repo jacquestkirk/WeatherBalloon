@@ -92,6 +92,7 @@ int TaskTimer[TotalNumOfTasks]; //count down to 0 when it's time to run a task. 
 char _continue_running_scheduler = 0;
 
 int junk = 0; //For some reason some driver functions need a value that I don't care about. This does that.
+bool _loop_complete = true;
 
 //public functions
 void Sch_Initilize_Scheduler(void)
@@ -108,28 +109,22 @@ void Sch_Initilize_Scheduler(void)
 
 	//tbd
 }
-
+bool Sch_Get_Loop_Status(void)
+{
+	return _loop_complete;
+}
 void Sch_Run_Scheduler(void)
 {
-	static bool loop_complete = true;
-
-
 	while(_continue_running_scheduler)
 	{
-		if(!loop_complete)
-		{
-			ErrorHandler_Throw(ErrorHandler_Enum_Error_SchedulerNotComplete);
-		}
 
-		loop_complete = false;
+
+		_loop_complete = false;
 		RunTasks();
 		DecrementTaskTimer();
 
-		//while(1);
 
-		loop_complete = true;
-
-
+		_loop_complete = true;
 		//Delay, enter EM2 while waiting
 		SetSleepClockState(1);
 		//RTCDRV_Delay(SCH_SCHEDULERPERIOD_MS ,true);

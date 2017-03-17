@@ -13,5 +13,6 @@
 
 	void Sch_Initilize_Scheduler(void);
 	void Sch_Run_Scheduler(void);
+	bool Sch_Get_Loop_Status(void);
 
 #endif /* SCHEDULER_H_ */

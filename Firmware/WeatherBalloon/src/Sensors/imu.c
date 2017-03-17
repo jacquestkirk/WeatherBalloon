@@ -428,6 +428,11 @@ void Int1_a_g_Callback(void)
 	_fifoFilled = 1;
 	Led_On_1();
 
+	if(!Sch_Get_Loop_Status())
+	{
+		ErrorHandler_Throw(ErrorHandler_Enum_Error_SchedulerNotComplete);
+	}
+
 }
 
 void Imu_WriteStreamFifo(void)
