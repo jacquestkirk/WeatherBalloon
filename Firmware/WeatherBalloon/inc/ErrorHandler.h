@@ -17,6 +17,7 @@ typedef enum ErrorHandler_Enum_Error{
 	ErrorHandler_Enum_Error_TestError,
 	ErrorHandler_Enum_Error_SchedulerNotComplete,
 	ErrorHandler_Enum_Error_Imu_Buffer_Timeout,
+	ErrorHandler_Enum_Error_Imu_Buffer_Overflow,
 }ErrorHandler_Enum_Error;
 
 typedef struct ErrorHandler_Error{

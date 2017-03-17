@@ -18,6 +18,9 @@
 #include "timestamp.h"
 #include "rtcdriver.h"
 #include "Sensors/led.h"
+#include "ErrorHandler.h"
+#include "HelperFunctions.h"
+#include "Scheduler.h"
 
 // Setup two switching buffers to temporarily store imu data in ram
 STATIC_UBUF(imu_data_buff1,  FLASH_PAGE_SIZE_BYTES-1);   /* Allocate USB receive buffer.   */
@@ -39,6 +42,7 @@ void ClearFifo(void);
 void WriteFifoOverUsb();
 void WriteFifoDataToBuffer(void);
 int Write_16bit_To_Buffer(uint8_t *buffer, int starting_location, int value_to_write);
+uint8_t Get_Num_Entries_In_Fifo(void);
 
 #define WHO_AM_I_RESPONSE 0x68
 
@@ -70,7 +74,7 @@ Imu_Data Imu_Read(void)
 void Imu_Read_Tsk(void)
 {
 
-	if(_fifoFilled)
+	if(1)//(_fifoFilled)
 	{
 		Time_ReArm_Timeout();
 		//Read fifo
@@ -82,6 +86,22 @@ void Imu_Read_Tsk(void)
 	//Write to tem_dat_buff
 	//If address gets to FLASH_PAGE_SIZE_BYTES
 	//then write temp_data_buff to flash
+}
+
+uint8_t Get_Num_Entries_In_Fifo(void)
+{
+	uint8_t response = Imu_QueryRegister1Byte(reg_fifo_src);
+
+	uint8_t overrun_check = (response & FIFO_SRC_OVRN_MASK) >> FIFO_SRC_OVRN_SHIFT;
+	if(overrun_check)
+	{
+		ErrorHandler_Throw(ErrorHandler_Enum_Error_Imu_Buffer_Overflow);
+	}
+
+	uint8_t num_entries = (response & FIFO_SRC_FSS_MASK) >> FIFO_SRC_FSS_SHIFT;
+
+
+	return num_entries;
 }
 
 void Imu_Initialize_OneShot()
@@ -222,7 +242,7 @@ void Imu_Initialize()
 	Imu_WriteRegister1Byte(reg_int2_ctrl, int2_ctrl);
 
 	uint8_t fmode = FIFO_CTRL_FMODE_CONT_OVERWRITE;
-	uint8_t fth = IMU_FIFO_SIZE-1;
+	uint8_t fth = IMU_FIFO_SIZE;
 	uint8_t fifo_ctrl = fmode << FIFO_CTRL_FMODE_SHIFT | fth << FIFO_CTRL_FTH_SHIFT;
 	Imu_WriteRegister1Byte(reg_fifo_ctrl, fifo_ctrl);
 
@@ -365,14 +385,17 @@ void ClearFifo(void)
 
 void ReadFifo(void)
 {
-	for( int i = 0; i < IMU_FIFO_SIZE; i++)
+
+	uint8_t num_fifo_entries = Get_Num_Entries_In_Fifo();
+
+	Helper_Debug_Buffer_Append(num_fifo_entries);
+
+	for( int i = 0; i < num_fifo_entries; i++)
 	{
 		fifo_data[i] = QueryAllImuValues();
 	}
 	_fifoFilled = 0;
 	Led_Off_1();
-
-
 }
 
 void WriteFifoDataToBuffer(void)
