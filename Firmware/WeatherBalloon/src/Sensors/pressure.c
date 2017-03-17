@@ -14,7 +14,7 @@
 #include "em_assert.h"
 #include "rtcdriver.h"
 #include "HelperFunctions.h"
-
+#include "Sensors/led.h"
 //Pressure buffers
 STATIC_UBUF(press_data_buff1,  FLASH_PAGE_SIZE_BYTES);   /* Allocate USB receive buffer.   */
 STATIC_UBUF(press_data_buff2,  FLASH_PAGE_SIZE_BYTES);   /* Allocate USB receive buffer.   */
@@ -53,11 +53,20 @@ Press_Data Press_Read(void)
 	Press_Data pressdata;
 
 	//Read Values
+	//Led_Off_1();
+	RTCDRV_Delay(2);
+
 	Press_WriteCommandByte(0x48);
+
+
 
 	RTCDRV_Delay(10);
 
+
+
 	int32_t D1 = Press_QueryRegister3Byte(0x00);
+
+
 
 	//Read Values
 	Press_WriteCommandByte(0x58);
