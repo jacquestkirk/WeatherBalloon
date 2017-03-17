@@ -571,7 +571,7 @@ class SpaceBubbl:
 
         while(True):
             data_size_bytes = 12
-            read_bytes = self.driver.ReadData(data_size_bytes, 5000)
+            read_bytes = self.driver.ReadData(data_size_bytes, 5000) #This is blocking waiting till data comes in
             startIndex = 0
 
 
@@ -609,7 +609,7 @@ class SpaceBubbl:
             count += 1
             print("Count: ", count)
 
-            if (count%32 == 0):
+            if (count%21 == 0):
                 accelFig = plt.figure(1)
                 accelFig.clear();
                 plt.subplot(211)
