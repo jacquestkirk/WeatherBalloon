@@ -23,6 +23,7 @@
 #include "Sensors\temperature.h"
 #include "timestamp.h"
 #include "flash.h"
+#include "ErrorHandler.h"
 
 #define USB_TIMEOUT 100
 #define USB_TX_BUFFER_SIZE 300
@@ -55,6 +56,8 @@ enum Commands{
 	Cmd_WriteFlashPage,
 	Cmd_ReadPressCal,
 	Cmd_ReadFlashId,
+	Cmd_ReadErrorBuffer,
+	Cmd_ReadDebugBuffer,
 };
 
 #define ERROR_MESSAGE_ENUM  255
@@ -123,6 +126,7 @@ void ReadFlashPage(void);
 void WriteFlashPage(void);
 void ReadPressCal(void);
 void ReadFlashId(void);
+void ReadErrorRegister(void);
 
 SL_PACK_START(1)
 typedef struct
@@ -340,6 +344,8 @@ void RunStateMachine(char* usbRxBuff)
 		case Cmd_ReadFlashId:
 			ReadFlashId();
 			return;
+		case Cmd_ReadErrorBuffer:
+			ReadErrorRegister();
 		default:
 			WriteInvalidCommandMessage();
 			return;
@@ -866,6 +872,37 @@ void WriteFlashPage(void)
 	return;
 }
 
+void ReadErrorRegister(void)
+{
+	ErrorHandler_BufferInfo buffInfo;
+
+	buffInfo = ErrorHandler_GetBufferAddress();
+	uint8_t *errorBuffer = buffInfo.BufferAddress;
+
+	int startIndex = 0;
+
+	//Echo command
+	startIndex = Add8bitIntToTxBuff((uint8_t) Cmd_ReadErrorBuffer, startIndex);
+
+	//Write data to tx buffer
+	for( int i = 0; i < ERRORHANDLER_MAX_ERRORS_PER_CYCLE * ERRORHANDLER_ERROR_SIZE_BYTES; i++) //The size of the data should be the flash size
+	{
+
+		startIndex = Add8bitIntToTxBuff(errorBuffer[i] , startIndex);
+	}
+
+	//Todo: add back message once we get multiple tx buffers working
+	//Write debug message to Tx Buff
+	//char message[] = "IMU Register Written";
+	//startIndex = WriteDebugMessage((char*)&message, startIndex);
+
+	//Write debug message to Tx Buff
+	char message[] = "Data Read from Error Buffer";
+	startIndex = WriteDebugMessage((char*)&message, startIndex);
+
+	//Write the TxBuff over USB
+	 Cli_WriteUSB((void*)usbTxBuff, startIndex);
+}
 void StartImuStream(void)
 {
 	Imu_StartFifo();

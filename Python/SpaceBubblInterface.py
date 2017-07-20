@@ -533,6 +533,37 @@ class SpaceBubbl:
 
         return
 
+    def ReadErrorBuffer(self):
+
+        self.driver.WriteData([Enum_Commands.Cmd_ReadErrorBuffer])
+        data_size_bytes = 257
+        read_bytes = self.driver.ReadData(data_size_bytes)
+
+        startIndex = 0
+
+        # Error Handling
+        [commandEcho, startIndex] = self._Read8bit(read_bytes, startIndex)
+        if (commandEcho == 255):
+            self.ParseError(read_bytes, startIndex)
+        assert commandEcho == Enum_Commands.Cmd_ReadErrorBuffer, "Bubbl responded with an invalid response"
+
+        page_contents = []
+
+        errorBufferSize = ERRORHANDLER_MAX_ERRORS_PER_CYCLE * ERRORHANDLER_ERROR_SIZE_BYTES
+
+        for i in range(0,errorBufferSize):
+            [value, startIndex] = self._Read8bit(read_bytes, startIndex)
+            page_contents.append(value)
+            #print(value)
+
+        message = "Message: "
+        for n in range(startIndex, len(read_bytes)):
+            message += chr(read_bytes[n])
+
+        print(message)
+
+        return page_contents
+
     def StartImuStream(self):
         self.driver.WriteData([Enum_Commands.Cmd_StartImuStream])
         data_size_bytes = 0

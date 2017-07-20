@@ -27,6 +27,7 @@ class Enum_Commands:
     Cmd_WriteFlashPage = 23
     Cmd_ReadPressCal = 24
     Cmd_ReadFlashId = 25
+    Cmd_ReadErrorBuffer = 26
     Cmd_ERROR = 255
 
 class Enum_Flash_TestData:
@@ -34,5 +35,8 @@ class Enum_Flash_TestData:
     allones = 1
     primes = 2
     random = 3
+
+ERRORHANDLER_MAX_ERRORS_PER_CYCLE = 10
+ERRORHANDLER_ERROR_SIZE_BYTES  = 8
 
 
